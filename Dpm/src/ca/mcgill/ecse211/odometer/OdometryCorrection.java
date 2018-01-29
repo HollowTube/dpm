@@ -9,8 +9,8 @@ import lejos.robotics.SampleProvider;
 public class OdometryCorrection implements Runnable {
   private static final long CORRECTION_PERIOD = 10;
   private static final double SQUARE_LENGTH = 30.48;
-  private static final double ANGLE_THRESHOLD = 10;
-  private static final double LIGHTSENS_OFFSET = 3.5;
+  private static final double ANGLE_THRESHOLD = 20;
+  private static final double LIGHTSENS_OFFSET = 2.5;
   private Odometer odometer;
   private SampleProvider lt;
   private float[] ltdata;
@@ -31,7 +31,7 @@ public class OdometryCorrection implements Runnable {
   public boolean correctionTrigger() {
 	   lt.fetchSample(ltdata, 0);
 	   lightVal = (int)(ltdata[0] *100);
-	   if( lightVal < 10) {
+	   if( lightVal < 15) {
 		   //Sound.beep();
 		   return true;
 	   }
@@ -55,25 +55,26 @@ public class OdometryCorrection implements Runnable {
       head = position[2];
       
       if(correctionTrigger()) {
-    	  if(head > 350 || head < 10) {// going up or down
-    		  currentYQuad = (int) ((position[1] + 10)/ SQUARE_LENGTH);
-    		  newy = SQUARE_LENGTH * currentYQuad-LIGHTSENS_OFFSET;
+    	  if(head > 350 || head < 10) {// going up
+    		  currentYQuad = (int) ((position[1] + 10)/ SQUARE_LENGTH); //calculates its vertical tile location( i.e 1 or 2 tiles up from the defined origin)
+    		  newy = SQUARE_LENGTH * currentYQuad-LIGHTSENS_OFFSET; //plugs in the correct y value
     		  odometer.setY(newy);
     		  Sound.buzz();
     	  }
-    	  else if(Math.abs(head-180) < ANGLE_THRESHOLD) {
+    	  else if(Math.abs(head-180) < ANGLE_THRESHOLD) {//going down , same as above but in other direction
     		  currentYQuad = (int) ((position[1] + 10)/ SQUARE_LENGTH);
     		  newy = SQUARE_LENGTH * currentYQuad+LIGHTSENS_OFFSET;
     		  odometer.setY(newy);
     		  Sound.buzz();  
     	  }
-    	  else if((Math.abs(head-90) < ANGLE_THRESHOLD)){
-    		  currentXQuad = (int)((position[0] + 10)/SQUARE_LENGTH);
-    		  newx = SQUARE_LENGTH * currentXQuad-LIGHTSENS_OFFSET;
+    	  //going right
+    	  else if((Math.abs(head-90) < ANGLE_THRESHOLD)){ //calculates its horizontal tile location (i.e. 1 or 2 tiles left or right from the defined origin
+    		  currentXQuad = (int)((position[0] + 10)/SQUARE_LENGTH); 
+    		  newx = SQUARE_LENGTH * currentXQuad-LIGHTSENS_OFFSET;//calculates its actual x position, includes the offset from the light sensor
     		  odometer.setX(newx);
     		  Sound.beep();
-    	  }
-    	  else {//right or left
+    	  }//going left
+    	  else {
     		  currentXQuad = (int)((position[0] + 10)/SQUARE_LENGTH);
     		  newx = SQUARE_LENGTH * currentXQuad+LIGHTSENS_OFFSET;
     		  odometer.setX(newx);

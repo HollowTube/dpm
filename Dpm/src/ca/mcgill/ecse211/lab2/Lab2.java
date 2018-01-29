@@ -91,11 +91,15 @@ public class Lab2 {
         Thread odoCorrectionThread = new Thread(odometryCorrection);
         odoCorrectionThread.start();
       }
-
       // spawn a new Thread to avoid SquareDriver.drive() from blocking
       (new Thread() {
         public void run() {
-          SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
+          try {
+			SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
+		} catch (OdometerExceptions e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         }
       }).start();
     }

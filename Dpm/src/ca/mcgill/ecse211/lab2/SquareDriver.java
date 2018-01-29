@@ -3,8 +3,11 @@
  */
 package ca.mcgill.ecse211.lab2;
 
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometerExceptions;
+import lejos.hardware.Button;
 /**
  * This class is used to drive the robot on the demo floor.
  */
@@ -12,6 +15,7 @@ public class SquareDriver {
   private static final int FORWARD_SPEED = 250;
   private static final int ROTATE_SPEED = 150;
   private static final double TILE_SIZE = 30.48;
+  private static Odometer odometer;
 
   /**
    * This method is meant to drive the robot in a square of size 2x2 Tiles. It is to run in parallel
@@ -22,39 +26,51 @@ public class SquareDriver {
    * @param leftRadius
    * @param rightRadius
    * @param width
+ * @throws OdometerExceptions 
    */
   public static void drive(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-      double leftRadius, double rightRadius, double track) {
+      double leftRadius, double rightRadius, double track) throws OdometerExceptions {
     // reset the motors
     for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {leftMotor, rightMotor}) {
       motor.stop();
       motor.setAcceleration(3000);
     }
-
+    odometer  = Odometer.getOdometer();
+while(true) {
+	
     // Sleep for 2 seconds
     try {
       Thread.sleep(2000);
     } catch (InterruptedException e) {
       // There is nothing to be done here
     }
+    while (Button.waitForAnyPress() != Button.ID_UP) {
+    	  try {
+    	      Thread.sleep(500);
+    	    } catch (InterruptedException e) {
+    	      // There is nothing to be done here
+    	    }
+    }
+    odometer.setXYT(0, 0, 0); // reset display
 for (int k = 0; k<1; k++) {
     for (int i = 0; i < 4; i++) {
       // drive forward two tiles
       leftMotor.setSpeed(FORWARD_SPEED);
       rightMotor.setSpeed(FORWARD_SPEED);
 
-      leftMotor.rotate(convertDistance(leftRadius, 3 * TILE_SIZE), true);
-      rightMotor.rotate(convertDistance(rightRadius, 3 * TILE_SIZE), false);
+      leftMotor.rotate(convertDistance(leftRadius, 2 * TILE_SIZE), true);
+      rightMotor.rotate(convertDistance(rightRadius, 2 * TILE_SIZE), false);
 
       // turn 90 degrees clockwise
       leftMotor.setSpeed(ROTATE_SPEED);
       rightMotor.setSpeed(ROTATE_SPEED);
 
-      leftMotor.rotate(convertAngle(leftRadius, track, 90.0), true);
+      leftMotor.rotate(convertAngle(leftRadius, track, 90.0-4), true);
       rightMotor.rotate(-convertAngle(rightRadius, track, 90.0), false);
     }
   }
-  }
+}
+ }
   /**
    * This method allows the conversion of a distance to the total rotation of each wheel need to
    * cover that distance.
