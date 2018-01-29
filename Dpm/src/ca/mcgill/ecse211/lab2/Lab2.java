@@ -31,7 +31,7 @@ public class Lab2 {
     EV3ColorSensor colorSensor = new EV3ColorSensor (sensorPort);
     SampleProvider colorRGBSensor = colorSensor.getRedMode();   
     int sampleSize = colorRGBSensor.sampleSize();   
-    float[] sample = new float[sampleSize];
+    float[] sample = new float[sampleSize]; //this is a comment
 
     Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD); // TODO Complete implementation
     OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample); // TODO Complete
