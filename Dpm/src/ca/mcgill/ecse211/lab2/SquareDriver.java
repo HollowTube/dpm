@@ -13,7 +13,7 @@ import lejos.hardware.Button;
  */
 public class SquareDriver {
   private static final int FORWARD_SPEED = 250;
-  private static final int ROTATE_SPEED = 150;
+  private static final int ROTATE_SPEED = 75;
   private static final double TILE_SIZE = 30.48;
   private static Odometer odometer;
 
@@ -52,20 +52,20 @@ while(true) {
     	    }
     }
     odometer.setXYT(0, 0, 0); // reset display
-for (int k = 0; k<1; k++) {
-    for (int i = 0; i < 4; i++) {
+for (int k = 0; k<4; k++) {
+    for (int i = 0; i < 1; i++) {
       // drive forward two tiles
       leftMotor.setSpeed(FORWARD_SPEED);
       rightMotor.setSpeed(FORWARD_SPEED);
 
-      leftMotor.rotate(convertDistance(leftRadius, 2 * TILE_SIZE), true);
-      rightMotor.rotate(convertDistance(rightRadius, 2 * TILE_SIZE), false);
+      leftMotor.rotate(convertDistance(leftRadius, 3 * TILE_SIZE), true);
+      rightMotor.rotate(convertDistance(rightRadius, 3 * TILE_SIZE), false);
 
       // turn 90 degrees clockwise
       leftMotor.setSpeed(ROTATE_SPEED);
       rightMotor.setSpeed(ROTATE_SPEED);
 
-      leftMotor.rotate(convertAngle(leftRadius, track, 90.0-4), true);
+      leftMotor.rotate(convertAngle(leftRadius, track, 90.0), true);
       rightMotor.rotate(-convertAngle(rightRadius, track, 90.0), false);
     }
   }

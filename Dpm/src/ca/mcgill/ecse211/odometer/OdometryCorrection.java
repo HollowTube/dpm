@@ -10,7 +10,8 @@ public class OdometryCorrection implements Runnable {
   private static final long CORRECTION_PERIOD = 10;
   private static final double SQUARE_LENGTH = 30.48;
   private static final double ANGLE_THRESHOLD = 20;
-  private static final double LIGHTSENS_OFFSET = 2.5;
+  private static final double LIGHTSENS_OFFSET = 3.5;
+  private static final double LIGHTSENS_THRESHOLD = 15;
   private Odometer odometer;
   private SampleProvider lt;
   private float[] ltdata;
@@ -29,9 +30,11 @@ public class OdometryCorrection implements Runnable {
 
   }
   public boolean correctionTrigger() {
+	  int prevLightVal;
+	  
 	   lt.fetchSample(ltdata, 0);
 	   lightVal = (int)(ltdata[0] *100);
-	   if( lightVal < 15) {
+	   if( lightVal < LIGHTSENS_THRESHOLD) { //triggers when a low amount of light is reflected (i.e. it detects black)
 		   //Sound.beep();
 		   return true;
 	   }
@@ -56,7 +59,8 @@ public class OdometryCorrection implements Runnable {
       
       if(correctionTrigger()) {
     	  if(head > 350 || head < 10) {// going up
-    		  currentYQuad = (int) ((position[1] + 10)/ SQUARE_LENGTH); //calculates its vertical tile location( i.e 1 or 2 tiles up from the defined origin)
+    		  currentYQuad = (int) ((position[1] + 10)/ SQUARE_LENGTH); //calculates its vertical tile location( i.e 1 or 2 tiles up from the defined origin), 
+    		  // the + 10 is for the cases where the robot is lagging behind the actual value, facilitates the floor division.
     		  newy = SQUARE_LENGTH * currentYQuad-LIGHTSENS_OFFSET; //plugs in the correct y value
     		  odometer.setY(newy); //sets the correct y value in the display
     		  Sound.buzz(); // audio feedback for easier troubleshooting
