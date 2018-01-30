@@ -12,7 +12,7 @@ import lejos.hardware.Button;
  * This class is used to drive the robot on the demo floor.
  */
 public class SquareDriver {
-  private static final int FORWARD_SPEED = 250;
+  private static final int FORWARD_SPEED = 200;
   private static final int ROTATE_SPEED = 75;
   private static final double TILE_SIZE = 30.48;
   private static Odometer odometer;
@@ -33,10 +33,10 @@ public class SquareDriver {
     // reset the motors
     for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {leftMotor, rightMotor}) {
       motor.stop();
-      motor.setAcceleration(3000);
+      motor.setAcceleration(1000);
     }
     odometer  = Odometer.getOdometer();
-while(true) {
+while(true) { // all inside an infinite loop for easier testing
 	
     // Sleep for 2 seconds
     try {
@@ -44,14 +44,14 @@ while(true) {
     } catch (InterruptedException e) {
       // There is nothing to be done here
     }
-    while (Button.waitForAnyPress() != Button.ID_UP) {
+    while (Button.waitForAnyPress() != Button.ID_UP) { //waits until the up button is pressed before its starts
     	  try {
     	      Thread.sleep(500);
     	    } catch (InterruptedException e) {
     	      // There is nothing to be done here
     	    }
     }
-    odometer.setXYT(0, 0, 0); // reset display
+    odometer.setXYT(0, 0, 0); // reset display before every run
 for (int k = 0; k<4; k++) {
     for (int i = 0; i < 1; i++) {
       // drive forward two tiles

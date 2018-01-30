@@ -110,13 +110,17 @@ public class Odometer extends OdometerData implements Runnable {
 
       leftMotorTachoCount = leftMotor.getTachoCount();
       rightMotorTachoCount = rightMotor.getTachoCount();
-      deltaL = Math.PI * WHEEL_RAD *(leftMotorTachoCount - prevLeftCount)/180;
+      //gets current tachometer count
+      
+      deltaL = Math.PI * WHEEL_RAD *(leftMotorTachoCount - prevLeftCount)/180; //calculates the distance each wheel has travelled
       deltaR = Math.PI * WHEEL_RAD *(rightMotorTachoCount - prevRightCount)/180;
-      prevLeftCount = leftMotorTachoCount;
+      prevLeftCount = leftMotorTachoCount; // updates the prev tacho count
       prevRightCount = rightMotorTachoCount;
+      
       deltaD = 0.5*(deltaL +deltaR);
       deltaT = (deltaL-deltaR)/TRACK;
       theta += deltaT;
+      
       dx = deltaD * Math.sin(theta);
       dy = deltaD * Math.cos(theta);
 

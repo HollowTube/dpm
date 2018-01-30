@@ -30,8 +30,6 @@ public class OdometryCorrection implements Runnable {
 
   }
   public boolean correctionTrigger() {
-	  int prevLightVal;
-	  
 	   lt.fetchSample(ltdata, 0);
 	   lightVal = (int)(ltdata[0] *100);
 	   if( lightVal < LIGHTSENS_THRESHOLD) { //triggers when a low amount of light is reflected (i.e. it detects black)
