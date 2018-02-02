@@ -97,7 +97,10 @@ public class Lab3 {
         public void run() {
           try {
 //			SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
-        	Navigation.travelTo(1, 1);
+        	navigator.travelTo(1, 0);
+        	navigator.travelTo(0, 0);
+        	navigator.travelTo(2, 0);
+        	navigator.travelTo(-2, 0);
 				
 			
 			
