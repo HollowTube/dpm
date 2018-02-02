@@ -32,13 +32,13 @@ public class Lab3 {
     SampleProvider colorRGBSensor = colorSensor.getRedMode();   
     int sampleSize = colorRGBSensor.sampleSize();   
     float[] sample = new float[sampleSize]; 
-    final Navigation navigator = new Navigation();
-
-    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD); // TODO Complete implementation
-    OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample); // TODO Complete
-                                                                      // implementation
-    Display odometryDisplay = new Display(lcd); // No need to change
     
+    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
+    OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample); 
+    
+    Display odometryDisplay = new Display(lcd); // No need to change
+    final Navigation navigator = new Navigation(leftMotor, rightMotor, sampleSize, sampleSize, sampleSize);
+
 
     do {
       // clear the display
@@ -97,8 +97,7 @@ public class Lab3 {
         public void run() {
           try {
 //			SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
-        	while()
-			Navigation.travelTo(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK, 1, 1);
+        	Navigation.travelTo(1, 1);
 				
 			
 			

@@ -52,7 +52,7 @@ public class OdometryCorrection implements Runnable {
     double newy, newx = 0;
     while (true) {
       correctionStart = System.currentTimeMillis();
-      
+      //TODO variable lightsensor offset
       
       if(correctionTrigger()) {
     	  position = odometer.getXYT(); //get current position and heading from odometer

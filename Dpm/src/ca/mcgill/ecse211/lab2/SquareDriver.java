@@ -36,6 +36,7 @@ public class SquareDriver {
       motor.setAcceleration(1000);
     }
     odometer  = Odometer.getOdometer();
+    
 while(true) { // all inside an infinite loop for easier testing
 	
     // Sleep for 2 seconds
