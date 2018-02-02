@@ -34,24 +34,37 @@ public class Navigation {
 	    this.rightRadius = rightRadius;
 	    this.track = track;
 	  }
+	  /**
+	   * This method makes the robot travel to a certain coordinate, 
+	   * it will also hand control to another method if an obstacle is ever detected.
+	   * It depends on the odometer data to get the correct heading
+	   * 
+	   * @param xf
+	   * @param yf
+
+	 * @throws OdometerExceptions 
+	   */
 	  public static boolean travelTo(double xf, double yf) throws OdometerExceptions {
 
-			double xi,yi,dx,dy,heading;
+			double xi,yi,dx,dy,initial_heading,final_heading, turning_angle;
 
 			 do {
 					
 				 position = odometer.getXYT();
 				 xi = position[0];
 				 yi = position[1];
-				 heading = position[2];
+				 initial_heading = position[2];
 				 dx = xf * TILE_SIZE - xi;
 				 dy = yf * TILE_SIZE - yi;
-				 newheading = Math.atan((dx)/(dy))+Math.PI/2;
-				 if(Math.abs(heading - newheading) < HEADING_THRESHOLD) {
-					 turnto(newheading);
+				 
+				 newheading = getHeading(dx,dy);
+				 final_heading = (newheading + Math.PI * 2 ) % 360;
+				 turning_angle = (min_angle(initial_heading, final_heading);
+				 if (turning_angle < HEADING_THRESHOLD) {
+					 turnto(turning_angle);
 				 }
 				 if(obstacleDetected()) {
-					 //TODO add wallfollower, return control after given distance
+					 //TODO add wallfollower, return control after coast is clear
 				 }
 				 //TODO convert angle for newheading
 
@@ -79,11 +92,27 @@ public class Navigation {
 			  rightMotor.rotate(convertAngle(rightRadius, track, absTheta), true);
 		  }
 	  }
-		  
+	private static double getHeading(double dx, double dy) {
+		double angle;
+		if(dy > 0 ) {
+			angle = (Math.atan(dx/dy) + Math.PI*2) % 6;
+		}
+		else {
+			angle = (Math.atan(dx/dy) + Math.PI);
+		}
+		return angle;
+		
+	}
 	  private static int convertAngle(double radius, double width, double angle) {
 		    return convertDistance(radius, Math.PI * width * angle / 360.0);
 		  }
 	  private static int convertDistance(double radius, double distance) {
 		    return (int) ((180.0 * distance) / (Math.PI * radius));
 		  }
+	  private static double min_angle(double ihead, double fhead) {
+		  double theta;
+		  theta = (fhead + Math.PI*2 - ihead) % (2*Math.PI);
+		  if(theta < Math.PI) return theta;
+		  else return theta-Math.PI*2;
+	  }
 }
