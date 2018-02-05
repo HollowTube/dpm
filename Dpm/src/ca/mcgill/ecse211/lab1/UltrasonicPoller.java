@@ -1,7 +1,7 @@
 package ca.mcgill.ecse211.lab1;
 
 import lejos.robotics.SampleProvider;
-//THIS IS WHERE THE MAIN LOOP IS
+
 /**
  * Control of the wall follower is applied periodically by the UltrasonicPoller thread. The while
  * loop at the bottom executes in a loop. Assuming that the us.fetchSample, and cont.processUSData

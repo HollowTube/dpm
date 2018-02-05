@@ -10,111 +10,103 @@ import lejos.hardware.sensor.*;
 import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 
-
 public class Lab3 {
 
-  // Motor Objects, and Robot related parameters
-  private static final EV3LargeRegulatedMotor leftMotor =
-      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
-  private static final EV3LargeRegulatedMotor rightMotor =
-      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-  private static final TextLCD lcd = LocalEV3.get().getTextLCD();
-  private static final Port sensorPort = LocalEV3.get().getPort("S1"); 
-  public static final double WHEEL_RAD = 2.2;
-  public static final double TRACK = 17.0;
+	// Motor Objects, and Robot related parameters
+	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
+	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
+	private static final Port sensorPort = LocalEV3.get().getPort("S1");
+	public static final double WHEEL_RAD = 2.2;
+	public static final double TRACK = 17.0;
 
-  public static void main(String[] args) throws OdometerExceptions {
+	static Port portUS = LocalEV3.get().getPort("S2");
+	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
+	static SampleProvider myDistance = myUS.getMode("Distance");
+	static float[] sampleUS = new float[myDistance.sampleSize()];
 
-    int buttonChoice;
+	public static void main(String[] args) throws OdometerExceptions {
 
-    // Odometer related objects
-    EV3ColorSensor colorSensor = new EV3ColorSensor (sensorPort);
-    SampleProvider colorRGBSensor = colorSensor.getRedMode();   
-    int sampleSize = colorRGBSensor.sampleSize();   
-    float[] sample = new float[sampleSize]; 
-    
-    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-    OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample); 
-    
-    Display odometryDisplay = new Display(lcd); // No need to change
-    final Navigation navigator = new Navigation(leftMotor, rightMotor, sampleSize, sampleSize, sampleSize);
+		int buttonChoice;
 
+		// Odometer related objects
+		EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
+		SampleProvider colorRGBSensor = colorSensor.getRedMode();
+		int sampleSize = colorRGBSensor.sampleSize();
+		float[] sample = new float[sampleSize];
 
-    do {
-      // clear the display
-      lcd.clear();
+		// Pcontrol pcontrol = new Pcontrol();
 
-      // ask the user whether the motors should drive in a square or float
-      lcd.drawString("< Left | Right >", 0, 0);
-      lcd.drawString("       |        ", 0, 1);
-      lcd.drawString(" Float | Drive  ", 0, 2);
-      lcd.drawString("motors | in a   ", 0, 3);
-      lcd.drawString("       | square ", 0, 4);
+		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
+		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample);
 
-      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-    } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
+		Display odometryDisplay = new Display(lcd); // No need to change
+		new Navigation(leftMotor, rightMotor);
+		new Pcontrol(myDistance, sampleUS, leftMotor,rightMotor);
+		// clear the display
+		lcd.clear();
 
-    if (buttonChoice == Button.ID_LEFT) {
-      // Float the motors
-      leftMotor.forward();
-      leftMotor.flt();
-      rightMotor.forward();
-      rightMotor.flt();
+		// ask the user whether odometery correction should be run or not
+		lcd.drawString("< Left | Right >", 0, 0);
+		lcd.drawString("  No   | with   ", 0, 1);
+		lcd.drawString(" corr- | corr-  ", 0, 2);
+		lcd.drawString(" ection| ection ", 0, 3);
+		lcd.drawString("       |        ", 0, 4);
 
-      // Display changes in position as wheels are (manually) moved
-      
-      Thread odoThread = new Thread(odometer);
-      odoThread.start();
-      Thread odoDisplayThread = new Thread(odometryDisplay);
-      odoDisplayThread.start();
+		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 
-    } else {
-      // clear the display
-      lcd.clear();
+		// Start odometer and display threads
+		Thread odoThread = new Thread(odometer);
+		odoThread.start();
+		Thread odoDisplayThread = new Thread(odometryDisplay);
+		odoDisplayThread.start();
 
-      // ask the user whether odometery correction should be run or not
-      lcd.drawString("< Left | Right >", 0, 0);
-      lcd.drawString("  No   | with   ", 0, 1);
-      lcd.drawString(" corr- | corr-  ", 0, 2);
-      lcd.drawString(" ection| ection ", 0, 3);
-      lcd.drawString("       |        ", 0, 4);
-
-      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-
-      // Start odometer and display threads
-      Thread odoThread = new Thread(odometer);
-      odoThread.start();
-      Thread odoDisplayThread = new Thread(odometryDisplay);
-      odoDisplayThread.start();
-
-      // Start correction if right button was pressed
-      if (buttonChoice == Button.ID_RIGHT) {
-        Thread odoCorrectionThread = new Thread(odometryCorrection);
-        odoCorrectionThread.start();
-      }
-      // spawn a new Thread to avoid SquareDriver.drive() from blocking
-      (new Thread() {
-        public void run() {
-          try {
-//			SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
-        	navigator.travelTo(1, 0);
-        	navigator.travelTo(0, 0);
-        	navigator.travelTo(2, 0);
-        	navigator.travelTo(-2, 0);
-				
-			
-			
-			
-			
-		} catch (OdometerExceptions e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// Start correction if right button was pressed
+		if (buttonChoice == Button.ID_RIGHT) {
+			Thread odoCorrectionThread = new Thread(odometryCorrection);
+			odoCorrectionThread.start();
 		}
-        }
-      }).start();
-    }
+		// spawn a new Thread to avoid SquareDriver.drive() from blocking
+		(new Thread() {
+			public void run() {
+				try {
+					while (true) {
 
-    while (Button.waitForAnyPress() != Button.ID_ESCAPE);
-    System.exit(0);
-  }
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							// There is nothing to be done here
+						}
+						while (Button.waitForAnyPress() != Button.ID_UP) { // waits until the up button is pressed
+																			// before its starts
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								// There is nothing to be done here
+							}
+						}
+						odometer.setXYT(0.1, 0.1, 0);
+						// SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
+						// navigator.travelTo(1, 0);
+						// navigator.travelTo(0, 0);
+						// navigator.travelTo(2, 0);
+						// navigator.travelTo(-2, 0);
+						Navigation.travelTo(0, 2);
+						Navigation.travelTo(1, 1);
+						Navigation.travelTo(2, 2);
+						Navigation.travelTo(2, 1);
+						Navigation.travelTo(1, 0);
+					}
+
+				} catch (OdometerExceptions e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
+		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
+			;
+		System.exit(0);
+	}
 }
