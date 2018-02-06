@@ -51,9 +51,9 @@ public class Navigation {
 	 * 
 	 * @throws OdometerExceptions
 	 */
-	public static boolean travelTo(double xf, double yf) throws OdometerExceptions {
+	public boolean travelTo(double xf, double yf) throws OdometerExceptions {
 		double xi, yi, dx, dy, initial_heading, turning_angle, prev_angle = 0;
-		
+
 		// robot sets initial position here
 		position = odometer.getXYT();
 		xi = position[0];
@@ -65,7 +65,7 @@ public class Navigation {
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
 		absolute_distance = euclidian_error(dx, dy);
-		
+
 		prev_angle = turning_angle;
 
 		turnto(turning_angle);
@@ -74,17 +74,16 @@ public class Navigation {
 		rightMotor.forward();
 
 		do {
-			
-			 if(Pcontrol.obstacleDetected()) {
-			// Pcontrol.avoid();
-			 Sound.beep();
-			 Sound.beep();
-			 try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// there is nothing to be done here
-				}
-			 }
+
+			if (Lab3.pcontrol.obstacleDetected()) {
+				leftMotor.stop();
+				rightMotor.stop();
+				
+				
+				Lab3.pcontrol.avoid();
+				
+
+			}
 
 			// if (Math.abs(turning_angle) > HEADING_THRESHOLD+10 && absolute_distance > 10)
 			// {
@@ -227,5 +226,11 @@ public class Navigation {
 			return theta;
 		else
 			return theta - 360;
+	}
+
+	private static void clearObstacle() {
+		boolean hasObstacle = true;
+		
+
 	}
 }

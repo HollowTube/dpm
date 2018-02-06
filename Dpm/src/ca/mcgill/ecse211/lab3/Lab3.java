@@ -24,6 +24,8 @@ public class Lab3 {
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
+	
+	final static Pcontrol pcontrol = new Pcontrol(myDistance, sampleUS, leftMotor,rightMotor);
 
 	public static void main(String[] args) throws OdometerExceptions {
 
@@ -41,8 +43,8 @@ public class Lab3 {
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample);
 
 		Display odometryDisplay = new Display(lcd); // No need to change
-		new Navigation(leftMotor, rightMotor);
-		new Pcontrol(myDistance, sampleUS, leftMotor,rightMotor);
+		final Navigation navigator = new Navigation(leftMotor, rightMotor);
+		
 		// clear the display
 		lcd.clear();
 
@@ -91,11 +93,11 @@ public class Lab3 {
 						// navigator.travelTo(0, 0);
 						// navigator.travelTo(2, 0);
 						// navigator.travelTo(-2, 0);
-						Navigation.travelTo(0, 2);
-						Navigation.travelTo(1, 1);
-						Navigation.travelTo(2, 2);
-						Navigation.travelTo(2, 1);
-						Navigation.travelTo(1, 0);
+						navigator.travelTo(0, 2);
+						navigator.travelTo(1, 1);
+						navigator.travelTo(2, 2);
+						navigator.travelTo(2, 1);
+						navigator.travelTo(1, 0);
 					}
 
 				} catch (OdometerExceptions e) {
