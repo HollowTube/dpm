@@ -26,12 +26,14 @@ public class Lab3 {
 	static float[] sampleUS = new float[myDistance.sampleSize()];
 	
 	final static Pcontrol pcontrol = new Pcontrol(myDistance, sampleUS, leftMotor,rightMotor);
+	
 
 	public static void main(String[] args) throws OdometerExceptions {
 
 		int buttonChoice;
 
 		// Odometer related objects
+		@SuppressWarnings("resource")
 		EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
 		SampleProvider colorRGBSensor = colorSensor.getRedMode();
 		int sampleSize = colorRGBSensor.sampleSize();
@@ -43,6 +45,7 @@ public class Lab3 {
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample);
 
 		Display odometryDisplay = new Display(lcd); // No need to change
+		
 		final Navigation navigator = new Navigation(leftMotor, rightMotor);
 		
 		// clear the display
@@ -58,8 +61,7 @@ public class Lab3 {
 		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 
 		// Start odometer and display threads
-		Thread odoThread = new Thread(odometer);
-		odoThread.start();
+
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
 
@@ -73,6 +75,8 @@ public class Lab3 {
 			public void run() {
 				try {
 					while (true) {
+						Thread odoThread = new Thread(odometer);
+						odoThread.start();
 
 						try {
 							Thread.sleep(2000);
@@ -93,10 +97,12 @@ public class Lab3 {
 						// navigator.travelTo(0, 0);
 						// navigator.travelTo(2, 0);
 						// navigator.travelTo(-2, 0);
-						navigator.travelTo(0, 2);
+//						navigator.travelTo(0, 2);
+//						navigator.travelTo(1, 1);
+//						navigator.travelTo(2, 2);
+//						navigator.travelTo(2, 1);
+//						navigator.travelTo(1, 0);
 						navigator.travelTo(1, 1);
-						navigator.travelTo(2, 2);
-						navigator.travelTo(2, 1);
 						navigator.travelTo(1, 0);
 					}
 

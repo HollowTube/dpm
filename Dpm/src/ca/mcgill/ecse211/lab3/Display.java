@@ -56,9 +56,11 @@ public class Display implements Runnable {
       lcd.drawString("X: " + numberFormat.format(position[0]), 0, 0);
       lcd.drawString("Y: " + numberFormat.format(position[1]), 0, 1);
       lcd.drawString("T: " + numberFormat.format(position[2]), 0, 2);
+
       lcd.drawString("New Heading: " + numberFormat.format(Navigation.final_heading), 0, 3);
-      lcd.drawString("Distance: " + numberFormat.format(Navigation.absolute_distance), 0, 4);
-      
+      lcd.drawString("Distance: " + numberFormat.format(Navigation.wallDist), 0, 4);
+      lcd.drawString("dx: " + numberFormat.format(Navigation.dx), 0, 5);
+      lcd.drawString("dy: " + numberFormat.format(Navigation.dy), 0, 6);
       // this ensures that the data is updated only once every period
       updateEnd = System.currentTimeMillis();
       if (updateEnd - updateStart < DISPLAY_PERIOD) {

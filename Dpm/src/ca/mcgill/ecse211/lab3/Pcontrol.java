@@ -18,7 +18,7 @@ public class Pcontrol {
 	public final int MAXDIST = 150; // Max value of valid distance
 	public final int FILTER_OUT = 12; // Filter threshold 17
 	// Class Variables
-	public int wallDist = 0; // Measured distance to wall
+	public static int wallDist = 0; // Measured distance to wall
 	public int distError = 0; // Error
 	public int leftSpeed = FWDSPEED; // Vehicle speed
 	public int rightSpeed = FWDSPEED;
@@ -47,68 +47,13 @@ public class Pcontrol {
 		}
 	}
 
-	public void avoid() {
-		int diff;
-		boolean hasObstacle = true;
+	public int avoid() {
 
-		while (hasObstacle) {
-			myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
-			wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
-			// Sound.buzz();
-			if (wallDist >= MAXDIST && filterControl < FILTER_OUT) {
-				// bad value, do not set the distance var, however do increment the
-				// filter value
-				finalDist = WALLDIST;
-				filterControl++;
-			} else if (wallDist >= MAXDIST) {
-				// We have repeated large values, so there must actually be nothing
-				// there: leave the distance alone
-				finalDist = MAXDIST;
-			} else {
-				// distance went below 255: reset filter and leave
-				// distance alone.
-				hasObstacle = false;
-				break;
+		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
+		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
 
-			}
-			if (wallDist >= MAXDIST) {
-				wallDist = MAXDIST;
-			}
-			distError = WALLDIST - finalDist; // Compute error term
+		return wallDist;
 
-			// Controller Actions
-
-			if (Math.abs(distError) <= ERRORTOL) { // Case 1: Error in bounds, no correction
-				leftSpeed = FWDSPEED;
-				rightSpeed = FWDSPEED;
-				leftMotor.setSpeed(leftSpeed); // If correction was being applied on last
-				rightMotor.setSpeed(rightSpeed); // update, clear it
-			}
-
-			else if (distError > 0) { // Case 2: positive error, move away from wall
-				diff = calcProp(distError); // Get correction value and apply
-				leftSpeed = FWDSPEED + diff;
-				rightSpeed = FWDSPEED - diff;
-				leftMotor.setSpeed(leftSpeed);
-				rightMotor.setSpeed(rightSpeed);
-			}
-
-			else if (distError < 0) { // Case 3: negative error, move towards wall
-				diff = calcProp(distError); // Get correction value and apply
-				leftSpeed = FWDSPEED - diff;
-				rightSpeed = FWDSPEED + diff;
-				leftMotor.setSpeed(leftSpeed);
-				rightMotor.setSpeed(rightSpeed);
-			}
-			leftMotor.forward();
-			rightMotor.forward();
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 
 	//
