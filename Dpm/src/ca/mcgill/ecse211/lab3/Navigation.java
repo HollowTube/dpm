@@ -105,41 +105,43 @@ public class Navigation {
 					wallDist = Lab3.pcontrol.avoid();
 					
 					
-					if(wallDist > MAXDIST) {
-						wallDist = MAXDIST;
-					}
-					
-					if (wallDist >= MAXDIST && filterControl < FILTER_OUT) {
-						// bad value, do not set the distance var, however do increment the
-						// filter value
-						finalDist = WALLDIST;
-						filterControl++;
-					} else if (wallDist >= MAXDIST && filterControl >= FILTER_OUT ) {
-						// We have repeated large values, so there must actually be nothing
-						// there: leave the distance alone
-						Sound.beep();
-						hasObstacle = false;
-						finalDist = MAXDIST;
-					} else {
-						// distance went below 255: reset filter and leave
-						// distance alone.
-						finalDist = wallDist;
-						filterControl = 0;
-					}
-
-					
-					error = WALLDIST - wallDist;
-					wall_correction(error);
-//					leftMotor.setSpeed(ROTATE_SPEED);
-//					rightMotor.setSpeed(ROTATE_SPEED);
-//
-//					leftMotor.rotate(convertAngle(leftRadius, track, 90.0), true);
-//					rightMotor.rotate(-convertAngle(rightRadius, track, 90.0), false);
+//					if(wallDist > MAXDIST) {
+//						wallDist = MAXDIST;
+//					}
 //					
-//					leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
-//					rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
+//					if (wallDist >= MAXDIST && filterControl < FILTER_OUT) {
+//						// bad value, do not set the distance var, however do increment the
+//						// filter value
+//						finalDist = WALLDIST;
+//						filterControl++;
+//					} else if (wallDist >= MAXDIST && filterControl >= FILTER_OUT ) {
+//						// We have repeated large values, so there must actually be nothing
+//						// there: leave the distance alone
+//						Sound.beep();
+//						hasObstacle = false;
+//						finalDist = MAXDIST;
+//						break;
+//					} else {
+//						// distance went below 255: reset filter and leave
+//						// distance alone.
+//						finalDist = wallDist;
+//						filterControl = 0;
+//					}
+//
+//					
+//					error = WALLDIST - finalDist;
+//					wall_correction(error);
+					leftMotor.setSpeed(ROTATE_SPEED);
+					rightMotor.setSpeed(ROTATE_SPEED);
+
+					leftMotor.rotate(convertAngle(leftRadius, track, 90.0), true);
+					rightMotor.rotate(-convertAngle(rightRadius, track, 90.0), false);
+					
+					leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
+					rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
 					leftMotor.forward();
 					rightMotor.forward();
+					hasObstacle = false;
 					try {
 						Thread.sleep(50);
 					} catch (InterruptedException e) {
@@ -326,7 +328,7 @@ public class Navigation {
 	}
 
 	private void wall_correction(double distError) {
-		Sound.buzz();
+//		Sound.buzz();
 		if (Math.abs(distError) <= ERRORTOL) { // Case 1: Error in bounds, no correction
 			left_speed = FORWARD_SPEED;
 			right_speed = FORWARD_SPEED;
@@ -335,15 +337,15 @@ public class Navigation {
 		}
 
 		else if (distError > 0) { // Case 2: positive error, move away from wall
-			left_speed = FORWARD_SPEED + 150;
-			right_speed = FORWARD_SPEED - 150;
+			left_speed = FORWARD_SPEED - 150;
+			right_speed = FORWARD_SPEED + 150;
 			leftMotor.setSpeed(left_speed);
 			rightMotor.setSpeed(right_speed);
 		}
 
 		else if (distError < 0) { // Case 3: negative error, move towards wall
-			left_speed = FORWARD_SPEED - 150;
-			right_speed = FORWARD_SPEED + 150;
+			left_speed = FORWARD_SPEED + 150;
+			right_speed = FORWARD_SPEED - 150;
 			leftMotor.setSpeed(left_speed);
 			rightMotor.setSpeed(right_speed);
 		}
