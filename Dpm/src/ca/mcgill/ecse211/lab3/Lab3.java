@@ -92,16 +92,6 @@ public class Lab3 {
 							}
 						}
 						odometer.setXYT(0.1, 0.1, 0);
-						// SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
-						// navigator.travelTo(1, 0);
-						// navigator.travelTo(0, 0);
-						// navigator.travelTo(2, 0);
-						// navigator.travelTo(-2, 0);
-//						navigator.travelTo(0, 2);
-//						navigator.travelTo(1, 1);
-//						navigator.travelTo(2, 2);
-//						navigator.travelTo(2, 1);
-//						navigator.travelTo(1, 0);
 						navigator.travelTo(1, 1);
 						navigator.travelTo(1, 0);
 					}

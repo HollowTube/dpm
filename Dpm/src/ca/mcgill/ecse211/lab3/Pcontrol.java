@@ -47,7 +47,7 @@ public class Pcontrol {
 		}
 	}
 
-	public int avoid() {
+	public int getDistance() {
 
 		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
 		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
