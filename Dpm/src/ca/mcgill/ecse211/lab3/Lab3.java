@@ -78,9 +78,7 @@ public class Lab3 {
 			public void run() {
 				try {
 					while (true) {
-						final double[] position;
 						odometer.setXYT(0.01, 0.01, 0.01);
-						position = odometer.getXYT();
 
 
 

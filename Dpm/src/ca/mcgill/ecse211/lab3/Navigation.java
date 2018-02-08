@@ -24,7 +24,6 @@ public class Navigation {
 	private final double P_CONST = 5;
 	private final double ERRORTOL = 3;
 
-
 	public final int WALLDIST = 35;// Distance to wall * 1.4 (cm) accounting for sensor angle
 	public final int MAXCORRECTION = 100; // Bound on correction to prevent stalling
 	public final long SLEEPINT = 100; // Display update 2Hz
@@ -66,22 +65,20 @@ public class Navigation {
 	 */
 	public void travelTo(double xf, double yf) throws OdometerExceptions {
 		double xi, yi, initial_heading, turning_angle, prev_angle = 0;
-		
+
 		double initial_distance = 0;
 		absolute_distance = 0;
 		final_heading = 0;
-		
-		
+
 		position = odometer.getXYT();
 		xi = position[0];
 		yi = position[1];
 		initial_heading = position[2];
 		dx = (xf * TILE_SIZE) - xi;
 		dy = (yf * TILE_SIZE) - yi;
-		
-		initial_distance  = euclidian_error(dx,dy);
-		turn_to_heading(xf, yf);
 
+		initial_distance = euclidian_error(dx, dy);
+		turn_to_heading(xf, yf);
 
 		leftMotor.forward();
 		rightMotor.forward();
@@ -117,7 +114,6 @@ public class Navigation {
 			final_heading = getHeading(dx, dy);
 			turning_angle = (min_angle(initial_heading, final_heading));
 
-
 			// slows down the robot as it approaches its destination
 			if (absolute_distance < 10) {
 				left_speed = SLOW_SPEED;
@@ -148,8 +144,8 @@ public class Navigation {
 		// that offset
 		leftMotor.rotate(convertDistance(leftRadius, 0.04 * initial_distance), true);
 		rightMotor.rotate(convertDistance(rightRadius, 0.04 * initial_distance), false);
-		odometer.setX(xf*TILE_SIZE+.01);
-		odometer.setY(yf*TILE_SIZE+.01);
+		odometer.setX(xf * TILE_SIZE + .01);
+		odometer.setY(yf * TILE_SIZE + .01);
 
 		leftMotor.stop(true);
 		rightMotor.stop(false);
@@ -276,17 +272,6 @@ public class Navigation {
 		rightMotor.forward();
 	}
 
-
-	private void wall_correction(double distError) {
-		// Sound.buzz();
-		if (Math.abs(distError) <= ERRORTOL) { // Case 1: Error in bounds, no correction
-			left_speed = FORWARD_SPEED;
-			right_speed = FORWARD_SPEED;
-			leftMotor.setSpeed(left_speed); // If correction was being applied on last
-			rightMotor.setSpeed(right_speed); // update, clear it
-		}
-	}
-
 	private void go_around() {
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
@@ -303,26 +288,4 @@ public class Navigation {
 		leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
 		rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
 	}
-
-	/**
-	 * This method makes the robot turn away from the detected wall and move a bit
-	 * forward to avoid the obstacle
-	 */
-	private void move_out() {
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
-
-		leftMotor.rotate(convertAngle(leftRadius, track, 90.0), true);
-		rightMotor.rotate(-convertAngle(rightRadius, track, 90.0), false);
-
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
-
-		leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
-		rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
-
-		leftMotor.forward();
-		rightMotor.forward();
-	}
-
 }
