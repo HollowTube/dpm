@@ -25,7 +25,7 @@ public class Lab3 {
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
 	
-	final static Pcontrol pcontrol = new Pcontrol(myDistance, sampleUS, leftMotor,rightMotor);
+	final static USPoller pcontrol = new USPoller(myDistance, sampleUS, leftMotor,rightMotor);
 	
 
 	public static void main(String[] args) throws OdometerExceptions {
@@ -64,19 +64,25 @@ public class Lab3 {
 
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
+		Thread odoThread = new Thread(odometer);
+		odoThread.start();
 
 		// Start correction if right button was pressed
 		if (buttonChoice == Button.ID_RIGHT) {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
 			odoCorrectionThread.start();
 		}
+
 		// spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
 			public void run() {
 				try {
 					while (true) {
-						Thread odoThread = new Thread(odometer);
-						odoThread.start();
+						final double[] position;
+						odometer.setXYT(0.01, 0.01, 0.01);
+						position = odometer.getXYT();
+
+
 
 						try {
 							Thread.sleep(2000);
@@ -91,9 +97,28 @@ public class Lab3 {
 								// There is nothing to be done here
 							}
 						}
-						odometer.setXYT(0.1, 0.1, 0);
 						navigator.travelTo(1, 1);
+						navigator.travelTo(0, 2);
+						navigator.travelTo(2, 2);
+						navigator.travelTo(2, 1);
 						navigator.travelTo(1, 0);
+						
+//						navigator.travelTo(1, 0);
+//						navigator.travelTo(2, 1);
+//						navigator.travelTo(2, 2);
+//						navigator.travelTo(0, 2);
+//						navigator.travelTo(1, 1);
+						
+//						navigator.travelTo(0, 1);
+//						navigator.travelTo(1, 2);
+//						navigator.travelTo(1, 0);
+//						navigator.travelTo(2, 1);
+//						navigator.travelTo(2, 2);
+//						
+//						navigator.travelTo(2, 1);
+//						navigator.travelTo(1, 1);
+//						navigator.travelTo(1, 2);
+//						navigator.travelTo(2, 0);
 					}
 
 				} catch (OdometerExceptions e) {

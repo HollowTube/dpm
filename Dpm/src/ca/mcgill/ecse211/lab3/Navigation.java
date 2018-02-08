@@ -17,12 +17,13 @@ public class Navigation {
 	// private double newheading;
 	private final int FORWARD_SPEED = 250;
 	private final int SLOW_SPEED = 100;
-	private final int ROTATE_SPEED = 75;
+	private final int ROTATE_SPEED = 120;
 	private final double RANGE_THRESHOLD = 0.5;
 	private final int HEADING_THRESHOLD = 1;
 	private final double TILE_SIZE = 30.48;
 	private final double P_CONST = 5;
 	private final double ERRORTOL = 3;
+
 
 	public final int WALLDIST = 35;// Distance to wall * 1.4 (cm) accounting for sensor angle
 	public final int MAXCORRECTION = 100; // Bound on correction to prevent stalling
@@ -49,7 +50,7 @@ public class Navigation {
 		Navigation.leftMotor = leftMotor;
 		Navigation.rightMotor = rightMotor;
 		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor, rightMotor }) {
-			motor.setAcceleration(1000);
+			motor.setAcceleration(500);
 		}
 	}
 
@@ -65,30 +66,30 @@ public class Navigation {
 	 */
 	public void travelTo(double xf, double yf) throws OdometerExceptions {
 		double xi, yi, initial_heading, turning_angle, prev_angle = 0;
+		
+		double initial_distance = 0;
 		absolute_distance = 0;
 		final_heading = 0;
-
-		// robot sets initial position here
+		
+		
 		position = odometer.getXYT();
 		xi = position[0];
 		yi = position[1];
 		initial_heading = position[2];
 		dx = (xf * TILE_SIZE) - xi;
 		dy = (yf * TILE_SIZE) - yi;
+		
+		initial_distance  = euclidian_error(dx,dy);
+		turn_to_heading(xf, yf);
 
-		final_heading = getHeading(dx, dy);
-		turning_angle = min_angle(initial_heading, final_heading);
-
-		turnto(turning_angle);
-
-		// odometer.setXYT(xi, yi, final_heading);
 
 		leftMotor.forward();
 		rightMotor.forward();
 
 		do {
 
-			if (Lab3.pcontrol.getDistance() < 50) {
+			// if an obstacle is detected, hands control over to obstacle avoidance
+			if (Lab3.pcontrol.obstacleDetected(15)) {
 				leftMotor.stop(true);
 				rightMotor.stop();
 
@@ -98,20 +99,9 @@ public class Navigation {
 					// there is nothing to be done here
 				}
 
-				move_out();
+				go_around();
 
-				Sound.beep();
-				position = odometer.getXYT();
-				xi = position[0];
-				yi = position[1];
-				initial_heading = position[2];
-				dx = (xf * TILE_SIZE) - xi;
-				dy = (yf * TILE_SIZE) - yi;
-
-				final_heading = getHeading(dx, dy);
-				turning_angle = min_angle(initial_heading, final_heading);
-
-				turnto(turning_angle);
+				turn_to_heading(xf, yf);
 
 			}
 
@@ -127,7 +117,8 @@ public class Navigation {
 			final_heading = getHeading(dx, dy);
 			turning_angle = (min_angle(initial_heading, final_heading));
 
-			//slows down the robot as it approaches its destination
+
+			// slows down the robot as it approaches its destination
 			if (absolute_distance < 10) {
 				left_speed = SLOW_SPEED;
 				right_speed = SLOW_SPEED;
@@ -153,12 +144,15 @@ public class Navigation {
 			}
 		} while (absolute_distance > RANGE_THRESHOLD);
 
-		// leftMotor.rotate(convertDistance(leftRadius, 2), true);
-		// rightMotor.rotate(convertDistance(rightRadius, 2), false);
+		// the robot always went slightly below its required distance, this corrects
+		// that offset
+		leftMotor.rotate(convertDistance(leftRadius, 0.04 * initial_distance), true);
+		rightMotor.rotate(convertDistance(rightRadius, 0.04 * initial_distance), false);
+		odometer.setX(xf*TILE_SIZE+.01);
+		odometer.setY(yf*TILE_SIZE+.01);
 
 		leftMotor.stop(true);
 		rightMotor.stop(false);
-		// odometer.setXYT(xf * TILE_SIZE, xf * TILE_SIZE, final_heading);
 		return;
 
 	}
@@ -253,6 +247,13 @@ public class Navigation {
 			return theta - 360;
 	}
 
+	/**
+	 * this method calculates the smallest angle to rotate to the correct heading
+	 * and then turns on a dime to reach it
+	 * 
+	 * @param xf
+	 * @param yf
+	 */
 	private void turn_to_heading(double xf, double yf) {
 
 		double initial_heading, turning_angle, xi, yi;
@@ -268,11 +269,13 @@ public class Navigation {
 
 		turnto(turning_angle);
 
-		// odometer.setXYT(xi, yi, final_heading);
+		leftMotor.rotate(convertDistance(leftRadius, 2), true);
+		rightMotor.rotate(convertDistance(rightRadius, 2), false);
 
 		leftMotor.forward();
 		rightMotor.forward();
 	}
+
 
 	private void wall_correction(double distError) {
 		// Sound.buzz();
@@ -282,21 +285,23 @@ public class Navigation {
 			leftMotor.setSpeed(left_speed); // If correction was being applied on last
 			rightMotor.setSpeed(right_speed); // update, clear it
 		}
+	}
 
-		else if (distError > 0) { // Case 2: positive error, move away from wall
-			left_speed = FORWARD_SPEED - 150;
-			right_speed = FORWARD_SPEED + 150;
-			leftMotor.setSpeed(left_speed);
-			rightMotor.setSpeed(right_speed);
-		}
+	private void go_around() {
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.setSpeed(ROTATE_SPEED);
 
-		else if (distError < 0) { // Case 3: negative error, move towards wall
-			left_speed = FORWARD_SPEED + 150;
-			right_speed = FORWARD_SPEED - 150;
-			leftMotor.setSpeed(left_speed);
-			rightMotor.setSpeed(right_speed);
-		}
+		leftMotor.rotate(convertAngle(leftRadius, track, 90.0), true);
+		rightMotor.rotate(-convertAngle(rightRadius, track, 90.0), false);
 
+		leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
+		rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
+
+		leftMotor.rotate(-convertAngle(leftRadius, track, 90.0), true);
+		rightMotor.rotate(convertAngle(rightRadius, track, 90.0), false);
+
+		leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
+		rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
 	}
 
 	/**
@@ -319,4 +324,5 @@ public class Navigation {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
+
 }

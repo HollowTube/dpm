@@ -1,11 +1,11 @@
 package ca.mcgill.ecse211.lab3;
 
-import lejos.hardware.Sound;
+
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 
-public class Pcontrol {
+public class USPoller {
 
 	// Class Constants
 	public final int SINTERVAL = 100; // A 10Hz sampling rate
@@ -29,7 +29,7 @@ public class Pcontrol {
 	private float[] sampleUS;
 	SampleProvider myDistance;
 
-	public Pcontrol(SampleProvider us, float[] usdata, EV3LargeRegulatedMotor leftMotor,
+	public USPoller(SampleProvider us, float[] usdata, EV3LargeRegulatedMotor leftMotor,
 			EV3LargeRegulatedMotor rightMotor) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
@@ -37,44 +37,18 @@ public class Pcontrol {
 		this.sampleUS = usdata;
 	}
 
-	public boolean obstacleDetected() {
+	/** 
+	 * this method returns true if the on object is detected within the threshold distance
+	 * @param threshold
+	 * @return boolean
+	 */
+	public boolean obstacleDetected(double threshold) {
 		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
 		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
-		if (wallDist < 70) {
+		if (wallDist < threshold) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-
-	public int getDistance() {
-
-		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
-		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
-
-		return wallDist;
-
-	}
-
-	//
-	// This method is used to implement your particular control law. The default
-	// here is to alter motor speed by an amount proportional to the error. There
-	// is some clamping to stay within speed limits.
-
-	int calcProp(int diff) {
-
-		int correction;
-
-		// PROPORTIONAL: Correction is proportional to magnitude of error
-
-		diff = Math.abs(diff);
-
-		correction = (int) (PROPCONST * (double) diff);
-		if (correction >= FWDSPEED) {
-			correction = MAXCORRECTION;
-		}
-
-		return correction;
-	}
-
 }
