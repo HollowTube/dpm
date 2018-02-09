@@ -22,7 +22,6 @@ public class Navigation {
 	private final int HEADING_THRESHOLD = 1;
 	private final double TILE_SIZE = 30.48;
 	private final double P_CONST = 5;
-	private final double ERRORTOL = 3;
 
 	public final int WALLDIST = 35;// Distance to wall * 1.4 (cm) accounting for sensor angle
 	public final int MAXCORRECTION = 100; // Bound on correction to prevent stalling

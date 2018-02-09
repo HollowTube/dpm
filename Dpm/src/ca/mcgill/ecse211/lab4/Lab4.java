@@ -1,5 +1,5 @@
 // Lab2.java
-package ca.mcgill.ecse211.lab3;
+package ca.mcgill.ecse211.lab4;
 
 import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.Button;
@@ -10,7 +10,7 @@ import lejos.hardware.sensor.*;
 import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 
-public class Lab3 {
+public class Lab4 {
 
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
@@ -24,9 +24,10 @@ public class Lab3 {
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
+
+	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	
-	final static USPoller pcontrol = new USPoller(myDistance, sampleUS);
-	
+	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);
 
 	public static void main(String[] args) throws OdometerExceptions {
 
@@ -45,9 +46,8 @@ public class Lab3 {
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample);
 
 		Display odometryDisplay = new Display(lcd); // No need to change
-		
-		final Navigation navigator = new Navigation(leftMotor, rightMotor);
-		
+
+		final Localization localizer = new Localization();
 		// clear the display
 		lcd.clear();
 
@@ -73,55 +73,28 @@ public class Lab3 {
 			odoCorrectionThread.start();
 		}
 
-		// spawn a new Thread to avoid SquareDriver.drive() from blocking
+//		 spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
 			public void run() {
-				try {
-					while (true) {
-						odometer.setXYT(0.01, 0.01, 0.01);
+				while (true) {
 
 
-
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// There is nothing to be done here
+					}
+					while (Button.waitForAnyPress() != Button.ID_UP) { // waits until the up button is pressed
+																		// before its starts
 						try {
-							Thread.sleep(2000);
+							Thread.sleep(500);
 						} catch (InterruptedException e) {
 							// There is nothing to be done here
 						}
-						while (Button.waitForAnyPress() != Button.ID_UP) { // waits until the up button is pressed
-																			// before its starts
-							try {
-								Thread.sleep(500);
-							} catch (InterruptedException e) {
-								// There is nothing to be done here
-							}
-						}
-						navigator.travelTo(1, 1);
-						navigator.travelTo(0, 2);
-						navigator.travelTo(2, 2);
-						navigator.travelTo(2, 1);
-						navigator.travelTo(1, 0);
-						
-//						navigator.travelTo(1, 0);
-//						navigator.travelTo(2, 1);
-//						navigator.travelTo(2, 2);
-//						navigator.travelTo(0, 2);
-//						navigator.travelTo(1, 1);
-						
-//						navigator.travelTo(0, 1);
-//						navigator.travelTo(1, 2);
-//						navigator.travelTo(1, 0);
-//						navigator.travelTo(2, 1);
-//						navigator.travelTo(2, 2);
-//						
-//						navigator.travelTo(2, 1);
-//						navigator.travelTo(1, 1);
-//						navigator.travelTo(1, 2);
-//						navigator.travelTo(2, 0);
 					}
-
-				} catch (OdometerExceptions e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					odometer.setXYT(0.01, 0.01, 0.01);
+					localizer.go();
+					
 				}
 			}
 		}).start();
@@ -130,4 +103,5 @@ public class Lab3 {
 			;
 		System.exit(0);
 	}
+
 }
