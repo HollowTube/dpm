@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab3;
+package ca.mcgill.ecse211.lab4;
 
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
@@ -85,7 +85,7 @@ public class Navigation {
 		do {
 
 			// if an obstacle is detected, hands control over to obstacle avoidance
-			if (Lab3.pcontrol.obstacleDetected(15)) {
+			if (Lab4.usPoller.obstacleDetected(15)) {
 				leftMotor.stop(true);
 				rightMotor.stop();
 

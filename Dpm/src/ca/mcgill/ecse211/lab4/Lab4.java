@@ -3,6 +3,7 @@ package ca.mcgill.ecse211.lab4;
 
 import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -24,23 +25,24 @@ public class Lab4 {
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
+	
+	
+	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
+	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
+	static int sampleSize = colorRGBSensor.sampleSize();
+	static float[] sample = new float[sampleSize];
+	
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	
-	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);
+	final static LightPoller lightPoller = new LightPoller(colorRGBSensor, sample);
+
+	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);;
 
 	public static void main(String[] args) throws OdometerExceptions {
 
 		int buttonChoice;
 
 		// Odometer related objects
-		@SuppressWarnings("resource")
-		EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
-		SampleProvider colorRGBSensor = colorSensor.getRedMode();
-		int sampleSize = colorRGBSensor.sampleSize();
-		float[] sample = new float[sampleSize];
-
-		// Pcontrol pcontrol = new Pcontrol();
 
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample);
@@ -48,6 +50,8 @@ public class Lab4 {
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		final Localization localizer = new Localization();
+		
+		
 		// clear the display
 		lcd.clear();
 
@@ -73,28 +77,21 @@ public class Lab4 {
 			odoCorrectionThread.start();
 		}
 
-//		 spawn a new Thread to avoid SquareDriver.drive() from blocking
+		// spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
 			public void run() {
 				while (true) {
 
-
+					sleeptime(50);
+					while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
+					odometer.setXYT(0.1, 0.1, 0.001);
 					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// There is nothing to be done here
+						localizer.go();
+					} catch (OdometerExceptions e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					while (Button.waitForAnyPress() != Button.ID_UP) { // waits until the up button is pressed
-																		// before its starts
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {
-							// There is nothing to be done here
-						}
-					}
-					odometer.setXYT(0.01, 0.01, 0.01);
-					localizer.go();
-					
+
 				}
 			}
 		}).start();
@@ -102,6 +99,13 @@ public class Lab4 {
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
 			;
 		System.exit(0);
+	}
+	public static void sleeptime(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			// There is nothing to be done here
+		}
 	}
 
 }

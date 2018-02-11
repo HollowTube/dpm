@@ -1,5 +1,7 @@
 package ca.mcgill.ecse211.lab4;
 
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 
@@ -15,6 +17,7 @@ public class MotorControl {
 	static RegulatedMotor rightMotor;
 	private double radius;
 	private double track;
+	private static Odometer odometer;
 
 	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double wheelRad,
 			double track) {
@@ -22,6 +25,7 @@ public class MotorControl {
 		MotorControl.rightMotor = rightmotor;
 		this.radius = wheelRad;
 		this.track = track;
+//		MotorControl.odometer = Odometer.getOdometer();
 	}
 
 	/**
@@ -70,8 +74,8 @@ public class MotorControl {
 	 * This method stops the left and right motors almost simultaneously
 	 */
 	public void stop() {
-		leftMotor.stop(false);
-		rightMotor.stop();
+		leftMotor.stop(true);
+		rightMotor.stop(true);
 	}
 	/**
 	 * This method makes the robot turn on a dime for a certain amount of degrees, positive rotation means clockwise
@@ -99,6 +103,31 @@ public class MotorControl {
 		if(leftMotor.isMoving() || rightMotor.isMoving()) return true;
 		return false;
 	}
+	public void leftMotor(int speed) {
+		leftMotor.setSpeed(speed);
+		if(speed>0)leftMotor.forward();
+		else leftMotor.backward();
+		
+	}
+	public void rightMotor(int speed) {
+		rightMotor.setSpeed(speed);
+		if(speed>0)rightMotor.forward();
+		else rightMotor.backward();
+		
+	}
+	
+//	public void turn_to_heading(double finalHead) {
+//
+//		double initial_heading, turning_angle;
+//
+//		initial_heading = odometer.getXYT()[2];
+//		
+//		turning_angle = Navigation.min_angle(initial_heading, finalHead);
+//		
+//		dime_turn(turning_angle, 100, true);
+//		stop();
+//
+//	}
 
 	private int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
@@ -107,5 +136,7 @@ public class MotorControl {
 	private int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
+	
+
 
 }
