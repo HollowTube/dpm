@@ -15,6 +15,7 @@ public class Display implements Runnable {
   private double[] position;
   private final long DISPLAY_PERIOD = 25;
   private long timeout = Long.MAX_VALUE;
+  
 
   /**
    * This is the class constructor
@@ -51,6 +52,7 @@ public class Display implements Runnable {
 
       // Retrieve x, y and Theta information
       position = odo.getXYT();
+      
       // Print x,y, and theta information
       DecimalFormat numberFormat = new DecimalFormat("######0.00");
       lcd.drawString("X: " + numberFormat.format(position[0]), 0, 0);

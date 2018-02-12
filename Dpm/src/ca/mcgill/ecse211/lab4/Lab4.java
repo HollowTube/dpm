@@ -34,7 +34,7 @@ public class Lab4 {
 	
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	final static LightPoller lightPoller = new LightPoller(colorRGBSensor, sample);
+	final static LightPoll lightPoller = new LightPoll(colorRGBSensor, sample);
 
 	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);;
 

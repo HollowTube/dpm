@@ -21,8 +21,8 @@ public class myUSPoller {
 		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
 		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
 		
-		if(wallDist > 255) {
-			return 255;
+		if(wallDist > 250) {
+			return 250;
 		}
 		return wallDist;
 	}

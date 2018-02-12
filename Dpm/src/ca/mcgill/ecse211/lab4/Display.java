@@ -15,6 +15,8 @@ public class Display implements Runnable {
   private double[] position;
   private final long DISPLAY_PERIOD = 25;
   private long timeout = Long.MAX_VALUE;
+  private myUSPoller uspoller = Lab4.usPoller;
+  private double dist;
 
   /**
    * This is the class constructor
@@ -48,7 +50,7 @@ public class Display implements Runnable {
     long tStart = System.currentTimeMillis();
     do {
       updateStart = System.currentTimeMillis();
-
+      dist = uspoller.getDist();
       // Retrieve x, y and Theta information
       position = odo.getXYT();
       // Print x,y, and theta information
@@ -58,7 +60,7 @@ public class Display implements Runnable {
       lcd.drawString("T: " + numberFormat.format(position[2]), 0, 2);
 
 //      lcd.drawString("New Heading: " + numberFormat.format(Navigation.final_heading), 0, 3);
-//      lcd.drawString("Distance: " + numberFormat.format(Navigation.wallDist), 0, 4);
+      lcd.drawString("Distance: " + numberFormat.format(dist), 0, 4);
       lcd.drawString("dx: " + numberFormat.format(Odometer.deltaL), 0, 5);
       lcd.drawString("dy: " + numberFormat.format(Odometer.deltaR), 0, 6);
       // this ensures that the data is updated only once every period
