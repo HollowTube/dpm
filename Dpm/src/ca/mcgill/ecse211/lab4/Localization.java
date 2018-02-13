@@ -3,6 +3,8 @@ package ca.mcgill.ecse211.lab4;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
+import lejos.robotics.navigation.Navigator;
+
 import java.util.*;
 
 public class Localization {
@@ -13,6 +15,7 @@ public class Localization {
 	private final static double LIGHT_OFFSET = 7.73;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
+	private static Navigator navigator;
 
 	double current_dist, prev_dist, change_inDist = 0;
 	double theta, itheta = 0;
@@ -21,12 +24,27 @@ public class Localization {
 	public Localization() throws OdometerExceptions {
 		Localization.odometer = Odometer.getOdometer();
 		Localization.motorcontrol = Lab4.motorControl;
+		
 	}
 
 	public void go() throws OdometerExceptions {
-
+		motorcontrol.forward(100, 100);
+		while(!Lab4.lightPoller.falling(20)) 
+		motorcontrol.leftRot(7.6);
+		motorcontrol.rightRot(7.6);
+		
+		odometer.setY(0);
+		motorcontrol.dime_turn(90, 100, true);
+		
+		motorcontrol.forward(100, 100);
+		while(!Lab4.lightPoller.falling(20)) 
+		motorcontrol.leftRot(7.6);
+		motorcontrol.rightRot(7.6);
+		
+		
+		odometer.setX(0);
+		motorcontrol.dime_turn(-90, 100, true);
 		localize_heading();
-
 	}
 
 	public boolean rising_edge() {

@@ -10,6 +10,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.*;
 import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
+import lejos.robotics.navigation.Navigator;
 
 public class Lab4 {
 
@@ -36,7 +37,8 @@ public class Lab4 {
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	final static LightPoll lightPoller = new LightPoll(colorRGBSensor, sample);
 
-	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);;
+	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);
+	
 
 	public static void main(String[] args) throws OdometerExceptions {
 
@@ -50,7 +52,6 @@ public class Lab4 {
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		final Localization localizer = new Localization();
-		
 		
 		// clear the display
 		lcd.clear();
@@ -81,7 +82,6 @@ public class Lab4 {
 		(new Thread() {
 			public void run() {
 				while (true) {
-
 					sleeptime(50);
 					while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
 					odometer.setXYT(0.1, 0.1, 0.001);
@@ -91,7 +91,6 @@ public class Lab4 {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
 				}
 			}
 		}).start();
