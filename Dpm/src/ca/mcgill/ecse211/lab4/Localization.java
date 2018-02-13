@@ -374,7 +374,7 @@ public class Localization {
 	}
 
 	/**
-	 *Average angle calculation
+	 *Average angle calculation method
 	 * @param a
 	 * @param b
 	 * @return
