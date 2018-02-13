@@ -7,9 +7,16 @@ import lejos.robotics.navigation.Navigator;
 
 import java.util.*;
 
+/**
+ * This class is used to perform localization using both the UltraSonic and light sensors.
+ * It allows the robot to now its position and orientation and therefore correct itself accordingly.
+ */
 public class Localization {
 	static boolean measuring = true;
 
+/**
+* Variables needed
+*/	
 	private final static int EDGE_TRIGGER = 150;;
 	private final static int MARGIN = 10;
 	private final static double LIGHT_OFFSET = 7.73;
@@ -20,13 +27,21 @@ public class Localization {
 	double current_dist, prev_dist, change_inDist = 0;
 	double theta, itheta = 0;
 	boolean in_margin = false;
-
+/**
+* This is the class constructor
+* 
+* @throws OdometerExceptions 
+*/
 	public Localization() throws OdometerExceptions {
 		Localization.odometer = Odometer.getOdometer();
 		Localization.motorcontrol = Lab4.motorControl;
 		
 	}
 
+/**
+ * Runs the class
+ * @throws OdometerExceptions
+ */
 	public void go() throws OdometerExceptions {
 		motorcontrol.forward(100, 100);
 		while(!Lab4.lightPoller.falling(20)) 
@@ -46,7 +61,10 @@ public class Localization {
 		motorcontrol.dime_turn(-90, 100, true);
 		localize_heading();
 	}
-
+/**
+ * Method to know if a rising edge is detected
+ * @return
+ */
 	public boolean rising_edge() {
 		boolean edge_detected, in_margin = false;
 
@@ -79,7 +97,10 @@ public class Localization {
 		prev_dist = current_dist;
 		return edge_detected;
 	}
-
+	/**
+	 * Method to know if a falling edge is detected
+	 * @return
+	 */
 	public boolean falling_edge() {
 		boolean edge_detected, in_margin = false;
 
@@ -111,6 +132,9 @@ public class Localization {
 		return edge_detected;
 	}
 
+/**
+ * Uses the light sensor to get the position of the robot in space
+ */
 	private void light_localization() {
 		double diff_x, diff_y, x_value, y_value, heading_correction = 0;
 		motorcontrol.dime_turn(360, 70, false);
@@ -141,6 +165,9 @@ public class Localization {
 		odometer.setY((360-(diff_y))/2);
 
 	}
+	/**
+	 * Method to find the right orientation (0 degree) after light sensor localization
+	 */
 	void localize_heading() {
 		int count = 0;
 		double new_zero=0;
@@ -183,6 +210,12 @@ public class Localization {
 		//odometer.setTheta(0);
 		
 	}
+	/**
+	 * Method to get the angle between two different angle readings, even when overlapping happens
+	 * @param a
+	 * @param b
+	 * @return
+	 */
     static double GetAngleAverage(double a, double b)
     {
         a = a % 360;
@@ -196,6 +229,10 @@ public class Localization {
         return sum / 2;
     }
 
+    /**
+     * Method that runs rising edge localization
+     * @throws OdometerExceptions
+     */
 	private void localize_rising() throws OdometerExceptions {
 		double theta1 = -1;
 		double theta2 = -1;
@@ -253,7 +290,11 @@ public class Localization {
 		finalHead = (odometer.getXYT()[2] + (360 + head_correction) % 360) % 360;
 		odometer.setTheta(finalHead);
 	}
-
+	
+	 /**
+     * Method that runs falling edge localization
+     * @throws OdometerExceptions
+     */
 	private void localize_falling() throws OdometerExceptions {
 		double theta1 = -1;
 		double theta2 = -1;
@@ -318,6 +359,10 @@ public class Localization {
 		odometer.setTheta(finalHead);
 	}
 
+	/**
+	 * Method to make robot turn itself to the right orientation
+	 * @param finalHead
+	 */
 	private void turn_to_heading(double finalHead) {
 
 		double initial_heading, turning_angle;
@@ -331,6 +376,12 @@ public class Localization {
 
 	}
 
+	/**
+	 * Method to obtain the minimum angle, takes in consideration overlapping
+	 * @param ihead
+	 * @param fhead
+	 * @return
+	 */
 	public static double min_angle(double ihead, double fhead) {
 		double theta;
 		theta = (fhead + 360 - ihead) % (360);
@@ -340,6 +391,12 @@ public class Localization {
 			return theta - 360;
 	}
 
+	/**
+	 *Average angle calculation method
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	private double average_angle(double a, double b) {
 		double sum = a + b;
 		if (sum > 360) {
@@ -348,6 +405,10 @@ public class Localization {
 			return sum / 2;
 	}
 
+	/**
+	 * sleep thread for a time wanted
+	 * @param time
+	 */
 	private void sleep(int time) {
 		try {
 			Thread.sleep(time);
