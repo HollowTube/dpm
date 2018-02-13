@@ -73,8 +73,8 @@ public class Navigation {
 		xi = position[0];
 		yi = position[1];
 		initial_heading = position[2];
-		dx = (xf * TILE_SIZE) - xi;
-		dy = (yf * TILE_SIZE) - yi;
+		dx = (xf) - xi;
+		dy = (yf) - yi;
 
 		initial_distance = euclidian_error(dx, dy);
 		turn_to_heading(xf, yf);

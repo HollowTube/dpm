@@ -91,13 +91,9 @@ public class MotorControl {
 		leftMotor.setSpeed(rotate_speed);
 		rightMotor.setSpeed(rotate_speed);
 		
-		if (rotation > 0) {
-			leftMotor.rotate(convertAngle(radius, track, rotation), true);
-			rightMotor.rotate(-convertAngle(radius, track, rotation), !block);
-		} else {
 			leftMotor.rotate(-convertAngle(radius, track, rotation), true);
 			rightMotor.rotate(convertAngle(radius, track, rotation), !block);
-		}
+
 	}
 	public boolean isMoving() {
 		if(leftMotor.isMoving() || rightMotor.isMoving()) return true;
@@ -128,6 +124,12 @@ public class MotorControl {
 //		stop();
 //
 //	}
+	public void leftRot(double rotation) {
+		leftMotor.rotate(convertAngle(radius, track, rotation), true);
+	}
+	public void rightRot(double rotation) {
+		leftMotor.rotate(convertAngle(radius, track, rotation), true);
+	}
 
 	private int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);

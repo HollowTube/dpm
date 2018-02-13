@@ -8,8 +8,9 @@ import java.util.*;
 public class Localization {
 	static boolean measuring = true;
 
-	private final static int EDGE_TRIGGER = 110;;
+	private final static int EDGE_TRIGGER = 150;;
 	private final static int MARGIN = 10;
+	private final static double LIGHT_OFFSET = 7.73;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
 
@@ -23,25 +24,8 @@ public class Localization {
 	}
 
 	public void go() throws OdometerExceptions {
-		motorcontrol.dime_turn(-360, 70, false);
-		ArrayList<Double> angles = new ArrayList<Double>();
-		while (motorcontrol.isMoving()) {
-			
-			if (Lab4.lightPoller.falling(20)) {
-				angles.add(odometer.getXYT()[2]);
-				Sound.beep();
-			}
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
-		}
-		
-		double x_value = -9*(Math.cos((angles.get(0)-angles.get(2))/2));
-		double y_value = -9*(Math.cos((angles.get(1)-angles.get(3))/2));
-		odometer.setX(x_value);
-		odometer.setY(y_value);
+
+		localize_heading();
 
 	}
 
@@ -110,11 +94,89 @@ public class Localization {
 	}
 
 	private void light_localization() {
+		double diff_x, diff_y, x_value, y_value, heading_correction = 0;
+		motorcontrol.dime_turn(360, 70, false);
+		ArrayList<Double> angles = new ArrayList<Double>();
+		while (motorcontrol.isMoving()) {
 
-		motorcontrol.rightMotor(-70);
-		motorcontrol.rightMotor(70);
+			if (Lab4.lightPoller.falling(20)) {
+				angles.add(odometer.getXYT()[2]);
+				Sound.beep();
+			}
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// there is nothing to be done here
+			}
+		}
+		
+		
+		// double x_value = (angles.get(1)-angles.get(0));
+		// double y_value = (angles.get(3)-angles.get(1));
+		diff_x = angles.get(2) - angles.get(0);
+		diff_y = angles.get(1) - angles.get(3);
+		x_value = -LIGHT_OFFSET * (Math.cos(diff_x / 2 * Math.PI / 180));
+		y_value = -LIGHT_OFFSET * (Math.cos(diff_y / 2 * Math.PI / 180));
+		
+		heading_correction = 90 + (360-(diff_y))/2 + 125 - angles.get(2);	
+		odometer.setX(heading_correction);
+		odometer.setY((360-(diff_y))/2);
 
 	}
+	void localize_heading() {
+		int count = 0;
+		double new_zero=0;
+		ArrayList<Double> angles = new ArrayList<Double>();
+		motorcontrol.leftMotor(70);
+		motorcontrol.rightMotor(-70);
+		
+		while(!Lab4.lightPoller.falling(20)) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// there is nothing to be done here
+			}
+		}
+		motorcontrol.stop();
+		angles.add(odometer.getXYT()[2]);
+		Sound.beep();
+		motorcontrol.dime_turn(10, 70, true);
+		motorcontrol.leftMotor(-70);
+		motorcontrol.rightMotor(70);
+		
+		
+
+		while(count<2 ) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// there is nothing to be done here
+			}
+			if(Lab4.lightPoller.falling(20)) {
+				Sound.beep();
+				count++;
+			}
+		}
+		motorcontrol.stop();
+		angles.add(odometer.getXYT()[2]);
+		new_zero = GetAngleAverage(angles.get(0), angles.get(1));
+		//new_zero = (360-angles.get(1))
+		turn_to_heading(new_zero);
+		//odometer.setTheta(0);
+		
+	}
+    static double GetAngleAverage(double a, double b)
+    {
+        a = a % 360;
+        b = b % 360;
+
+        double sum = a + b;
+        if (sum > 360 && sum < 540)
+        {
+            sum = sum % 180;
+        }
+        return sum / 2;
+    }
 
 	private void localize_rising() throws OdometerExceptions {
 		double theta1 = -1;
