@@ -2,6 +2,7 @@ package ca.mcgill.ecse211.lab4;
 
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.robotics.navigation.Navigator;
 
@@ -17,9 +18,10 @@ public class Localization {
 /**
 * Variables needed
 */	
-	private final static int EDGE_TRIGGER = 150;;
+	private final static int EDGE_TRIGGER = 80;
 	private final static int MARGIN = 10;
 	private final static double LIGHT_OFFSET = 7.73;
+	private final static int SCANNING_SPEED = 100;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
 	private static Navigator navigator;
@@ -39,33 +41,39 @@ public class Localization {
 	}
 
 /**
- * Runs the class
- * @throws OdometerExceptions
+ * @throws InterruptedException
  */
-	public void go() throws OdometerExceptions {
-		motorcontrol.forward(100, 100);
-		while(!Lab4.lightPoller.falling(20)) 
-		motorcontrol.leftRot(7.6);
-		motorcontrol.rightRot(7.6);
-		
-		odometer.setY(0);
-		motorcontrol.dime_turn(90, 100, true);
-		
-		motorcontrol.forward(100, 100);
-		while(!Lab4.lightPoller.falling(20)) 
-		motorcontrol.leftRot(7.6);
-		motorcontrol.rightRot(7.6);
-		
-		
-		odometer.setX(0);
-		motorcontrol.dime_turn(-90, 100, true);
-		localize_heading();
+public void head_to_origin()  {
+	Button.waitForAnyPress();
+	
+	motorcontrol.forward(100, 100);
+	while(!Lab4.lightPoller.falling(20)) {
+		sleep(50);
 	}
+	motorcontrol.stop();
+	motorcontrol.leftRot(7.7);
+	Sound.beep();
+	odometer.setY(0);
+	
+	motorcontrol.dime_turn(-90, 100, true);
+	
+	motorcontrol.forward(100, 100);
+	while(!Lab4.lightPoller.falling(20)) {
+		sleep(50);
+	}
+	motorcontrol.stop();
+	motorcontrol.leftRot(7.7);
+	
+	
+	odometer.setX(0);
+	motorcontrol.dime_turn(60, 100, true);
+	localize_heading();
+}
 /**
  * Method to know if a rising edge is detected
  * @return
  */
-	public boolean rising_edge() {
+	private boolean rising_edge() {
 		boolean edge_detected, in_margin = false;
 
 		current_dist = Lab4.usPoller.getDist();
@@ -101,7 +109,7 @@ public class Localization {
 	 * Method to know if a falling edge is detected
 	 * @return
 	 */
-	public boolean falling_edge() {
+	private boolean falling_edge() {
 		boolean edge_detected, in_margin = false;
 
 		current_dist = Lab4.usPoller.getDist();
@@ -135,9 +143,9 @@ public class Localization {
 /**
  * Uses the light sensor to get the position of the robot in space
  */
-	private void light_localization() {
+	public void light_localization() {
 		double diff_x, diff_y, x_value, y_value, heading_correction = 0;
-		motorcontrol.dime_turn(360, 70, false);
+		motorcontrol.dime_turn(360, SCANNING_SPEED, false);
 		ArrayList<Double> angles = new ArrayList<Double>();
 		while (motorcontrol.isMoving()) {
 
@@ -145,16 +153,9 @@ public class Localization {
 				angles.add(odometer.getXYT()[2]);
 				Sound.beep();
 			}
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
+			sleep(50);
 		}
 		
-		
-		// double x_value = (angles.get(1)-angles.get(0));
-		// double y_value = (angles.get(3)-angles.get(1));
 		diff_x = angles.get(2) - angles.get(0);
 		diff_y = angles.get(1) - angles.get(3);
 		x_value = -LIGHT_OFFSET * (Math.cos(diff_x / 2 * Math.PI / 180));
@@ -163,17 +164,16 @@ public class Localization {
 		heading_correction = 90 + (360-(diff_y))/2 + 125 - angles.get(2);	
 		odometer.setX(heading_correction);
 		odometer.setY((360-(diff_y))/2);
-
 	}
 	/**
 	 * Method to find the right orientation (0 degree) after light sensor localization
 	 */
-	void localize_heading() {
+	public void localize_heading() {
 		int count = 0;
 		double new_zero=0;
 		ArrayList<Double> angles = new ArrayList<Double>();
-		motorcontrol.leftMotor(70);
-		motorcontrol.rightMotor(-70);
+		motorcontrol.leftMotor(SCANNING_SPEED);
+		motorcontrol.rightMotor(-SCANNING_SPEED);
 		
 		while(!Lab4.lightPoller.falling(20)) {
 			try {
@@ -185,12 +185,10 @@ public class Localization {
 		motorcontrol.stop();
 		angles.add(odometer.getXYT()[2]);
 		Sound.beep();
-		motorcontrol.dime_turn(10, 70, true);
-		motorcontrol.leftMotor(-70);
-		motorcontrol.rightMotor(70);
+		motorcontrol.dime_turn(10, SCANNING_SPEED, true);
+		motorcontrol.leftMotor(-SCANNING_SPEED);
+		motorcontrol.rightMotor(SCANNING_SPEED);
 		
-		
-
 		while(count<2 ) {
 			try {
 				Thread.sleep(50);
@@ -206,7 +204,7 @@ public class Localization {
 		angles.add(odometer.getXYT()[2]);
 		new_zero = GetAngleAverage(angles.get(0), angles.get(1));
 		//new_zero = (360-angles.get(1))
-		turn_to_heading(new_zero);
+		turn_to_heading(new_zero+180+20);
 		//odometer.setTheta(0);
 		
 	}
@@ -233,7 +231,7 @@ public class Localization {
      * Method that runs rising edge localization
      * @throws OdometerExceptions
      */
-	private void localize_rising() throws OdometerExceptions {
+	public void localize_rising() throws OdometerExceptions {
 		double theta1 = -1;
 		double theta2 = -1;
 		double finalHead = 0;
@@ -242,34 +240,24 @@ public class Localization {
 		prev_dist = current_dist;
 
 		do {
-			motorcontrol.leftMotor(70);
-			motorcontrol.rightMotor(-70);
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
+			motorcontrol.leftMotor(SCANNING_SPEED);
+			motorcontrol.rightMotor(-SCANNING_SPEED);
+
+			sleep(50);
 		} while (!rising_edge());
 		theta1 = theta;
 
 		motorcontrol.stop();
 		Sound.buzz();
 
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// there is nothing to be done here
-		}
+		sleep(2000);
+
 
 		do {
-			motorcontrol.rightMotor(70);
-			motorcontrol.leftMotor(-70);
+			motorcontrol.rightMotor(SCANNING_SPEED);
+			motorcontrol.leftMotor(-SCANNING_SPEED);
 
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
+			sleep(50);
 		} while (!rising_edge());
 
 		motorcontrol.stop();
@@ -295,10 +283,9 @@ public class Localization {
      * Method that runs falling edge localization
      * @throws OdometerExceptions
      */
-	private void localize_falling() throws OdometerExceptions {
+	public void localize_falling() throws OdometerExceptions {
 		double theta1 = -1;
 		double theta2 = -1;
-		double finalHead = 0;
 
 		odometer = Odometer.getOdometer();
 
@@ -306,57 +293,41 @@ public class Localization {
 		prev_dist = current_dist;
 
 		do {
-			motorcontrol.leftMotor(70);
-			motorcontrol.rightMotor(-70);
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
+			motorcontrol.leftMotor(SCANNING_SPEED);
+			motorcontrol.rightMotor(-SCANNING_SPEED);
+			sleep(20);
 		} while (!falling_edge());
 		theta1 = theta;
 
 		motorcontrol.stop();
 		Sound.buzz();
 
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// there is nothing to be done here
-		}
+		sleep(2000);
+
 
 		do {
-			motorcontrol.rightMotor(70);
-			motorcontrol.leftMotor(-70);
-
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
+			motorcontrol.rightMotor(SCANNING_SPEED);
+			motorcontrol.leftMotor(-SCANNING_SPEED);
+				sleep(20);
 		} while (!falling_edge());
 
 		motorcontrol.stop();
 		Sound.buzz();
 
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// there is nothing to be done here
-		}
+		sleep(2000);
 
 		theta2 = theta;
 
 		double head_correction;
-		if (theta1 > theta2) {
-			head_correction = 45 - average_angle(theta1, theta2);
+		if (theta1 < theta2) {
+			head_correction = 45 - GetAngleAverage(theta1, theta2);
 
 		} else {
-			head_correction = 225 - average_angle(theta1, theta2);
-		}
+			head_correction = 45 - GetAngleAverage(theta1, theta2);
+		} 
 
-		finalHead = (odometer.getXYT()[2] + (360 + head_correction) % 360) % 360;
-		odometer.setTheta(finalHead);
+		odometer.update(0,0,head_correction);
+		turn_to_heading(0);
 	}
 
 	/**
@@ -371,7 +342,7 @@ public class Localization {
 
 		turning_angle = min_angle(initial_heading, finalHead);
 
-		motorcontrol.dime_turn(turning_angle, 100, true);
+		motorcontrol.dime_turn(-turning_angle, 100, true);
 		motorcontrol.stop();
 
 	}

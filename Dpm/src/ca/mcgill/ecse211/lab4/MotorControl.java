@@ -125,10 +125,11 @@ public class MotorControl {
 //
 //	}
 	public void leftRot(double rotation) {
-		leftMotor.rotate(convertAngle(radius, track, rotation), true);
+	      leftMotor.rotate(convertDistance(radius, rotation), true);
+	      rightMotor.rotate(convertDistance(radius, rotation), false);
 	}
 	public void rightRot(double rotation) {
-		leftMotor.rotate(convertAngle(radius, track, rotation), true);
+		leftMotor.rotate(convertAngle(radius, track, rotation), false);
 	}
 
 	private int convertAngle(double radius, double width, double angle) {

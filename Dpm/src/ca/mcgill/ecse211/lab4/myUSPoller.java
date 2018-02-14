@@ -17,7 +17,7 @@ public class myUSPoller {
 		this.myDistance = us;	
 		this.sampleUS = usdata;
 	}
-	public double getDist() {
+	public synchronized double getDist() {
 		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
 		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
 		

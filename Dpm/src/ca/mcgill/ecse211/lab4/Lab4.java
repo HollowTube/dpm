@@ -86,11 +86,13 @@ public class Lab4 {
 					while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
 					odometer.setXYT(0.1, 0.1, 0.001);
 					try {
-						localizer.go();
+						localizer.localize_falling();
 					} catch (OdometerExceptions e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					motorControl.stop();
+					localizer.head_to_origin();
 				}
 			}
 		}).start();

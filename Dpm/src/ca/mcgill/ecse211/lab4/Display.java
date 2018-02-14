@@ -50,7 +50,7 @@ public class Display implements Runnable {
     long tStart = System.currentTimeMillis();
     do {
       updateStart = System.currentTimeMillis();
-      dist = uspoller.getDist();
+      //dist = uspoller.getDist();
       // Retrieve x, y and Theta information
       position = odo.getXYT();
       // Print x,y, and theta information
