@@ -20,11 +20,11 @@ public class Localization {
 */	
 	private final static int EDGE_TRIGGER = 80;
 	private final static int MARGIN = 10;
-	private final static double LIGHT_OFFSET = 7.73;
+	private final static double LIGHT_OFFSET = 7.7;
 	private final static int SCANNING_SPEED = 100;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
-	private static Navigator navigator;
+	
 
 	double current_dist, prev_dist, change_inDist = 0;
 	double theta, itheta = 0;
@@ -33,7 +33,7 @@ public class Localization {
 * This is the class constructor
 * 
 * @throws OdometerExceptions 
-*/
+*/	
 	public Localization() throws OdometerExceptions {
 		Localization.odometer = Odometer.getOdometer();
 		Localization.motorcontrol = Lab4.motorControl;
@@ -51,7 +51,7 @@ public void head_to_origin()  {
 		sleep(50);
 	}
 	motorcontrol.stop();
-	motorcontrol.leftRot(7.7);
+	motorcontrol.leftRot(LIGHT_OFFSET);
 	Sound.beep();
 	odometer.setY(0);
 	
@@ -62,7 +62,7 @@ public void head_to_origin()  {
 		sleep(50);
 	}
 	motorcontrol.stop();
-	motorcontrol.leftRot(7.7);
+	motorcontrol.leftRot(LIGHT_OFFSET);
 	
 	
 	odometer.setX(0);
@@ -143,7 +143,8 @@ public void head_to_origin()  {
 /**
  * Uses the light sensor to get the position of the robot in space
  */
-	public void light_localization() {
+	
+public void light_localization() {
 		double diff_x, diff_y, x_value, y_value, heading_correction = 0;
 		motorcontrol.dime_turn(360, SCANNING_SPEED, false);
 		ArrayList<Double> angles = new ArrayList<Double>();
@@ -163,28 +164,26 @@ public void head_to_origin()  {
 		
 		heading_correction = 90 + (360-(diff_y))/2 + 125 - angles.get(2);	
 		odometer.setX(heading_correction);
-		odometer.setY((360-(diff_y))/2);
+		odometer.setY(y_value);
 	}
 	/**
 	 * Method to find the right orientation (0 degree) after light sensor localization
 	 */
 	public void localize_heading() {
 		int count = 0;
-		double new_zero=0;
+		double new_zero = 0;
 		ArrayList<Double> angles = new ArrayList<Double>();
+		
 		motorcontrol.leftMotor(SCANNING_SPEED);
 		motorcontrol.rightMotor(-SCANNING_SPEED);
 		
-		while(!Lab4.lightPoller.falling(20)) {
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
-		}
+		while(!Lab4.lightPoller.falling(20)) sleep(50);
+		
+		
 		motorcontrol.stop();
 		angles.add(odometer.getXYT()[2]);
 		Sound.beep();
+		
 		motorcontrol.dime_turn(10, SCANNING_SPEED, true);
 		motorcontrol.leftMotor(-SCANNING_SPEED);
 		motorcontrol.rightMotor(SCANNING_SPEED);
@@ -235,6 +234,8 @@ public void head_to_origin()  {
 		double theta1 = -1;
 		double theta2 = -1;
 		double finalHead = 0;
+		double head_correction;
+
 
 		current_dist = Lab4.usPoller.getDist();
 		prev_dist = current_dist;
@@ -253,12 +254,7 @@ public void head_to_origin()  {
 		sleep(2000);
 
 
-		do {
-			motorcontrol.rightMotor(SCANNING_SPEED);
-			motorcontrol.leftMotor(-SCANNING_SPEED);
-
-			sleep(50);
-		} while (!rising_edge());
+		rotate_until_rising(true);
 
 		motorcontrol.stop();
 		Sound.buzz();
@@ -267,6 +263,30 @@ public void head_to_origin()  {
 
 		theta2 = theta;
 
+		head_correction = get_heading_correction(theta1, theta2);
+
+		finalHead = (odometer.getXYT()[2] + (360 + head_correction) % 360) % 360;
+		odometer.setTheta(finalHead);
+	}
+
+	/**rotates until sensor dete
+	 * 
+	 */
+	private void rotate_until_rising(boolean clockwise) {
+		do {
+			motorcontrol.rightMotor(SCANNING_SPEED);
+			motorcontrol.leftMotor(-SCANNING_SPEED);
+
+			sleep(50);
+		} while (!rising_edge());
+	}
+
+	/**
+	 * @param theta1
+	 * @param theta2
+	 * @return
+	 */
+	private double get_heading_correction(double theta1, double theta2) {
 		double head_correction;
 		if (theta1 > theta2) {
 			head_correction = 45 - average_angle(theta1, theta2);
@@ -274,11 +294,8 @@ public void head_to_origin()  {
 		} else {
 			head_correction = 225 - average_angle(theta1, theta2);
 		}
-
-		finalHead = (odometer.getXYT()[2] + (360 + head_correction) % 360) % 360;
-		odometer.setTheta(finalHead);
-	}
-	
+		return head_correction;
+	}	
 	 /**
      * Method that runs falling edge localization
      * @throws OdometerExceptions
@@ -304,7 +321,6 @@ public void head_to_origin()  {
 
 		sleep(2000);
 
-
 		do {
 			motorcontrol.rightMotor(SCANNING_SPEED);
 			motorcontrol.leftMotor(-SCANNING_SPEED);
@@ -318,13 +334,7 @@ public void head_to_origin()  {
 
 		theta2 = theta;
 
-		double head_correction;
-		if (theta1 < theta2) {
-			head_correction = 45 - GetAngleAverage(theta1, theta2);
-
-		} else {
-			head_correction = 45 - GetAngleAverage(theta1, theta2);
-		} 
+		double head_correction = get_heading_correction(theta1,theta2);
 
 		odometer.update(0,0,head_correction);
 		turn_to_heading(0);

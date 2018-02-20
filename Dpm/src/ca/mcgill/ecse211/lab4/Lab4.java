@@ -28,14 +28,19 @@ public class Lab4 {
 	static float[] sampleUS = new float[myDistance.sampleSize()];
 	
 	
+//	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
+//	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
+//	static int sampleSize = colorRGBSensor.sampleSize();
+//	static float[] sample = new float[sampleSize];
+	
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
-	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
+	static SampleProvider colorRGBSensor = colorSensor.getRGBMode();
 	static int sampleSize = colorRGBSensor.sampleSize();
 	static float[] sample = new float[sampleSize];
 	
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	final static LightPoll lightPoller = new LightPoll(colorRGBSensor, sample);
+	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
 
 	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);
 	
@@ -84,15 +89,8 @@ public class Lab4 {
 				while (true) {
 					sleeptime(50);
 					while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
-					odometer.setXYT(0.1, 0.1, 0.001);
-					try {
-						localizer.localize_falling();
-					} catch (OdometerExceptions e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					motorControl.stop();
-					localizer.head_to_origin();
+					lightPoller.calibrate();
+					odometer.setXYT(0.1, 0.1, 0.001);	
 				}
 			}
 		}).start();

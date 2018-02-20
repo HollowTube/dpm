@@ -16,15 +16,24 @@ public class LightPoll {
 	public LightPoll (SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
 		this.ltdata = ltdata;
-		
 	}
 	
+	/**
+	 * returns the reflected light value as an int in range [0,100]
+	 * @return
+	 */
 	public int getValue() {
 		lt.fetchSample(ltdata, 0);
 		lightVal = (int) (ltdata[0] * 100);
 		return lightVal;
 		
 	}
+	
+	/**
+	 * returns true if reading is less the set threshold
+	 * @param threshold
+	 * @return
+	 */
 	public boolean lessThan(int threshold) {
 		current_light = getValue();
 		
@@ -33,6 +42,7 @@ public class LightPoll {
 		}
 		else return false;
 	}
+	
 	
 	public boolean falling(int threshold) {
 		boolean edge;
@@ -62,6 +72,10 @@ public class LightPoll {
 		else edge = false;
 		prev_light = current_light;
 		return edge;
+	}
+	public boolean colorDetecter() {
+		
+		return first_time;
 	}
 	
 	public void main (String args[]) throws InterruptedException {
