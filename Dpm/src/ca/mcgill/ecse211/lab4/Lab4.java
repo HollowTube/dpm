@@ -54,7 +54,7 @@ public class Lab4 {
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensor, sample);
 
-		Display odometryDisplay = new Display(lcd); // No need to change
+		//Display odometryDisplay = new Display(lcd); // No need to change
 
 		final Localization localizer = new Localization();
 		
@@ -69,13 +69,13 @@ public class Lab4 {
 		lcd.drawString("       |        ", 0, 4);
 
 		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-
+		lcd.clear();
 		// Start odometer and display threads
 
-		Thread odoDisplayThread = new Thread(odometryDisplay);
-		odoDisplayThread.start();
-		Thread odoThread = new Thread(odometer);
-		odoThread.start();
+		//Thread odoDisplayThread = new Thread(odometryDisplay);
+		//odoDisplayThread.start();
+		//Thread odoThread = new Thread(odometer);
+		//odoThread.start();
 
 		// Start correction if right button was pressed
 		if (buttonChoice == Button.ID_RIGHT) {
@@ -89,7 +89,7 @@ public class Lab4 {
 				while (true) {
 					sleeptime(50);
 					while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
-					lightPoller.calibrate();
+					lightPoller.detectColor();
 					odometer.setXYT(0.1, 0.1, 0.001);	
 				}
 			}
