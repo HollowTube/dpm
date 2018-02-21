@@ -39,11 +39,12 @@ public class Lab4 {
 	static float[] sample = new float[sampleSize];
 	
 
-	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
+	
 
 	static MotorControl motorControl = new MotorControl(leftMotor, rightMotor, WHEEL_RAD, TRACK);
 	
+	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
+	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample, motorControl);
 
 	public static void main(String[] args) throws OdometerExceptions {
 
@@ -56,7 +57,7 @@ public class Lab4 {
 
 		//Display odometryDisplay = new Display(lcd); // No need to change
 
-		final Localization localizer = new Localization();
+		final Localization localizer = new Localization(motorControl);
 		
 		// clear the display
 		lcd.clear();
@@ -89,7 +90,7 @@ public class Lab4 {
 				while (true) {
 					sleeptime(50);
 					while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
-					lightPoller.detectColor();
+					lightPoller.calibrate();
 					odometer.setXYT(0.1, 0.1, 0.001);	
 				}
 			}

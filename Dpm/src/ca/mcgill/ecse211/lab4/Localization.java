@@ -34,10 +34,9 @@ public class Localization {
 * 
 * @throws OdometerExceptions 
 */	
-	public Localization() throws OdometerExceptions {
+	public Localization(MotorControl motorcontrol) throws OdometerExceptions {
 		Localization.odometer = Odometer.getOdometer();
-		Localization.motorcontrol = Lab4.motorControl;
-		
+		Localization.motorcontrol = motorcontrol;		
 	}
 
 /**

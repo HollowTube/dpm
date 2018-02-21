@@ -17,23 +17,31 @@ public class LightPollerColor {
 	private float[] ltdata;
 	private int lightVal;
 	private float[] desiredColor;
+	public MotorControl motorcontrol;
 
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
 	// private Color red_block = new Color(0,0,0,0,0,0);
 	// private Color blue_block = new Color(0,0,0,0,0,0);
 	// private Color yellow_block = new Color(0,0,0,0,0,0);
-	private Color orange = new Color(0.164809809f, 0.128121575f, 0.096505883f, 0.1574731f, 0.1548986f,
-			0.15302903f);
+	private Color orange = new Color(0.164809809f, 0.128121575f, 0.096505883f, 0.1574731f, 0.1548986f, 0.15302903f);
+	private Color green = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f);
+	private Color table = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f);
 
-	public LightPollerColor(SampleProvider lt, float[] ltdata) {
+	public LightPollerColor(SampleProvider lt, float[] ltdata,MotorControl motorcontrol) {
 		this.lt = lt;
 		this.ltdata = ltdata;
+		this.motorcontrol =  motorcontrol;
 	}
 
 	public void calibrate() {
 		lt.fetchSample(ltdata, 0);
-		for (int i = 0; i < 500; i++) {
+		
+		motorcontrol.leftMotor(100);
+		motorcontrol.rightMotor(100);
+		
+		for (int i = 0; i < 100; i++) {
+
 			lt.fetchSample(ltdata, 0);
 			System.out.println(ltdata[0] + "\t" + ltdata[1] + "\t" + ltdata[2]);
 			try {
@@ -43,6 +51,7 @@ public class LightPollerColor {
 				e.printStackTrace();
 			}
 		}
+		motorcontrol.stop();
 		Sound.beep();
 	}
 
@@ -76,6 +85,8 @@ public class LightPollerColor {
 		green_dist = Math.abs(color.green_mean - reading[1]);
 		blue_dist = Math.abs(color.blue_mean - reading[2]);
 
+		System.out.println("prob of Color \n ");
+
 		System.out.println("red dist: " + red_dist);
 		System.out.println("green dist: " + green_dist);
 		System.out.println("blue dist: " + blue_dist);
@@ -84,21 +95,11 @@ public class LightPollerColor {
 		System.out.println("green mean: " + color.green_mean);
 		System.out.println("blue mean: " + color.blue_mean);
 
-		// sum_prob += 1-color.red.probability(color.red_mean-red_dist,
-		// color.red_mean+red_dist);
-		// sum_prob += 1-color.green.probability(color.green_mean-green_dist,
-		// color.green_mean+green_dist);
-		// sum_prob += 1-color.red.probability(color.blue_mean-blue_dist,
-		// color.blue_mean+blue_dist);
-
 		red_prob = (float) (1 - color.red.probability(color.red_mean - red_dist, color.red_mean + red_dist));
 		green_prob = (float) (1
 				- (color.green.probability(color.green_mean - green_dist, color.green_mean + green_dist)));
 		blue_prob = (float) (1 - (color.red.probability(color.blue_mean - blue_dist, color.blue_mean + blue_dist)));
 
-		// lcd.drawString("Red: " + Float.toString(red_dist), 0, 0);
-		// lcd.drawString("Green: " +Float.toString(green_dist), 0, 1);
-		// lcd.drawString("Blue: " +Float.toString(blue_dist), 0, 2);
 
 		System.out.println("red prob: " + red_prob);
 		System.out.println("green prob: " + green_prob);
@@ -108,11 +109,11 @@ public class LightPollerColor {
 		lcd.drawString("Green: " + Float.toString(green_prob), 0, 1);
 		lcd.drawString("Blue: " + Float.toString(blue_prob), 0, 2);
 
-		return sum_prob / 3;
+		return (red_prob + green_prob + blue_prob) / 3;
 	}
 
 	public void detectColor() {
-		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10;
+		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0;
 		double max_prob;
 		lt.fetchSample(ltdata, 0);
 		float[] reading = getAverageMeasurement();
@@ -125,12 +126,18 @@ public class LightPollerColor {
 		// prob_green = getProbability(blue_block, reading);
 		// prob_blue = getProbability(yellow_block, reading);
 		prob_orange = getProbability(orange, reading);
+		prob_green = getProbability(green, reading);
+		prob_table = getProbability(table,reading);
+
+		System.out.println("Orange" + prob_orange);
+		System.out.println("Green" + prob_green);
+		System.out.println("Table" + prob_table);
 
 		// max_prob = Math.max(Math.max(prob_blue, prob_green), prob_red);
 
-		lcd.drawString("Red: " + Float.toString(reading[0]), 0, 3);
-		lcd.drawString("Green: " + Float.toString(reading[1]), 0, 4);
-		lcd.drawString("Blue: " + Float.toString(reading[2]), 0, 5);
+		// lcd.drawString("Red: " + Float.toString(reading[0]), 0, 3);
+		// lcd.drawString("Green: " + Float.toString(reading[1]), 0, 4);
+		// lcd.drawString("Blue: " + Float.toString(reading[2]), 0, 5);
 
 		// lcd.drawString("Orange: " +Double.toString(prob_orange), 0, 3);
 
