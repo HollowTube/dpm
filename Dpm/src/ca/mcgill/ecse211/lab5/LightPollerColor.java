@@ -1,9 +1,8 @@
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import java.util.ArrayList;
-
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
@@ -28,18 +27,18 @@ public class LightPollerColor {
 	private Color green = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f);
 	private Color table = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f);
 
-	public LightPollerColor(SampleProvider lt, float[] ltdata,MotorControl motorcontrol) {
+	public LightPollerColor(SampleProvider lt, float[] ltdata, MotorControl motorcontrol) {
 		this.lt = lt;
 		this.ltdata = ltdata;
-		this.motorcontrol =  motorcontrol;
+		this.motorcontrol = motorcontrol;
 	}
 
 	public void calibrate() {
 		lt.fetchSample(ltdata, 0);
-		
+
 		motorcontrol.leftMotor(100);
 		motorcontrol.rightMotor(100);
-		
+
 		for (int i = 0; i < 100; i++) {
 
 			lt.fetchSample(ltdata, 0);
@@ -52,6 +51,7 @@ public class LightPollerColor {
 			}
 		}
 		motorcontrol.stop();
+		
 		Sound.beep();
 	}
 
@@ -95,11 +95,11 @@ public class LightPollerColor {
 		System.out.println("green mean: " + color.green_mean);
 		System.out.println("blue mean: " + color.blue_mean);
 
-		red_prob = (float) (1 - color.red.probability(color.red_mean - red_dist, color.red_mean + red_dist));
+		red_prob = (float) (1 - color.red.probability(color.getRed_mean() - red_dist, color.getRed_mean() + red_dist));
 		green_prob = (float) (1
-				- (color.green.probability(color.green_mean - green_dist, color.green_mean + green_dist)));
-		blue_prob = (float) (1 - (color.red.probability(color.blue_mean - blue_dist, color.blue_mean + blue_dist)));
-
+				- (color.green.probability(color.getGreen_mean() - green_dist, color.getGreen_mean() + green_dist)));
+		blue_prob = (float) (1
+				- (color.red.probability(color.getBlue_mean() - blue_dist, color.getBlue_mean() + blue_dist)));
 
 		System.out.println("red prob: " + red_prob);
 		System.out.println("green prob: " + green_prob);
@@ -108,7 +108,9 @@ public class LightPollerColor {
 		lcd.drawString("Red: " + Float.toString(red_prob), 0, 0);
 		lcd.drawString("Green: " + Float.toString(green_prob), 0, 1);
 		lcd.drawString("Blue: " + Float.toString(blue_prob), 0, 2);
-
+		
+		
+		//returns the average probability of each probability
 		return (red_prob + green_prob + blue_prob) / 3;
 	}
 
@@ -127,7 +129,7 @@ public class LightPollerColor {
 		// prob_blue = getProbability(yellow_block, reading);
 		prob_orange = getProbability(orange, reading);
 		prob_green = getProbability(green, reading);
-		prob_table = getProbability(table,reading);
+		prob_table = getProbability(table, reading);
 
 		System.out.println("Orange" + prob_orange);
 		System.out.println("Green" + prob_green);

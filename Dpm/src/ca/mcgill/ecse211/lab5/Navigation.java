@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
@@ -13,6 +13,8 @@ import lejos.robotics.RegulatedMotor;
 
 public class Navigation {
 	private static Odometer odometer;
+	private static MotorControl motorcontrol;
+	
 	private double position[];
 	// private double newheading;
 	private final int FORWARD_SPEED = 250;
@@ -30,26 +32,21 @@ public class Navigation {
 	public final int FILTER_OUT = 20; // Filter threshold 17
 	public static double wallDist;
 
-	static RegulatedMotor leftMotor;
-	static RegulatedMotor rightMotor;
-	double leftRadius = 2.2;
-	double rightRadius = 2.2;
-	double track = 17;
 	public static double final_heading = 0;
 	public static double absolute_distance = 0;
 	public static double dx = 0;
 	public static double dy = 0;
 	private int left_speed;
 	private int right_speed;
-	public static boolean obstacleDetected = true;
 
-	public Navigation(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) throws OdometerExceptions {
+	public Navigation() throws OdometerExceptions {
 		Navigation.odometer = Odometer.getOdometer();
-		Navigation.leftMotor = leftMotor;
-		Navigation.rightMotor = rightMotor;
-		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor, rightMotor }) {
-			motor.setAcceleration(500);
-		}
+		Navigation.motorcontrol = MotorControl.getMotor();
+//		Navigation.leftMotor = leftMotor;
+//		Navigation.rightMotor = rightMotor;
+//		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor, rightMotor }) {
+//			motor.setAcceleration(500);
+//		}
 	}
 
 	/**
@@ -78,40 +75,10 @@ public class Navigation {
 
 		initial_distance = euclidian_error(dx, dy);
 		turn_to_heading(xf, yf);
+		
+		motorcontrol.forward(FORWARD_SPEED, FORWARD_SPEED);
 
-		leftMotor.forward();
-		rightMotor.forward();
-
-		do {
-
-			// if an obstacle is detected, hands control over to obstacle avoidance
-			if (Lab4.usPoller.obstacleDetected(15)) {
-				leftMotor.stop(true);
-				rightMotor.stop();
-
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// there is nothing to be done here
-				}
-
-				go_around();
-
-				turn_to_heading(xf, yf);
-
-			}
-
-			position = odometer.getXYT();
-			xi = position[0];
-			yi = position[1];
-			initial_heading = position[2];
-
-			dx = (xf * TILE_SIZE) - xi;
-			dy = (yf * TILE_SIZE) - yi;
-
-			absolute_distance = euclidian_error(dx, dy);
-			final_heading = getHeading(dx, dy);
-			turning_angle = (min_angle(initial_heading, final_heading));
+			turning_angle = dime_turn_to_heading(xf, yf);
 
 			// slows down the robot as it approaches its destination
 			if (absolute_distance < 10) {
@@ -126,30 +93,39 @@ public class Navigation {
 				angle_correction(prev_angle);
 			}
 			prev_angle = turning_angle;
-			leftMotor.setSpeed(left_speed);
-			rightMotor.setSpeed(right_speed);
-
-			leftMotor.forward();
-			rightMotor.forward();
+			motorcontrol.forward(left_speed, right_speed);
 
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// there is nothing to be done here
 			}
-		} while (absolute_distance > RANGE_THRESHOLD);
-
-		// the robot always went slightly below its required distance, this corrects
-		// that offset
-		leftMotor.rotate(convertDistance(leftRadius, 0.04 * initial_distance), true);
-		rightMotor.rotate(convertDistance(rightRadius, 0.04 * initial_distance), false);
-		odometer.setX(xf * TILE_SIZE + .01);
-		odometer.setY(yf * TILE_SIZE + .01);
-
-		leftMotor.stop(true);
-		rightMotor.stop(false);
 		return;
 
+	}
+
+	/**
+	 * @param xf
+	 * @param yf
+	 * @return
+	 */
+	private double dime_turn_to_heading(double xf, double yf) {
+		double xi;
+		double yi;
+		double initial_heading;
+		double turning_angle;
+		position = odometer.getXYT();
+		xi = position[0];
+		yi = position[1];
+		initial_heading = position[2];
+
+		dx = (xf * TILE_SIZE) - xi;
+		dy = (yf * TILE_SIZE) - yi;
+
+		absolute_distance = euclidian_error(dx, dy);
+		final_heading = getHeading(dx, dy);
+		turning_angle = (min_angle(initial_heading, final_heading));
+		return turning_angle;
 	}
 
 	/**
@@ -169,22 +145,7 @@ public class Navigation {
 	 * 
 	 * @param theta
 	 */
-	public void turnto(double theta) {
-		double absTheta = Math.abs(theta);
-		leftMotor.stop(true);
-		rightMotor.stop(false);
 
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
-
-		if (theta > 0) {
-			leftMotor.rotate(convertAngle(leftRadius, track, absTheta), true);
-			rightMotor.rotate(-convertAngle(rightRadius, track, absTheta), false);
-		} else {
-			leftMotor.rotate(-convertAngle(leftRadius, track, absTheta), true);
-			rightMotor.rotate(convertAngle(rightRadius, track, absTheta), false);
-		}
-	}
 
 	/**
 	 * This method gives the heading of the next way point, that is, what angle
@@ -241,7 +202,6 @@ public class Navigation {
 		else
 			return theta - 360;
 	}
-	
 	/**
 	 * this method calculates the smallest angle to rotate to the correct heading
 	 * and then turns on a dime to reach it
@@ -250,41 +210,19 @@ public class Navigation {
 	 * @param yf
 	 */
 	private void turn_to_heading(double xf, double yf) {
-
+		double position[];
+		double dx,dy;
 		double initial_heading, turning_angle, xi, yi;
 		position = odometer.getXYT();
 		xi = position[0];
 		yi = position[1];
 		initial_heading = position[2];
-		dx = (xf * TILE_SIZE) - xi;
-		dy = (yf * TILE_SIZE) - yi;
+		dx = (xf ) - xi;
+		dy = (yf) - yi;
 
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
 
-		turnto(turning_angle);
-
-		leftMotor.rotate(convertDistance(leftRadius, 2), true);
-		rightMotor.rotate(convertDistance(rightRadius, 2), false);
-
-		leftMotor.forward();
-		rightMotor.forward();
-	}
-
-	private void go_around() {
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
-
-		leftMotor.rotate(convertAngle(leftRadius, track, 90.0), true);
-		rightMotor.rotate(-convertAngle(rightRadius, track, 90.0), false);
-
-		leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
-		rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
-
-		leftMotor.rotate(-convertAngle(leftRadius, track, 90.0), true);
-		rightMotor.rotate(convertAngle(rightRadius, track, 90.0), false);
-
-		leftMotor.rotate(convertDistance(leftRadius, 1 * TILE_SIZE), true);
-		rightMotor.rotate(convertDistance(rightRadius, 1 * TILE_SIZE), false);
+		motorcontrol.dime_turn(turning_angle, ROTATE_SPEED, true);
 	}
 }

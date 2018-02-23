@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.MedianFilter;

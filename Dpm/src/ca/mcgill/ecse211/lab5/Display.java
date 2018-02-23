@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import java.text.DecimalFormat;
 import ca.mcgill.ecse211.odometer.Odometer;
@@ -15,7 +15,7 @@ public class Display implements Runnable {
   private double[] position;
   private final long DISPLAY_PERIOD = 25;
   private long timeout = Long.MAX_VALUE;
-  private myUSPoller uspoller = Lab4.usPoller;
+ // private myUSPoller uspoller = Lab4.usPoller;
   private double dist;
 
   /**

@@ -1,8 +1,8 @@
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import lejos.robotics.SampleProvider;
 
-public class LightPoll {
+public class LightPoller {
 	
 	private SampleProvider lt;
 	private float[] ltdata;
@@ -13,27 +13,18 @@ public class LightPoll {
 	
 	private boolean first_time = true;
 	
-	public LightPoll (SampleProvider lt, float[] ltdata) {
+	public LightPoller (SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
 		this.ltdata = ltdata;
+		
 	}
 	
-	/**
-	 * returns the reflected light value as an int in range [0,100]
-	 * @return
-	 */
 	public int getValue() {
 		lt.fetchSample(ltdata, 0);
 		lightVal = (int) (ltdata[0] * 100);
 		return lightVal;
 		
 	}
-	
-	/**
-	 * returns true if reading is less the set threshold
-	 * @param threshold
-	 * @return
-	 */
 	public boolean lessThan(int threshold) {
 		current_light = getValue();
 		
@@ -42,7 +33,6 @@ public class LightPoll {
 		}
 		else return false;
 	}
-	
 	
 	public boolean falling(int threshold) {
 		boolean edge;
@@ -72,10 +62,6 @@ public class LightPoll {
 		else edge = false;
 		prev_light = current_light;
 		return edge;
-	}
-	public boolean colorDetecter() {
-		
-		return first_time;
 	}
 	
 	public void main (String args[]) throws InterruptedException {

@@ -1,5 +1,5 @@
-package ca.mcgill.ecse211;
-
+package ca.mcgill.ecse211.Localization;
+import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.sensor.*;
 
 public class UltrasonicLocalizer {

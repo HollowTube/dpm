@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
@@ -36,7 +36,7 @@ public class Localization {
 */	
 	public Localization(MotorControl motorcontrol) throws OdometerExceptions {
 		Localization.odometer = Odometer.getOdometer();
-		Localization.motorcontrol = motorcontrol;		
+		Localization.motorcontrol = motorcontrol;
 	}
 
 /**
@@ -46,7 +46,7 @@ public void head_to_origin()  {
 	Button.waitForAnyPress();
 	
 	motorcontrol.forward(100, 100);
-	while(!Lab4.lightPoller.falling(20)) {
+	while(!Lab5.lightPollerReflected.falling(20)) {
 		sleep(50);
 	}
 	motorcontrol.stop();
@@ -57,7 +57,7 @@ public void head_to_origin()  {
 	motorcontrol.dime_turn(-90, 100, true);
 	
 	motorcontrol.forward(100, 100);
-	while(!Lab4.lightPoller.falling(20)) {
+	while(!Lab5.lightPollerReflected.falling(20)) {
 		sleep(50);
 	}
 	motorcontrol.stop();
@@ -75,7 +75,7 @@ public void head_to_origin()  {
 	private boolean rising_edge() {
 		boolean edge_detected, in_margin = false;
 
-		current_dist = Lab4.usPoller.getDist();
+		current_dist = Lab5.usPoller.getDist();
 
 		if (current_dist > EDGE_TRIGGER + MARGIN && prev_dist < EDGE_TRIGGER - MARGIN) {
 
@@ -111,7 +111,7 @@ public void head_to_origin()  {
 	private boolean falling_edge() {
 		boolean edge_detected, in_margin = false;
 
-		current_dist = Lab4.usPoller.getDist();
+		current_dist = Lab5.usPoller.getDist();
 
 		if (current_dist < EDGE_TRIGGER - MARGIN && prev_dist > EDGE_TRIGGER + MARGIN) {
 
@@ -149,7 +149,7 @@ public void light_localization() {
 		ArrayList<Double> angles = new ArrayList<Double>();
 		while (motorcontrol.isMoving()) {
 
-			if (Lab4.lightPoller.falling(20)) {
+			if (Lab5.lightPollerReflected.falling(20)) {
 				angles.add(odometer.getXYT()[2]);
 				Sound.beep();
 			}
@@ -176,7 +176,7 @@ public void light_localization() {
 		motorcontrol.leftMotor(SCANNING_SPEED);
 		motorcontrol.rightMotor(-SCANNING_SPEED);
 		
-		while(!Lab4.lightPoller.falling(20)) sleep(50);
+		while(!Lab5.lightPollerReflected.falling(20)) sleep(50);
 		
 		
 		motorcontrol.stop();
@@ -193,7 +193,7 @@ public void light_localization() {
 			} catch (InterruptedException e) {
 				// there is nothing to be done here
 			}
-			if(Lab4.lightPoller.falling(20)) {
+			if(Lab5.lightPollerReflected.falling(20)) {
 				Sound.beep();
 				count++;
 			}
@@ -236,7 +236,7 @@ public void light_localization() {
 		double head_correction;
 
 
-		current_dist = Lab4.usPoller.getDist();
+		current_dist = Lab5.usPoller.getDist();
 		prev_dist = current_dist;
 
 		do {
@@ -305,7 +305,7 @@ public void light_localization() {
 
 		odometer = Odometer.getOdometer();
 
-		current_dist = Lab4.usPoller.getDist();
+		current_dist = Lab5.usPoller.getDist();
 		prev_dist = current_dist;
 
 		do {

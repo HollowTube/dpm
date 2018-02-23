@@ -1,5 +1,5 @@
 // Lab2.java
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.Button;
@@ -12,7 +12,7 @@ import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.navigation.Navigator;
 
-public class Lab4 {
+public class Lab5 {
 
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
@@ -28,10 +28,10 @@ public class Lab4 {
 	static float[] sampleUS = new float[myDistance.sampleSize()];
 	
 	
-//	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
-//	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
-//	static int sampleSize = colorRGBSensor.sampleSize();
-//	static float[] sample = new float[sampleSize];
+	static EV3ColorSensor colorSensorReflected = new EV3ColorSensor(sensorPort);
+	static SampleProvider colorRGBSensorReflected = colorSensorReflected.getRedMode();
+	static int sampleSizeReflected = colorRGBSensorReflected.sampleSize();
+	static float[] sampleReflected = new float[sampleSizeReflected];
 	
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
 	static SampleProvider colorRGBSensor = colorSensor.getRGBMode();
@@ -45,9 +45,16 @@ public class Lab4 {
 	
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample, motorControl);
+	final static LightPoller lightPollerReflected = new LightPoller(colorRGBSensor, sample);
+	
+	public enum List_of_states {IDLE, SEARCHING, IDENTIFYING}
+	
 
 	public static void main(String[] args) throws OdometerExceptions {
+		
+		
 
+		
 		int buttonChoice;
 
 		// Odometer related objects
@@ -58,6 +65,7 @@ public class Lab4 {
 		//Display odometryDisplay = new Display(lcd); // No need to change
 
 		final Localization localizer = new Localization(motorControl);
+		final Navigation navigator = new Navigation();
 		
 		// clear the display
 		lcd.clear();
@@ -87,11 +95,30 @@ public class Lab4 {
 		// spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
 			public void run() {
+				//set initial state
+				List_of_states state = List_of_states.IDLE;
 				while (true) {
+					switch(state) {
+					
+					case IDLE:
+						
+						while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
+						state = List_of_states.SEARCHING;
+						break;
+						
+					case SEARCHING:
+						
+						break;
+						
+					case IDENTIFYING:
+						
+						lightPoller.detectColor();
+						state = List_of_states.SEARCHING;
+						break;
+						
+					}
+					
 					sleeptime(50);
-					while (Button.waitForAnyPress() != Button.ID_UP) sleeptime(50); // waits until the up button is pressed
-					lightPoller.calibrate();
-					odometer.setXYT(0.1, 0.1, 0.001);	
 				}
 			}
 		}).start();

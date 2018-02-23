@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab4;
+package ca.mcgill.ecse211.lab5;
 
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
@@ -17,15 +17,35 @@ public class MotorControl {
 	static RegulatedMotor rightMotor;
 	private double radius;
 	private double track;
+	private final int ROTATE_SPEED = 100;
 	private static Odometer odometer;
+	private static MotorControl motorcontrol = null;
 
-	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double wheelRad,
+	public  MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double wheelRad,
 			double track) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
 		this.radius = wheelRad;
 		this.track = track;
 //		MotorControl.odometer = Odometer.getOdometer();
+	}
+	
+	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
+			final double TRACK, final double WHEEL_RAD) throws OdometerExceptions {
+		if (motorcontrol != null) { // Return existing object
+			return motorcontrol;
+		} else { // create object and return it
+			motorcontrol = new MotorControl(leftMotor, rightMotor, WHEEL_RAD,TRACK);
+			return motorcontrol;
+		}
+	}
+	
+	public synchronized static MotorControl getMotor(){
+
+		if (motorcontrol == null) {
+			System.out.println("motor Control not initialized");
+		}
+		return motorcontrol;
 	}
 
 	/**
@@ -139,6 +159,25 @@ public class MotorControl {
 	private int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
+	
+	public void turnto(double theta) {
+		double absTheta = Math.abs(theta);
+		leftMotor.stop(true);
+		rightMotor.stop(false);
+
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.setSpeed(ROTATE_SPEED);
+
+		if (theta > 0) {
+			leftMotor.rotate(convertAngle(radius, track, absTheta), true);
+			rightMotor.rotate(-convertAngle(radius, track, absTheta), false);
+		} else {
+			leftMotor.rotate(-convertAngle(radius, track, absTheta), true);
+			rightMotor.rotate(convertAngle(radius, track, absTheta), false);
+		}
+	}
+	
+
 	
 
 
