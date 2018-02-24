@@ -50,7 +50,7 @@ public void head_to_origin()  {
 		sleep(50);
 	}
 	motorcontrol.stop();
-	motorcontrol.leftRot(LIGHT_OFFSET);
+	motorcontrol.leftRot(LIGHT_OFFSET,false);
 	Sound.beep();
 	odometer.setY(0);
 	
@@ -61,7 +61,7 @@ public void head_to_origin()  {
 		sleep(50);
 	}
 	motorcontrol.stop();
-	motorcontrol.leftRot(LIGHT_OFFSET);
+	motorcontrol.leftRot(LIGHT_OFFSET, false);
 	
 	
 	odometer.setX(0);

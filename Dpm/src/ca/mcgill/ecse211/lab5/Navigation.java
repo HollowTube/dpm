@@ -14,23 +14,15 @@ import lejos.robotics.RegulatedMotor;
 public class Navigation {
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
-	
+
 	private double position[];
 	// private double newheading;
 	private final int FORWARD_SPEED = 250;
-	private final int SLOW_SPEED = 100;
 	private final int ROTATE_SPEED = 120;
 	private final double RANGE_THRESHOLD = 0.5;
 	private final int HEADING_THRESHOLD = 1;
 	private final double TILE_SIZE = 30.48;
 	private final double P_CONST = 5;
-
-	public final int WALLDIST = 35;// Distance to wall * 1.4 (cm) accounting for sensor angle
-	public final int MAXCORRECTION = 100; // Bound on correction to prevent stalling
-	public final long SLEEPINT = 100; // Display update 2Hz
-	public final int MAXDIST = 150; // Max value of valid distance
-	public final int FILTER_OUT = 20; // Filter threshold 17
-	public static double wallDist;
 
 	public static double final_heading = 0;
 	public static double absolute_distance = 0;
@@ -42,11 +34,12 @@ public class Navigation {
 	public Navigation() throws OdometerExceptions {
 		Navigation.odometer = Odometer.getOdometer();
 		Navigation.motorcontrol = MotorControl.getMotor();
-//		Navigation.leftMotor = leftMotor;
-//		Navigation.rightMotor = rightMotor;
-//		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor, rightMotor }) {
-//			motor.setAcceleration(500);
-//		}
+		// Navigation.leftMotor = leftMotor;
+		// Navigation.rightMotor = rightMotor;
+		// for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor,
+		// rightMotor }) {
+		// motor.setAcceleration(500);
+		// }
 	}
 
 	/**
@@ -59,73 +52,19 @@ public class Navigation {
 	 * 
 	 * @throws OdometerExceptions
 	 */
-	public void travelTo(double xf, double yf) throws OdometerExceptions {
-		double xi, yi, initial_heading, turning_angle, prev_angle = 0;
-
-		double initial_distance = 0;
-		absolute_distance = 0;
-		final_heading = 0;
-
-		position = odometer.getXYT();
-		xi = position[0];
-		yi = position[1];
-		initial_heading = position[2];
-		dx = (xf) - xi;
-		dy = (yf) - yi;
-
-		initial_distance = euclidian_error(dx, dy);
-		turn_to_heading(xf, yf);
-		
-		motorcontrol.forward(FORWARD_SPEED, FORWARD_SPEED);
-
-			turning_angle = dime_turn_to_heading(xf, yf);
-
-			// slows down the robot as it approaches its destination
-			if (absolute_distance < 10) {
-				left_speed = SLOW_SPEED;
-				right_speed = SLOW_SPEED;
-			} else {
-				left_speed = FORWARD_SPEED;
-				right_speed = FORWARD_SPEED;
-			}
-
-			if (Math.abs(prev_angle) > HEADING_THRESHOLD && absolute_distance > 10) {
-				angle_correction(prev_angle);
-			}
-			prev_angle = turning_angle;
-			motorcontrol.forward(left_speed, right_speed);
-
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here
-			}
-		return;
-
+	public double[] get_position() {
+		return odometer.getXYT();
 	}
 
-	/**
-	 * @param xf
-	 * @param yf
-	 * @return
-	 */
-	private double dime_turn_to_heading(double xf, double yf) {
-		double xi;
-		double yi;
-		double initial_heading;
-		double turning_angle;
-		position = odometer.getXYT();
-		xi = position[0];
-		yi = position[1];
-		initial_heading = position[2];
-
-		dx = (xf * TILE_SIZE) - xi;
-		dy = (yf * TILE_SIZE) - yi;
-
-		absolute_distance = euclidian_error(dx, dy);
-		final_heading = getHeading(dx, dy);
-		turning_angle = (min_angle(initial_heading, final_heading));
-		return turning_angle;
+	public void travelTo(double xf, double yf) {
+		position = get_position();
+		motorcontrol.forward(left_speed, right_speed);
+		if (Math.abs(position[2] - getHeading(xf - position[0], yf - position[1])) > HEADING_THRESHOLD) {
+			angle_correction(position[2]);
+		} else {
+			left_speed = FORWARD_SPEED;
+			right_speed = FORWARD_SPEED;
+		}
 	}
 
 	/**
@@ -136,16 +75,10 @@ public class Navigation {
 	 * @return
 	 */
 	private static double euclidian_error(double dx, double dy) {
-		return Math.sqrt(dx * dx + dy * dy);
+		double error = Math.sqrt(dx * dx + dy * dy);
+		System.out.println(error);
+		return error;
 	}
-
-	/**
-	 * This method makes the robot turn clockwise or counterclockwise on a dime for
-	 * a certain amount of degrees.
-	 * 
-	 * @param theta
-	 */
-
 
 	/**
 	 * This method gives the heading of the next way point, that is, what angle
@@ -202,6 +135,7 @@ public class Navigation {
 		else
 			return theta - 360;
 	}
+
 	/**
 	 * this method calculates the smallest angle to rotate to the correct heading
 	 * and then turns on a dime to reach it
@@ -209,20 +143,29 @@ public class Navigation {
 	 * @param xf
 	 * @param yf
 	 */
-	private void turn_to_heading(double xf, double yf) {
+	public void turn_to_heading(double xf, double yf) {
 		double position[];
-		double dx,dy;
+		double dx, dy;
 		double initial_heading, turning_angle, xi, yi;
 		position = odometer.getXYT();
 		xi = position[0];
 		yi = position[1];
 		initial_heading = position[2];
-		dx = (xf ) - xi;
+
+		dx = (xf) - xi;
 		dy = (yf) - yi;
 
+		Sound.beep();
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
+		motorcontrol.dime_turn(turning_angle, ROTATE_SPEED, false);
+	}
 
-		motorcontrol.dime_turn(turning_angle, ROTATE_SPEED, true);
+	public boolean destination_reached(double xf, double yf) {
+		double[] position = get_position();
+		if (euclidian_error(xf - position[0], yf - position[1]) < 10) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -15,35 +15,36 @@ import lejos.robotics.RegulatedMotor;
 public class MotorControl {
 	static RegulatedMotor leftMotor;
 	static RegulatedMotor rightMotor;
-	private double radius;
-	private double track;
+	final private double radius = 2.2;
+	final private double track = 17.0;
 	private final int ROTATE_SPEED = 100;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol = null;
 
-	public  MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double wheelRad,
-			double track) {
+	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
-		this.radius = wheelRad;
-		this.track = track;
-//		MotorControl.odometer = Odometer.getOdometer();
+
+		// MotorControl.odometer = Odometer.getOdometer();
 	}
-	
-	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-			final double TRACK, final double WHEEL_RAD) throws OdometerExceptions {
+
+	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor,
+			EV3LargeRegulatedMotor rightMotor) {
+		leftMotor.setSpeed(100);
+		rightMotor.setSpeed(100);
 		if (motorcontrol != null) { // Return existing object
 			return motorcontrol;
 		} else { // create object and return it
-			motorcontrol = new MotorControl(leftMotor, rightMotor, WHEEL_RAD,TRACK);
+			motorcontrol = new MotorControl(leftMotor, rightMotor);
 			return motorcontrol;
 		}
+
 	}
-	
-	public synchronized static MotorControl getMotor(){
+
+	public synchronized static MotorControl getMotor() {
 
 		if (motorcontrol == null) {
-			System.out.println("motor Control not initialized");
+			System.out.println("motor Control not be initialized");
 		}
 		return motorcontrol;
 	}
@@ -82,7 +83,7 @@ public class MotorControl {
 	 * @param rightSpeed
 	 */
 	public void forward(int leftSpeed, int rightSpeed) {
-		
+
 		leftMotor.setSpeed(leftSpeed);
 		rightMotor.setSpeed(rightSpeed);
 
@@ -97,59 +98,85 @@ public class MotorControl {
 		leftMotor.stop(true);
 		rightMotor.stop(true);
 	}
+
 	/**
-	 * This method makes the robot turn on a dime for a certain amount of degrees, positive rotation means clockwise
-	 * ,negative rotation means counter-clockwise
-	 * The block parameter determines if the program should wait for the movement 
-	 * to finish. Set true if the program should wait for the movement to end
+	 * This method makes the robot turn on a dime for a certain amount of degrees,
+	 * positive rotation means clockwise ,negative rotation means counter-clockwise
+	 * The block parameter determines if the program should wait for the movement to
+	 * finish. Set true if the program should wait for the movement to end
 	 * 
 	 * @param rotation
 	 * @param rotate_speed
 	 * @param block
 	 */
 	public void dime_turn(double rotation, int rotate_speed, boolean block) {
-		leftMotor.setSpeed(rotate_speed);
-		rightMotor.setSpeed(rotate_speed);
 		
+		if (rotation < 0) {
 			leftMotor.rotate(-convertAngle(radius, track, rotation), true);
-			rightMotor.rotate(convertAngle(radius, track, rotation), !block);
+			rightMotor.rotate(convertAngle(radius, track, rotation), false);
+		} else {
+			leftMotor.rotate(convertAngle(radius, track, rotation), true);
+			rightMotor.rotate(-convertAngle(radius, track, rotation), false);
+		}
+		//
+		// leftMotor.rotate(-convertAngle(radius, track, 90.0), true);
+		// rightMotor.rotate(convertAngle(radius, track, 90.0), false);
+
+		// leftRot(-convertAngle(radius, track, rotation), false);
+		// rightRot(convertAngle(radius, track, rotation), true);
 
 	}
+
 	public boolean isMoving() {
-		if(leftMotor.isMoving() || rightMotor.isMoving()) return true;
+		if (leftMotor.isMoving() || rightMotor.isMoving())
+			return true;
 		return false;
 	}
+
 	public void leftMotor(int speed) {
 		leftMotor.setSpeed(speed);
-		if(speed>0)leftMotor.forward();
-		else leftMotor.backward();
-		
+		if (speed > 0)
+			leftMotor.forward();
+		else
+			leftMotor.backward();
+
 	}
+
 	public void rightMotor(int speed) {
 		rightMotor.setSpeed(speed);
-		if(speed>0)rightMotor.forward();
-		else rightMotor.backward();
-		
+		if (speed > 0)
+			rightMotor.forward();
+		else
+			rightMotor.backward();
+
 	}
-	
-//	public void turn_to_heading(double finalHead) {
-//
-//		double initial_heading, turning_angle;
-//
-//		initial_heading = odometer.getXYT()[2];
-//		
-//		turning_angle = Navigation.min_angle(initial_heading, finalHead);
-//		
-//		dime_turn(turning_angle, 100, true);
-//		stop();
-//
-//	}
-	public void leftRot(double rotation) {
-	      leftMotor.rotate(convertDistance(radius, rotation), true);
-	      rightMotor.rotate(convertDistance(radius, rotation), false);
+
+	public void setLeftSpeed(int speed) {
+		leftMotor.setSpeed(speed);
 	}
-	public void rightRot(double rotation) {
-		leftMotor.rotate(convertAngle(radius, track, rotation), false);
+
+	public void setRightSpeed(int speed) {
+		rightMotor.setSpeed(speed);
+	}
+
+	// public void turn_to_heading(double finalHead) {
+	//
+	// double initial_heading, turning_angle;
+	//
+	// initial_heading = odometer.getXYT()[2];
+	//
+	// turning_angle = Navigation.min_angle(initial_heading, finalHead);
+	//
+	// dime_turn(turning_angle, 100, true);
+	// stop();
+	//
+	// }
+	public void leftRot(double rotation, boolean block) {
+		leftMotor.rotate(convertDistance(radius, rotation), block);
+	}
+
+	public void rightRot(double rotation, boolean block) {
+		rightMotor.rotate(convertAngle(radius, track, rotation), block);
 	}
 
 	private int convertAngle(double radius, double width, double angle) {
@@ -159,7 +186,7 @@ public class MotorControl {
 	private int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
-	
+
 	public void turnto(double theta) {
 		double absTheta = Math.abs(theta);
 		leftMotor.stop(true);
@@ -176,9 +203,10 @@ public class MotorControl {
 			rightMotor.rotate(convertAngle(radius, track, absTheta), false);
 		}
 	}
-	
 
-	
-
+	public void test() {
+		leftMotor.rotate(360, true);
+		rightMotor.rotate(-360, false);
+	}
 
 }
