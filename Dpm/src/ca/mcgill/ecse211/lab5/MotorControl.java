@@ -109,22 +109,16 @@ public class MotorControl {
 	 * @param rotate_speed
 	 * @param block
 	 */
-	public void dime_turn(double rotation, int rotate_speed, boolean block) {
+	public void dime_turn(double rotation) {
 		
 		if (rotation < 0) {
-			leftMotor.rotate(-convertAngle(radius, track, rotation), true);
-			rightMotor.rotate(convertAngle(radius, track, rotation), false);
+			leftMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), true);
+			rightMotor.rotate(convertAngle(radius, track, Math.abs(rotation)), false);
 		} else {
-			leftMotor.rotate(convertAngle(radius, track, rotation), true);
-			rightMotor.rotate(-convertAngle(radius, track, rotation), false);
+			leftMotor.rotate(convertAngle(radius, track, Math.abs(rotation)), true);
+			rightMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), false);
 		}
 		//
-		// leftMotor.rotate(-convertAngle(radius, track, 90.0), true);
-		// rightMotor.rotate(convertAngle(radius, track, 90.0), false);
-
-		// leftRot(-convertAngle(radius, track, rotation), false);
-		// rightRot(convertAngle(radius, track, rotation), true);
-
 	}
 
 	public boolean isMoving() {

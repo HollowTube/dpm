@@ -11,7 +11,7 @@ import lejos.hardware.sensor.*;
 import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.navigation.Navigator;
-
+import ca.mcgill.ecse211.Localization.*;
 public class Lab5 {
 
 	// Motor Objects, and Robot related parameters
@@ -43,7 +43,7 @@ public class Lab5 {
 	final static LightPoller lightPollerReflected = new LightPoller(colorRGBSensorReflected, sampleReflected);
 
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE
 	}
 
 	public static void main(String[] args) throws OdometerExceptions {
@@ -89,7 +89,10 @@ public class Lab5 {
 		(new Thread() {
 			public void run() {
 				// motorControl.dime_turn(90,100,true);
-
+				double[][] waypoints = { {0 , 212 }, { 212, 212 },{212,0 },{0,0}};
+				int i = 0;
+				double xf = waypoints[0][0];
+				double yf = waypoints[0][1];
 				// motorControl.leftRot(50, true);
 				// motorControl.rightRot(50, false);
 				// set initial state
@@ -98,39 +101,55 @@ public class Lab5 {
 					switch (state) {
 
 					case INITIALIZE:
-						odometer.setXYT(0.01, 0.01, 0.01);
+						odometer.setXYT(0.01, 0.01, 0);
 						state = List_of_states.IDLE;
 						break;
 
+					//do nothing until button is pressed up
 					case IDLE:
-						//
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
 						state = List_of_states.TURNING;
 						break;
 
+						
+					//dime turn towards necessary destination
 					case TURNING:
-
+						
+						
 						Sound.beep();
-						navigator.turn_to_heading(50, 50);
+
+						navigator.turn_to_heading(xf, yf);
 						state = List_of_states.SEARCHING;
 						break;
 
 					case SEARCHING:
-						
-						navigator.travelTo(50, 50);
-						if(navigator.destination_reached(50,50)) {
+
+						navigator.travelTo(xf, yf);
+						if(usPoller.obstacleDetected(20)) {
 							motorControl.stop();
-							Sound.beep();
 							state = List_of_states.IDLE;
+						}
+						if (navigator.destination_reached(xf, yf)) {
+							motorControl.stop();
+							sleeptime(2000);
+							i++;
+							xf = waypoints[i][0];
+							yf = waypoints[i][1];
+							Sound.beep();
+							state = List_of_states.TURNING;
 							break;
 						}
 						break;
-						
+
 					case IDENTIFYING:
 
 						// lightPoller.detectColor();
 						// state = List_of_states.SEARCHING;
+						break;
+						
+					case AVOIDANCE:
+						
 						break;
 
 					}

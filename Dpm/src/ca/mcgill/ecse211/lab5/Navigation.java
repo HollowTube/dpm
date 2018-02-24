@@ -34,12 +34,6 @@ public class Navigation {
 	public Navigation() throws OdometerExceptions {
 		Navigation.odometer = Odometer.getOdometer();
 		Navigation.motorcontrol = MotorControl.getMotor();
-		// Navigation.leftMotor = leftMotor;
-		// Navigation.rightMotor = rightMotor;
-		// for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor,
-		// rightMotor }) {
-		// motor.setAcceleration(500);
-		// }
 	}
 
 	/**
@@ -52,23 +46,23 @@ public class Navigation {
 	 * 
 	 * @throws OdometerExceptions
 	 */
-	public double[] get_position() {
+	private double[] get_position() {
 		return odometer.getXYT();
 	}
 
 	public void travelTo(double xf, double yf) {
 		position = get_position();
 		motorcontrol.forward(left_speed, right_speed);
-		if (Math.abs(position[2] - getHeading(xf - position[0], yf - position[1])) > HEADING_THRESHOLD) {
-			angle_correction(position[2]);
-		} else {
+//		if (Math.abs(position[2] - getHeading(xf - position[0], yf - position[1])) > HEADING_THRESHOLD) {
+//			angle_correction(position[2]);
+//		} else {
 			left_speed = FORWARD_SPEED;
 			right_speed = FORWARD_SPEED;
-		}
+//		}
 	}
 
 	/**
-	 * This method returns the euclidean distance
+	 * This method returns the euclidian distance
 	 * 
 	 * @param dx
 	 * @param dy
@@ -76,7 +70,7 @@ public class Navigation {
 	 */
 	private static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
-		System.out.println(error);
+		//System.out.println(error);
 		return error;
 	}
 
@@ -120,7 +114,7 @@ public class Navigation {
 	}
 
 	/**
-	 * This method returns the smallest angle between 2 headings it wll return a
+	 * This method returns the smallest angle between 2 headings it will return a
 	 * negative to turn counterclockwise and return positive for clockwise
 	 * 
 	 * @param ihead
@@ -154,18 +148,20 @@ public class Navigation {
 
 		dx = (xf) - xi;
 		dy = (yf) - yi;
-
 		Sound.beep();
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
-		motorcontrol.dime_turn(turning_angle, ROTATE_SPEED, false);
+		System.out.println("dx"+ dx +" dy"+ dy +" initial heading"+ initial_heading +" final heading"+ final_heading +" turning angle"+ turning_angle );
+		motorcontrol.dime_turn(turning_angle);
+		
 	}
 
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (euclidian_error(xf - position[0], yf - position[1]) < 10 	) {
+		if (euclidian_error(xf - position[0], yf - position[1]) < 5) {
 			return true;
 		}
 		return false;
 	}
+	
 }

@@ -54,7 +54,7 @@ public void head_to_origin()  {
 	Sound.beep();
 	odometer.setY(0);
 	
-	motorcontrol.dime_turn(-90, 100, true);
+	motorcontrol.dime_turn(-90);
 	
 	motorcontrol.forward(100, 100);
 	while(!Lab5.lightPollerReflected.falling(20)) {
@@ -65,7 +65,7 @@ public void head_to_origin()  {
 	
 	
 	odometer.setX(0);
-	motorcontrol.dime_turn(60, 100, true);
+	motorcontrol.dime_turn(60);
 	localize_heading();
 }
 /**
@@ -145,7 +145,7 @@ public void head_to_origin()  {
 	
 public void light_localization() {
 		double diff_x, diff_y, x_value, y_value, heading_correction = 0;
-		motorcontrol.dime_turn(360, SCANNING_SPEED, false);
+		motorcontrol.dime_turn(360);
 		ArrayList<Double> angles = new ArrayList<Double>();
 		while (motorcontrol.isMoving()) {
 
@@ -183,7 +183,7 @@ public void light_localization() {
 		angles.add(odometer.getXYT()[2]);
 		Sound.beep();
 		
-		motorcontrol.dime_turn(10, SCANNING_SPEED, true);
+		motorcontrol.dime_turn(10);
 		motorcontrol.leftMotor(-SCANNING_SPEED);
 		motorcontrol.rightMotor(SCANNING_SPEED);
 		
@@ -351,7 +351,7 @@ public void light_localization() {
 
 		turning_angle = min_angle(initial_heading, finalHead);
 
-		motorcontrol.dime_turn(-turning_angle, 100, true);
+		motorcontrol.dime_turn(-turning_angle);
 		motorcontrol.stop();
 
 	}
