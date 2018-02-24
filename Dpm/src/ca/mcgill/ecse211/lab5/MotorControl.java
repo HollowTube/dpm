@@ -24,7 +24,6 @@ public class MotorControl {
 	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
-
 		// MotorControl.odometer = Odometer.getOdometer();
 	}
 

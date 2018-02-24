@@ -10,7 +10,7 @@ public class LightLocalizer {
 	private static int LightDiff=100;
 	private static double Light_Sensor_Position;
 	private Odometer odo;
-	private Navigation nav;
+	private Nav nav;
 	private EV3ColorSensor LSensor;
 	private float[] LSData;
 	private float lastLSData;
@@ -18,7 +18,7 @@ public class LightLocalizer {
 	private double[] xyt;
 	private int lineCount=0;
 	
-	public LightLocalizer(Odometer odo, Navigation nav, 
+	public LightLocalizer(Odometer odo, Nav nav, 
 							EV3ColorSensor LSensor, EV3LargeRegulatedMotor leftMotor, 
 							EV3LargeRegulatedMotor rightMotor){
 		this.odo=odo;

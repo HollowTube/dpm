@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.lab5;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.exception.MathArithmeticException;
 
 public class Color {
 	public float getRed_mean() {

@@ -6,10 +6,7 @@ import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 //import lejos.hardware.motor.Motor;
 import lejos.robotics.RegulatedMotor;
-//import ca.mcgill.ecse211.odometer.Odometer;
-//import ca.mcgill.ecse211.odometer.OdometerExceptions;
-//import lejos.hardware.Button;
-//import lejos.hardware.Sound;
+
 
 public class Navigation {
 	private static Odometer odometer;
@@ -50,6 +47,7 @@ public class Navigation {
 		return odometer.getXYT();
 	}
 
+	//travels straight
 	public void travelTo(double xf, double yf) {
 		position = get_position();
 		motorcontrol.forward(left_speed, right_speed);

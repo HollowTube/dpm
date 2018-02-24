@@ -2,7 +2,7 @@ package ca.mcgill.ecse211.lab5;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.exception.MathArithmeticException;
-import java.util.ArrayList;
+import java.util.ArrayList;	
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
@@ -27,10 +27,10 @@ public class LightPollerColor {
 	private Color green = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f);
 	private Color table = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f);
 
-	public LightPollerColor(SampleProvider lt, float[] ltdata, MotorControl motorcontrol) {
+	public LightPollerColor(SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
 		this.ltdata = ltdata;
-		this.motorcontrol = motorcontrol;
+		this.motorcontrol = MotorControl.getMotor();
 	}
 
 	public void calibrate() {
@@ -94,7 +94,6 @@ public class LightPollerColor {
 		System.out.println("red mean: " + color.red_mean);
 		System.out.println("green mean: " + color.green_mean);
 		System.out.println("blue mean: " + color.blue_mean);
-
 		red_prob = (float) (1 - color.red.probability(color.getRed_mean() - red_dist, color.getRed_mean() + red_dist));
 		green_prob = (float) (1
 				- (color.green.probability(color.getGreen_mean() - green_dist, color.getGreen_mean() + green_dist)));

@@ -1,7 +1,8 @@
-// Lab2.java
+
 package ca.mcgill.ecse211.lab5;
 
 import ca.mcgill.ecse211.odometer.*;
+import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
@@ -12,6 +13,10 @@ import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.navigation.Navigator;
 import ca.mcgill.ecse211.Localization.*;
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.exception.MathArithmeticException;
+
+
 public class Lab5 {
 
 	// Motor Objects, and Robot related parameters
@@ -19,6 +24,7 @@ public class Lab5 {
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 	private static final Port sensorPort = LocalEV3.get().getPort("S1");
+	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	public static final double WHEEL_RAD = 2.2;
 	public static final double TRACK = 17.0;
 
@@ -32,14 +38,13 @@ public class Lab5 {
 	static int sampleSizeReflected = colorRGBSensorReflected.sampleSize();
 	static float[] sampleReflected = new float[sampleSizeReflected];
 
-	// static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPort);
-	// static SampleProvider colorRGBSensor = colorSensor.getRGBMode();
-	// static int sampleSize = colorRGBSensor.sampleSize();
-	// static float[] sample = new float[sampleSize];
+	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
+	static SampleProvider colorRGBSensor = colorSensor.getRGBMode();
+	static int sampleSize = colorRGBSensor.sampleSize();
+	static float[] sample = new float[sampleSize];
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	// final static LightPollerColor lightPoller = new
-	// LightPollerColor(colorRGBSensor, sample, motorControl);
+	//final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
 	final static LightPoller lightPollerReflected = new LightPoller(colorRGBSensorReflected, sampleReflected);
 
 	public enum List_of_states {
@@ -59,6 +64,9 @@ public class Lab5 {
 
 		final Localization localizer = new Localization(motorControl);
 		final Navigation navigator = new Navigation();
+		//final Nav nav = new Nav(leftMotor, rightMotor,WHEEL_RAD, TRACK, odometer);
+		//final UltrasonicLocalizer USLoc = new UltrasonicLocalizer(odometer, nav, (EV3UltrasonicSensor) myDistance, 1);
+		//final LightLocalizer  lightLoc = new LightLocalizer(odometer, nav, colorSensorReflected, leftMotor, rightMotor);
 
 		// clear the display
 		lcd.clear();
@@ -89,7 +97,8 @@ public class Lab5 {
 		(new Thread() {
 			public void run() {
 				// motorControl.dime_turn(90,100,true);
-				double[][] waypoints = { {0 , 212 }, { 212, 212 },{212,0 },{0,0}};
+				//simply imput waypoints here, will only update after it reaches the destination
+				double[][] waypoints = { { 0, 212 }, { 212, 212 }, { 212, 0 }, { 0, 0 } };
 				int i = 0;
 				double xf = waypoints[0][0];
 				double yf = waypoints[0][1];
@@ -101,24 +110,23 @@ public class Lab5 {
 					switch (state) {
 
 					case INITIALIZE:
-						odometer.setXYT(0.01, 0.01, 0);
+						//USLoc.Localize();
+						odometer.setXYT(0.01, 0.01, 0.01);
 						state = List_of_states.IDLE;
 						break;
 
-					//do nothing until button is pressed up
+					// do nothing until button is pressed up
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
 						state = List_of_states.TURNING;
 						break;
 
-						
-					//dime turn towards necessary destination
+					// dime turn towards necessary destination
 					case TURNING:
-						
-						
-						Sound.beep();
 
+						Sound.beep();
+						
 						navigator.turn_to_heading(xf, yf);
 						state = List_of_states.SEARCHING;
 						break;
@@ -126,9 +134,9 @@ public class Lab5 {
 					case SEARCHING:
 
 						navigator.travelTo(xf, yf);
-						if(usPoller.obstacleDetected(20)) {
+						if (usPoller.obstacleDetected(20)) {
 							motorControl.stop();
-							state = List_of_states.IDLE;
+							state = List_of_states.IDENTIFYING;
 						}
 						if (navigator.destination_reached(xf, yf)) {
 							motorControl.stop();
@@ -143,13 +151,17 @@ public class Lab5 {
 						break;
 
 					case IDENTIFYING:
-
-						// lightPoller.detectColor();
-						// state = List_of_states.SEARCHING;
+						
+						motorControl.forward(100, 100);
+						while(usPoller.getDist()>10);
+						motorControl.stop();
+						//lightPoller.detectColor();
+						state = List_of_states.AVOIDANCE;
 						break;
-						
+
 					case AVOIDANCE:
-						
+						motorControl.go_around(100, 20);
+						state = List_of_states.TURNING;
 						break;
 
 					}

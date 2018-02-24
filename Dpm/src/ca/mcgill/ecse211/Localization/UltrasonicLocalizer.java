@@ -6,7 +6,7 @@ public class UltrasonicLocalizer {
 	private static int wall_distance=30;
 	private static int noise_margin=2;
 	private final Odometer odo;
-	private final Navigation nav;
+	private final Nav nav;
 	private final EV3UltrasonicSensor us;
 	private final int type;
 	public float[] usData;
@@ -14,8 +14,8 @@ public class UltrasonicLocalizer {
 	public double[] edgeDetect;
 	private int dTheta;
 	
-	public UltrasonicLocalizer(Odometer odo, Navigation nav, EV3UltrasonicSensor us, int type){
-		this.odo=odo;
+	public UltrasonicLocalizer(Odometer odo, Nav nav, EV3UltrasonicSensor us, int type) throws OdometerExceptions{
+		this.odo=Odometer.getOdometer();
 		this.nav=nav;
 		this.us=us;
 		this.type=type;
