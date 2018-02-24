@@ -109,7 +109,7 @@ public class MotorControl {
 	 * @param rotate_speed
 	 * @param block
 	 */
-	public void dime_turn(double rotation, int rotate_speed, boolean block) {
+	public void dime_turn(double rotation) {
 		
 		if (rotation < 0) {
 			leftMotor.rotate(-convertAngle(radius, track, rotation), true);
