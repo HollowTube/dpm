@@ -163,7 +163,7 @@ public class Navigation {
 
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (euclidian_error(xf - position[0], yf - position[1]) < 10) {
+		if (euclidian_error(xf - position[0], yf - position[1]) < 10 	) {
 			return true;
 		}
 		return false;
