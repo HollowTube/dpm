@@ -1,5 +1,7 @@
 package ca.mcgill.ecse211.Searching;
 
+import java.util.Arrays;
+
 import ca.mcgill.ecse211.Odometry.Odometer;
 import ca.mcgill.ecse211.Odometry.OdometerData;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -24,7 +26,11 @@ public class Searching implements Runnable{
 	public float[] sample = new float[3];
 	private static float frontDist;
 	private static float dist;
-
+	private static float[] blockData = new float[5];
+	private static float[] DataSet = new float[5];
+	private static int DetectCount = 0;
+	private static float median;
+	
 	public Searching(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer, Navigation nav, EV3UltrasonicSensor usSensorLeft, EV3UltrasonicSensor usSensorFront, EV3ColorSensor colorSensorBlock){
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
@@ -67,7 +73,14 @@ public class Searching implements Runnable{
 	public void run(){
 		while(true){
 			dist = getDistanceLeft();
-			if(dist < 50 && dist > 8){ //if the left US reads a block or false positive
+			blockData[DetectCount%5]=dist;
+			DetectCount++;
+			for(int i=0; i<5;i++){
+				DataSet[i] = blockData[i];
+			}
+			Arrays.sort(DataSet);
+			median= DataSet[2];
+			if(median < 50 && median > 8){ //if the left US reads a block or false positive
 				
 				Lab5.foundBlock = true;
 				Lab5.noisemaker.systemSound(1);
@@ -80,7 +93,7 @@ public class Searching implements Runnable{
 				}catch (Exception e){}
 				
 				frontDist = getDistanceFront();
-				if(frontDist < 50 && dist > 8){//check if front US sensor also reads a block
+				if(frontDist < 50 && frontDist > 8){//check if front US sensor also reads a block
 					xyt = odometer.getXYT();
 					leftMotor.forward();
 					rightMotor.forward();
@@ -106,7 +119,7 @@ public class Searching implements Runnable{
 					Lab5.wpCtr--;
 					Lab5.foundBlock = false;
 				}else{ //WAS A FALSE POSITIVE
-					dist = 0;
+					median = 0;
 					Lab5.wpCtr--;
 					Lab5.foundBlock = false;
 				}

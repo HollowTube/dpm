@@ -22,7 +22,7 @@ public class Lab5 {
 	private static final EV3ColorSensor colorSensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
 	private static final EV3ColorSensor colorSensorBlock = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 15.4;
+	public static final double TRACK = 15.45;
 	public static final double TILE_SIZE = 30.48;
 	public static Odometer odometer;
 	private static EV3UltrasonicSensor usSensor = new EV3UltrasonicSensor(LocalEV3.get().getPort("S2"));
@@ -48,6 +48,7 @@ public class Lab5 {
 	private static Waypoints waypointer;
 	public static float[] sample = new float[3];
 	public static boolean wasStarted;
+	public static boolean COMPLETE;
 
 
 
@@ -66,8 +67,8 @@ public class Lab5 {
 			// ask the user for rising edge or falling edge
 			lcd.drawString("< Left | Right >", 0, 0);
 			lcd.drawString("       |        ", 0, 1);
-			lcd.drawString("Rising | Falling", 0, 2);
-			lcd.drawString(" Edge  |  Edge  ", 0, 3);
+			lcd.drawString("No     | Localize", 0, 2);
+			lcd.drawString("Localize|         ", 0, 3);
 			lcd.drawString("       |        ", 0, 4);
 
 			buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
@@ -140,11 +141,27 @@ public class Lab5 {
 			}
 		} else if (buttonChoice == Button.ID_LEFT) {
 			//---------------------------------------------------LEFT BUTTON-----------------------
+			Thread odoThread = new Thread(odometer);
+			odoThread.start();
+			Thread odoDisplayThread = new Thread(odometryDisplay);
+			odoDisplayThread.start();
 			
+			Thread searchThread = new Thread(search);
+			
+			while(wpCtr < waypoints.length){
+				if(wpCtr == 1 && !wasStarted){
+					searchThread.start();
+					wasStarted = true;
+				}
+				while(foundBlock){}
+				goToWaypoint(wpCtr);
+				while(foundBlock){}
+				wpCtr++;
+			}
 			//-------------------------------------------------------------------------------------
 		}else if(buttonChoice == Button.ID_RIGHT){
 			//---------------------------------------------------RIGHT BUTTON-----------------------
-			//DEBUGGING/TESTING OPTION FOR BOT
+			//FULL DEMO OPTION
 			Thread odoThread = new Thread(odometer);
 			odoThread.start();
 			Thread odoDisplayThread = new Thread(odometryDisplay);
@@ -189,10 +206,27 @@ public class Lab5 {
 				goToWaypoint(wpCtr);
 				while(foundBlock){}
 				wpCtr++;
+				if(COMPLETE){
+					goToWaypoint(2);
+					break;
+				}
 			}
 			//-------------------------------------------------------------------------------------
 		}else if(buttonChoice == Button.ID_DOWN){
-			
+			//----------------------------------------DOWN BUTTON------------------------------
+			Thread odoThread = new Thread(odometer);
+			odoThread.start();
+			Thread odoDisplayThread = new Thread(odometryDisplay);
+			odoDisplayThread.start();
+			try{
+				Thread.sleep(1000);
+			}catch (Exception e){}
+			nav.turnTo(90);
+			do{
+				buttonChoice = Button.waitForAnyPress();
+			}while (buttonChoice != Button.ID_ENTER);
+			nav.travelTo(10, 0);
+			//-------------------------------------------------------------------------------------
 		}
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
 		System.exit(0);
