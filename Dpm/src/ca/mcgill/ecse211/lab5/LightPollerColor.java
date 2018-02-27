@@ -1,5 +1,7 @@
 package ca.mcgill.ecse211.lab5;
 
+import java.util.ArrayList;
+
 import org.apache.commons.math3.distribution.*;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import lejos.hardware.Button;
@@ -10,26 +12,31 @@ import lejos.hardware.lcd.TextLCD;
 
 public class LightPollerColor {
 
-	private static final float COLOR_THRESHOLD = 0.2f;
 	private SampleProvider lt;
 	private float[] ltdata;
-	private int lightVal;
-	private float[] desiredColor;
 	public MotorControl motorcontrol;
 
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
-	// private Color red_block = new Color(0, 0, 0, 0, 0, 0, "red");
-	// private Color blue_block = new Color(0, 0, 0, 0, 0, 0, "blue");
-	private Color yellow_block = new Color(0.30775123f, 0.221819854f, 0.246875f, 0.9973893f, 0.5888729f,
-			0.01106323f, "yellow");
-	// private Color white_block = new Color(0, 0, 0, 0, 0, 0, "white");
-	private Color orange = new Color(0.164809809f, 0.128121575f, 0.096505883f, 0.1574731f, 0.1548986f, 0.15302903f,
-			"orange");
-	private Color green = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f,
-			"green");
-	private Color table = new Color(0.139549027f, 0.160666671f, 0.050921569f, 0.19885207f, 0.18045974f, 0.16318f,
-			"table");
+	 private Color red_block = new Color(0.20767974f,	0.027133795f,	0.015695887f,
+	0.03038505f,	0.004516072f,	0.002923487f,
+ "red");
+	private Color blue_block = new Color(0.035873442f, 0.058556151f, 0.059581107f, 0.004077874f, 0.005821204f,
+			0.004725411f, "blue");
+	private Color yellow_block = new Color(0.30775123f, 0.221819854f, 0.246875f, 0.9973893f, 0.5888729f, 0.01106323f,
+			"yellow");
+	private Color white_block = new Color(0.325635933f, 0.246581879f, 0.145455755f, 0.032806904f, 0.033583433f,
+			0.01739245f, "white");
+	// private Color orange = new Color(0.164809809f, 0.128121575f, 0.096505883f,
+	// 0.1574731f, 0.1548986f, 0.15302903f,
+	// "orange");
+	// private Color green = new Color(0.139549027f, 0.160666671f, 0.050921569f,
+	// 0.19885207f, 0.18045974f, 0.16318f,
+	// "green");
+	// private Color table = new Color(0.139549027f, 0.160666671f, 0.050921569f,
+	// 0.19885207f, 0.18045974f, 0.16318f,
+	// "table");
+	ArrayList<Color> colors = new ArrayList<Color>();
 
 	public LightPollerColor(SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
@@ -39,7 +46,7 @@ public class LightPollerColor {
 	public void calibrate() {
 		lt.fetchSample(ltdata, 0);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 2; i++) {
 
 			lt.fetchSample(ltdata, 0);
 			System.out.println(ltdata[0] + "\t" + ltdata[1] + "\t" + ltdata[2]);
@@ -101,11 +108,14 @@ public class LightPollerColor {
 		// returns the average probability of each probability
 		return (red_prob + green_prob + blue_prob) / 3;
 	}
+
 	public Color max_color() {
 		return yellow_block;
 	}
+
 	public void detectColor() {
-		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0;
+		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0,
+				prob_white = 0;
 		double max_prob;
 		lt.fetchSample(ltdata, 0);
 		float[] reading = getAverageMeasurement();
@@ -117,19 +127,22 @@ public class LightPollerColor {
 		// prob_red = getProbability(red_block, reading);
 		// prob_green = getProbability(blue_block, reading);
 		// prob_blue = getProbability(yellow_block, reading);
-		prob_orange = getProbability(orange, reading);
-		prob_green = getProbability(green, reading);
-		prob_table = getProbability(table, reading);
 		prob_yellow = getProbability(yellow_block, reading);
-		
+		prob_blue = getProbability(blue_block, reading);
+		prob_red = getProbability(red_block, reading);
+		prob_white = getProbability(white_block, reading);
+
 		yellow_block.setProbability(prob_yellow);
+		blue_block.setProbability(prob_blue);
+		red_block.setProbability(prob_red);
+		white_block.setProbability(prob_white);
 
 		System.out.println("Orange" + prob_orange);
 		System.out.println("Green" + prob_green);
 		System.out.println("Table" + prob_table);
 		System.out.println("YELLOW" + prob_yellow);
 
-		max_prob = Math.max(Math.max(prob_blue, prob_green), prob_red);
+		max_prob = Math.max(Math.max(Math.max(prob_blue, prob_green), prob_red), prob_white);
 
 		// lcd.drawString("Red: " + Float.toString(reading[0]), 0, 3);
 		// lcd.drawString("Green: " + Float.toString(reading[1]), 0, 4);
@@ -142,26 +155,50 @@ public class LightPollerColor {
 
 		else if (max_prob == prob_red) {
 			System.out.println("its Red with a probability of " + prob_red);
-		} else if (max_prob == prob_green) {
-			System.out.println("its Green with a probability of " + prob_green);
+		} else if (max_prob == prob_blue) {
+			System.out.println("its blue with a probability of " + prob_blue);
+		} else if (max_prob == prob_yellow) {
+			System.out.println("its yellow with a probability of " + prob_yellow);
 		} else {
-			System.out.println("its Blue with a probability of " + prob_blue);
+			System.out.println("its white with a probability of " + prob_white);
 		}
 	}
 
 	public boolean target_found(Color target) {
 		lt.fetchSample(ltdata, 0);
 		float[] reading = getAverageMeasurement();
-		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_yellow = 0, prob_white, max_prob;
 
-		// prob_red = getProbability(red_block, reading);
-		// prob_blue = getProbability(blue_block, reading);
-		// prob_yellow = getProbability(yellow_block, reading);
-		// prob_white = getProbability(yellow_block, reading);
+		red_block.setProbability(getProbability(red_block, reading));
+		blue_block.setProbability(getProbability(blue_block, reading));
+		yellow_block.setProbability(getProbability(yellow_block, reading));
+		white_block.setProbability(getProbability(yellow_block, reading));
 
-		// max_prob = Math.max(Math.max(Math.max(prob_blue, prob_green), prob_red),
-		// prob_white);
+		colors.add(red_block);
+		colors.add(blue_block);
+		colors.add(yellow_block);
+		colors.add(white_block);
 
-		return false;
+		if (max_color(colors).name == target.name) {
+			Sound.beep();
+			Sound.beep();
+			colors.clear();
+			return true;
+		} else {
+			Sound.beep();
+			colors.clear();
+			return false;
+		}
+
 	}
+
+	public Color max_color(ArrayList<Color> list) {
+		Color max_color = list.get(0);
+		for (int i = 0; i < 4; i++) {
+			if (max_color.getProbability() < list.get(i).getProbability()) {
+				max_color = list.get(i);
+			}
+		}
+		return max_color;
+	}
+
 }

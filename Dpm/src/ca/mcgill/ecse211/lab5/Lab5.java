@@ -43,8 +43,8 @@ public class Lab5 {
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
 	final static LightPoller lightPollerReflected = new LightPoller(colorRGBSensorReflected, sampleReflected);
-	
-	//TODO initialize and implement second ultrasonic sensor
+
+	// TODO initialize and implement second ultrasonic sensor
 
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH
@@ -63,8 +63,7 @@ public class Lab5 {
 
 		final Localization localizer = new Localization(motorControl);
 		final Navigation navigator = new Navigation();
-		
-		
+
 		// final Nav nav = new Nav(leftMotor, rightMotor,WHEEL_RAD, TRACK, odometer);
 		// final UltrasonicLocalizer USLoc = new UltrasonicLocalizer(odometer, nav,
 		// (EV3UltrasonicSensor) myDistance, 1);
@@ -90,8 +89,7 @@ public class Lab5 {
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
-		
-		//TODO make sure odometry correction works properly, adjust values as necessary
+		// TODO make sure odometry correction works properly, adjust values as necessary
 		// Start correction if right button was pressed
 		if (buttonChoice == Button.ID_RIGHT) {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
@@ -104,8 +102,7 @@ public class Lab5 {
 
 				// TODO algorithm to determine the necessary waypoints with given Lower left
 				// corner and upper right corner
-				
-				
+
 				// simply imput waypoints here, will only update after it reaches the
 				// destination
 				double[][] waypoints = { { 0, 212 }, { 212, 212 }, { 212, 0 }, { 0, 0 } };
@@ -122,7 +119,7 @@ public class Lab5 {
 				List_of_states state = List_of_states.INITIALIZE;
 				while (true) {
 					switch (state) {
-					
+
 					// TODO implement localization, set odometer to (30,30,0)
 					// intial state of the robot, localization should be implemented here
 					case INITIALIZE:
@@ -134,7 +131,7 @@ public class Lab5 {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.TURNING;
+						state = List_of_states.IDENTIFYING;
 						break;
 
 					// dime turn towards necessary destination
@@ -183,7 +180,7 @@ public class Lab5 {
 					// TODO after the sensor pick up an object to the side, rotates 90 degrees and
 					// moves
 					// until the color sensor is in position
-						// be sure to test this
+					// be sure to test this
 					case TRAVEL_TO_TARGET:
 
 						motorControl.dime_turn(90);
@@ -203,8 +200,8 @@ public class Lab5 {
 						// identifies the color on screen
 					case IDENTIFYING:
 
-						lightPoller.detectColor();
-						state = List_of_states.RETURN_TO_PATH;
+						lightPoller.calibrate();
+						state = List_of_states.IDLE;
 						break;
 
 					case COLOR_DEMO:
@@ -212,6 +209,9 @@ public class Lab5 {
 						while (usPoller.obstacleDetected(10)) {
 							lcd.drawString("Oject detected", 0, 0);
 							lightPoller.detectColor();
+						}
+						while (Button.waitForAnyPress() != Button.ID_UP) {
+							sleeptime(50);
 						}
 					}
 
