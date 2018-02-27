@@ -82,24 +82,24 @@ public class Searchin implements Runnable{
 	public void run(){
 		while(true){
 			float dist = getDistanceLeft();
-			if(dist < 50 && dist > 8){
+			if(dist < 50 && dist > 8){ //if the left US reads a block or false positive
+				Lab4.foundBlock = true;
 				//block has been detected
 				leftMotor.stop(true);
 				rightMotor.stop();
-				Lab4.foundBlock = true;
-				nav.turnTo(-90); //turn right on a dime
+				nav.turnTo(-90); //turn right on a dime to get front US to face the block
 				try{
-					Thread.sleep(1500);
+					Thread.sleep(1500); //wait for turn to complete
 				}catch (Exception e){
 					
 				}
 				float frontDist = getDistanceFront();
-				if(frontDist < 50 && dist > 8){
+				if(frontDist < 50 && dist > 8){//check if front US sensor also reads a block
 					leftMotor.forward();
 					rightMotor.forward();
-					while(true){
+					while(true){ //as the bot is approaching the block, repeatedly poll the light sensor
 						colorSensorBlock.getRGBMode().fetchSample(sample, 0);
-						if(sample[0] > 0.01){
+						if(sample[0] > 0.01){ //UNFINISHED COLOR DETECTION
 							leftMotor.stop(true);
 							rightMotor.stop();
 							Lab4.noisemaker.systemSound(3);
@@ -109,22 +109,22 @@ public class Searchin implements Runnable{
 				}else{ //WAS A FALSE POSITIVE -- TURN BACK TO CORRECT DIRECTION
 					nav.turnTo(90); //turn right on a dime
 					try{
-						Thread.sleep(1500);
+						Thread.sleep(1500);//wait for turn to complete
 					}catch (Exception e){
 						
 					}
 					leftMotor.forward();
 					rightMotor.forward();
+					
 					try{
 						Thread.sleep(1000);
-					}catch (Exception e){
-						
-					}
+					}catch (Exception e){}
+					
 					leftMotor.stop(true);
 					rightMotor.stop();
-					
-					//Lab4.noisemaker.systemSound(0);
 				}
+				Waypoints.wpCtr--;//decrement Waypoints waypoint counter to hopefully get it to turn to
+									//and head to the proper waypoint
 			}
 		}
 	}
