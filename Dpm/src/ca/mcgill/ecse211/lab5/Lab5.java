@@ -43,6 +43,8 @@ public class Lab5 {
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
 	final static LightPoller lightPollerReflected = new LightPoller(colorRGBSensorReflected, sampleReflected);
+	
+	final static String target_color = "red";
 
 	// TODO initialize and implement second ultrasonic sensor
 
@@ -131,7 +133,7 @@ public class Lab5 {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.IDENTIFYING;
+						state = List_of_states.COLOR_DEMO;
 						break;
 
 					// dime turn towards necessary destination
@@ -208,11 +210,12 @@ public class Lab5 {
 						lcd.clear();
 						while (usPoller.obstacleDetected(10)) {
 							lcd.drawString("Oject detected", 0, 0);
-							lightPoller.detectColor();
+							lightPoller.target_found(target_color);
+							while (Button.waitForAnyPress() != Button.ID_UP)
+								sleeptime(50); // waits until the up button is pressed
+							
 						}
-						while (Button.waitForAnyPress() != Button.ID_UP) {
-							sleeptime(50);
-						}
+						break;
 					}
 
 					sleeptime(50);
