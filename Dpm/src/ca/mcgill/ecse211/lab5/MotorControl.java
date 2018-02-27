@@ -95,21 +95,17 @@ public class MotorControl {
 	 */
 	public void stop() {
 		leftMotor.stop(true);
-		rightMotor.stop(true);
+		rightMotor.stop(false);
 	}
 
 	/**
 	 * This method makes the robot turn on a dime for a certain amount of degrees,
 	 * positive rotation means clockwise ,negative rotation means counter-clockwise
-	 * The block parameter determines if the program should wait for the movement to
-	 * finish. Set true if the program should wait for the movement to end
 	 * 
 	 * @param rotation
-	 * @param rotate_speed
-	 * @param block
 	 */
 	public void dime_turn(double rotation) {
-		
+
 		if (rotation < 0) {
 			leftMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), true);
 			rightMotor.rotate(convertAngle(radius, track, Math.abs(rotation)), false);
@@ -117,7 +113,6 @@ public class MotorControl {
 			leftMotor.rotate(convertAngle(radius, track, Math.abs(rotation)), true);
 			rightMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), false);
 		}
-		//
 	}
 
 	public boolean isMoving() {
@@ -164,12 +159,30 @@ public class MotorControl {
 	// stop();
 	//
 	// }
-	public void leftRot(double rotation, boolean block) {
-		leftMotor.rotate(convertDistance(radius, rotation), block);
+
+	/**
+	 * Works exactly like the default rotate function for the left motor execpt you only need to input
+	 * the distance you want
+	 * 
+	 * @param rotation
+	 * @param block
+	 */
+	public void leftRot(double distance, boolean block) {
+		if(distance>0) {
+			leftMotor.rotate(convertDistance(radius, Math.abs(distance)), block);
+		}
+		else {
+			leftMotor.rotate(-convertDistance(radius, Math.abs(distance)), block);
+		}
 	}
 
-	public void rightRot(double rotation, boolean block) {
-		rightMotor.rotate(convertAngle(radius, track, rotation), block);
+	public void rightRot(double distance, boolean block) {
+		if(distance>0) {
+			rightMotor.rotate(convertDistance(radius, Math.abs(distance)), block);
+		}
+		else {
+			rightMotor.rotate(-convertDistance(radius, Math.abs(distance)), block);
+		}
 	}
 
 	private int convertAngle(double radius, double width, double angle) {

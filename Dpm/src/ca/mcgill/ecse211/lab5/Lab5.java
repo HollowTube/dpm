@@ -13,9 +13,6 @@ import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.navigation.Navigator;
 import ca.mcgill.ecse211.Localization.*;
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.exception.MathArithmeticException;
-
 
 public class Lab5 {
 
@@ -44,11 +41,13 @@ public class Lab5 {
 	static float[] sample = new float[sampleSize];
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	//final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
+	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
 	final static LightPoller lightPollerReflected = new LightPoller(colorRGBSensorReflected, sampleReflected);
+	
+	//TODO initialize and implement second ultrasonic sensor
 
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH
 	}
 
 	public static void main(String[] args) throws OdometerExceptions {
@@ -64,9 +63,13 @@ public class Lab5 {
 
 		final Localization localizer = new Localization(motorControl);
 		final Navigation navigator = new Navigation();
-		//final Nav nav = new Nav(leftMotor, rightMotor,WHEEL_RAD, TRACK, odometer);
-		//final UltrasonicLocalizer USLoc = new UltrasonicLocalizer(odometer, nav, (EV3UltrasonicSensor) myDistance, 1);
-		//final LightLocalizer  lightLoc = new LightLocalizer(odometer, nav, colorSensorReflected, leftMotor, rightMotor);
+		
+		
+		// final Nav nav = new Nav(leftMotor, rightMotor,WHEEL_RAD, TRACK, odometer);
+		// final UltrasonicLocalizer USLoc = new UltrasonicLocalizer(odometer, nav,
+		// (EV3UltrasonicSensor) myDistance, 1);
+		// final LightLocalizer lightLoc = new LightLocalizer(odometer, nav,
+		// colorSensorReflected, leftMotor, rightMotor);
 
 		// clear the display
 		lcd.clear();
@@ -87,6 +90,8 @@ public class Lab5 {
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
+		
+		//TODO make sure odometry correction works properly, adjust values as necessary
 		// Start correction if right button was pressed
 		if (buttonChoice == Button.ID_RIGHT) {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
@@ -96,22 +101,32 @@ public class Lab5 {
 		// spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
 			public void run() {
-				// motorControl.dime_turn(90,100,true);
-				//simply imput waypoints here, will only update after it reaches the destination
+
+				// TODO algorithm to determine the necessary waypoints with given Lower left
+				// corner and upper right corner
+				
+				
+				// simply imput waypoints here, will only update after it reaches the
+				// destination
 				double[][] waypoints = { { 0, 212 }, { 212, 212 }, { 212, 0 }, { 0, 0 } };
 				int i = 0;
-				double xf = waypoints[0][0];
-				double yf = waypoints[0][1];
-				// motorControl.leftRot(50, true);
-				// motorControl.rightRot(50, false);
+				double xf = 0;
+				double yf = 0;
+
+				boolean detection = true;
+
+				// state machine implementation, if you add any states makes sure that it does
+				// not get stuck in a loop
+
 				// set initial state
 				List_of_states state = List_of_states.INITIALIZE;
 				while (true) {
 					switch (state) {
-
+					
+					// TODO implement localization, set odometer to (30,30,0)
+					// intial state of the robot, localization should be implemented here
 					case INITIALIZE:
-						//USLoc.Localize();
-						odometer.setXYT(0.01, 0.01, 0.01);
+						// USLoc.Localize();
 						state = List_of_states.IDLE;
 						break;
 
@@ -126,44 +141,78 @@ public class Lab5 {
 					case TURNING:
 
 						Sound.beep();
-						
+						xf = waypoints[i][0];
+						yf = waypoints[i][1];
 						navigator.turn_to_heading(xf, yf);
 						state = List_of_states.SEARCHING;
 						break;
 
+					// travels to waypoint while scanning for objects
+
 					case SEARCHING:
 
+						// TODO implement simple control feedback while the robot is travelling so that
+						// it stays on course
 						navigator.travelTo(xf, yf);
-						if (usPoller.obstacleDetected(20)) {
+
+						if (detection && usPoller.obstacleDetected(20)) {
 							motorControl.stop();
-							state = List_of_states.IDENTIFYING;
+							state = List_of_states.TRAVEL_TO_TARGET;
+							break;
 						}
+
+						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
 							motorControl.stop();
 							sleeptime(2000);
 							i++;
-							xf = waypoints[i][0];
-							yf = waypoints[i][1];
 							Sound.beep();
-							state = List_of_states.TURNING;
+
+							// resets the machine to its initial state
+							if (i > waypoints.length) {
+								i = 0;
+								state = List_of_states.IDLE;
+
+							} else {
+								state = List_of_states.TURNING;
+							}
 							break;
 						}
 						break;
 
-					case IDENTIFYING:
-						
+					// TODO after the sensor pick up an object to the side, rotates 90 degrees and
+					// moves
+					// until the color sensor is in position
+						// be sure to test this
+					case TRAVEL_TO_TARGET:
+
+						motorControl.dime_turn(90);
 						motorControl.forward(100, 100);
-						while(usPoller.getDist()>10);
+						while (usPoller.obstacleDetected(10)) {
+						}
 						motorControl.stop();
-						//lightPoller.detectColor();
-						state = List_of_states.AVOIDANCE;
-						break;
+						state = List_of_states.IDENTIFYING;
 
-					case AVOIDANCE:
-						motorControl.go_around(100, 20);
+						// TODO subroutine to get back on the travel path should be done here
+						// suggest to store the position when the object is detected and return to that
+						// after
+					case RETURN_TO_PATH:
+
 						state = List_of_states.TURNING;
+
+						// identifies the color on screen
+					case IDENTIFYING:
+
+						lightPoller.detectColor();
+						state = List_of_states.RETURN_TO_PATH;
 						break;
 
+					case COLOR_DEMO:
+						lcd.clear();
+						while (usPoller.obstacleDetected(10)) {
+							lcd.drawString("Oject detected", 0, 0);
+							lightPoller.detectColor();
+						}
 					}
 
 					sleeptime(50);

@@ -1,6 +1,5 @@
 package ca.mcgill.ecse211.lab5;
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.exception.MathArithmeticException;
 
 public class Color {
 	public float getRed_mean() {
@@ -74,12 +73,20 @@ public class Color {
 	public void setBlue(NormalDistribution blue) {
 		this.blue = blue;
 	}
+	public void setProbability(double prob_yellow) {
+		this.probability = prob_yellow;
+	}
+	public double getProbability() {
+		return this.probability;
+	}
 
 	float red_mean, green_mean, blue_mean, red_sigma, blue_sigma, green_sigma;
+	double probability;
+	String name;
 	public NormalDistribution red,green,blue;
 
 	public Color(float red_mean, float green_mean, float blue_mean, float red_sigma, float blue_sigma,
-			float green_sigma) {
+			float green_sigma, String name) {
 		
 		super();
 		this.red_mean = red_mean;
@@ -88,6 +95,7 @@ public class Color {
 		this.red_sigma = red_sigma;
 		this.blue_sigma = blue_sigma;
 		this.green_sigma = green_sigma;
+		this.name = name;
 		
 		red = new NormalDistribution(red_mean,red_sigma);
 		blue = new NormalDistribution(blue_mean,blue_sigma);
