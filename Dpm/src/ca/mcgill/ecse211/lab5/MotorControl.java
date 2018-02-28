@@ -15,8 +15,14 @@ import lejos.robotics.RegulatedMotor;
 public class MotorControl {
 	static RegulatedMotor leftMotor;
 	static RegulatedMotor rightMotor;
-	final private double radius = 2.2;
-	final private double track = 17.0;
+	private double bridge_radius = 2.05;
+	private double bridge_track = 14.45;
+	
+	private double tunnel_radius = 2.05;
+	private double tunnel_track = 14.45;
+	
+	private double radius = 2.05;
+	private double track = 14.45;
 	private final int ROTATE_SPEED = 100;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol = null;
@@ -89,6 +95,17 @@ public class MotorControl {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
+	
+	
+	/**
+	 * gives the forward command to both motors
+	 */
+	public void forward() {
+		leftMotor.forward();
+		rightMotor.forward();
+	}
+	
+	
 
 	/**
 	 * This method stops the left and right motors almost simultaneously
@@ -209,10 +226,4 @@ public class MotorControl {
 			rightMotor.rotate(convertAngle(radius, track, absTheta), false);
 		}
 	}
-
-	public void test() {
-		leftMotor.rotate(360, true);
-		rightMotor.rotate(-360, false);
-	}
-
 }
