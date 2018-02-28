@@ -11,7 +11,7 @@ public class LocalizationUSController implements UltrasonicController{
 	@Override
 	public void processUSData(int distance){
 		if(distance<30){
-			Lab5.noisemaker.systemSound(0);
+			SearchLab.noisemaker.systemSound(0);
 		}
 	}
 	

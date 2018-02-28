@@ -47,7 +47,7 @@ public class Navigation extends OdometerData implements UltrasonicController{
 	 * @param y
 	 */
 	void travelTo(double x, double y){
-		xyt = Lab5.odometer.getXYT();			//get current position
+		xyt = SearchLab.odometer.getXYT();			//get current position
 		path_distance= Math.pow(Math.pow(x-xyt[0],2)+Math.pow(y-xyt[1],2), 0.5); //calculate length of path
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
@@ -64,13 +64,13 @@ public class Navigation extends OdometerData implements UltrasonicController{
 	 * @param y
 	 */
 	void turnToCoord(double x, double y){
-		xyt = Lab5.odometer.getXYT();
+		xyt = SearchLab.odometer.getXYT();
 		if(x >= 0 && y >= 0){										//angles are from the y-axis instead of x-axis
-			turnTo((180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/Lab5.TILE_SIZE)), y-(Math.round(xyt[1]/Lab5.TILE_SIZE)))-xyt[2]);  		//angles in positive xy-plane
+			turnTo((180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/SearchLab.TILE_SIZE)), y-(Math.round(xyt[1]/SearchLab.TILE_SIZE)))-xyt[2]);  		//angles in positive xy-plane
 		}else if(y < 0){							
-			turnTo(180+(180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/Lab5.TILE_SIZE)), y-(Math.round(xyt[1]/Lab5.TILE_SIZE)))-xyt[2]);	//angles in the negative y-plane
+			turnTo(180+(180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/SearchLab.TILE_SIZE)), y-(Math.round(xyt[1]/SearchLab.TILE_SIZE)))-xyt[2]);	//angles in the negative y-plane
 		}else{
-			turnTo(360+(180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/Lab5.TILE_SIZE)), y-(Math.round(xyt[1]/Lab5.TILE_SIZE)))-xyt[2]); 	//angles in negative x-plane and positive y-plane
+			turnTo(360+(180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/SearchLab.TILE_SIZE)), y-(Math.round(xyt[1]/SearchLab.TILE_SIZE)))-xyt[2]); 	//angles in negative x-plane and positive y-plane
 		}
 		//turnTo((180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/Lab4.TILE_SIZE)), y-(Math.round(xyt[1]/Lab4.TILE_SIZE))));
 	}
@@ -82,10 +82,10 @@ public class Navigation extends OdometerData implements UltrasonicController{
 	 * @param y
 	 */
 	void turnToPoint(double x, double y){
-		xyt = Lab5.odometer.getXYT();
+		xyt = SearchLab.odometer.getXYT();
 		double currentX = xyt[0];
 		double currentY = xyt[1];
-		double path_angle = (180/Math.PI)*Math.atan2(x-(Math.round(currentX/Lab5.TILE_SIZE)), y-(Math.round(currentY/Lab5.TILE_SIZE)));
+		double path_angle = (180/Math.PI)*Math.atan2(x-(Math.round(currentX/SearchLab.TILE_SIZE)), y-(Math.round(currentY/SearchLab.TILE_SIZE)));
 		turnTo(path_angle-xyt[2]);
 	}
 	

@@ -30,6 +30,7 @@ public class Searching implements Runnable{
 	private static float[] DataSet = new float[5];
 	private static int DetectCount = 0;
 	private static float median;
+	private static LightPollerColor liPol;
 	
 	public Searching(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer, Navigation nav, EV3UltrasonicSensor usSensorLeft, EV3UltrasonicSensor usSensorFront, EV3ColorSensor colorSensorBlock){
 		this.leftMotor = leftMotor;
@@ -71,19 +72,13 @@ public class Searching implements Runnable{
 	}
 
 	public void run(){
+		liPol = new LightPollerColor(colorSensorBlock, sample);
 		while(true){
 			dist = getDistanceLeft();
-			blockData[DetectCount%5]=dist;
-			DetectCount++;
-			for(int i=0; i<5;i++){
-				DataSet[i] = blockData[i];
-			}
-			Arrays.sort(DataSet);
-			median= DataSet[2];
-			if(median < 50 && median > 8){ //if the left US reads a block or false positive
+			if(dist < 50 && dist > 8){ //if the left US reads a block or false positive
 				
-				Lab5.foundBlock = true;
-				Lab5.noisemaker.systemSound(1);
+				SearchLab.foundBlock = true; //throw flag to let waypoint navigation know to wait
+				SearchLab.noisemaker.systemSound(1);
 				//block has been detected
 				leftMotor.stop(true);
 				rightMotor.stop();
@@ -100,14 +95,17 @@ public class Searching implements Runnable{
 					while(true){ //as the bot is approaching the block, repeatedly poll the light sensor
 						//-----------------COLOR DETECTION-----------------------------
 						colorSensorBlock.getRGBMode().fetchSample(sample, 0);
-						if(sample[0] > 0.01){ //UNFINISHED COLOR DETECTION
+						if(sample[0] > 0.01){//if there has been a drastice change in lighting, check color
+							liPol.target_found("blue");
 							leftMotor.stop(true);
 							rightMotor.stop();
-							Lab5.noisemaker.systemSound(3);
 							break;
 						}
 						//---------------------------------------------------------------
 					}
+					try{
+						Thread.sleep(50);
+					}catch (Exception e){}
 					nav.turnToPoint(xyt[0], xyt[1]);
 					try{
 						Thread.sleep(3000);
@@ -116,14 +114,14 @@ public class Searching implements Runnable{
 					try{
 						Thread.sleep(3000);
 					}catch (Exception e){}
-					Lab5.wpCtr--;
-					Lab5.foundBlock = false;
+					SearchLab.wpCtr--;
+					SearchLab.foundBlock = false;
 				}else{ //WAS A FALSE POSITIVE
-					median = 0;
-					Lab5.wpCtr--;
-					Lab5.foundBlock = false;
+					dist = 0;
+					SearchLab.wpCtr--;
+					SearchLab.foundBlock = false;
 				}
-				//decrement Waypoints waypoint counter to hopefully get it to turn to
+				//decrement Waypoints waypoint counter to get it to turn to
 									//and head to the proper waypoint
 			}
 		}

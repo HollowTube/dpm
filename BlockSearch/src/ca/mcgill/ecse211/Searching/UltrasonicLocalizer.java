@@ -52,7 +52,7 @@ public class UltrasonicLocalizer {
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){
-				Lab5.noisemaker.systemSound(4);
+				SearchLab.noisemaker.systemSound(4);
 			}
 			nav.turnTo(-odo.getXYT()[2]);
 		}
@@ -62,7 +62,7 @@ public class UltrasonicLocalizer {
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){
-				Lab5.noisemaker.systemSound(4);
+				SearchLab.noisemaker.systemSound(4);
 			}
 			//odo.setTheta(odo.getXYT()[2]+correctionAngle);
 			nav.turnTo(-odo.getXYT()[2]);
@@ -75,7 +75,7 @@ public class UltrasonicLocalizer {
 		}
 		
 		
-		Lab5.noisemaker.systemSound(3);
+		SearchLab.noisemaker.systemSound(3);
 	}
 	public void fallingEdge(){
 		/*
@@ -116,7 +116,7 @@ public class UltrasonicLocalizer {
 		try{
 			Thread.sleep(2000);
 		}catch(Exception e){
-			Lab5.noisemaker.systemSound(4); //sleep didnt work
+			SearchLab.noisemaker.systemSound(4); //sleep didnt work
 		}
 		
 		while(getDistance() >= (wall_distance + noise_margin)){} //let spin until distance enters margin
@@ -161,7 +161,7 @@ public class UltrasonicLocalizer {
 		try{
 			Thread.sleep(2000);
 		}catch(Exception e){
-			Lab5.noisemaker.systemSound(4); //sleep didnt work
+			SearchLab.noisemaker.systemSound(4); //sleep didnt work
 		}
 		
 		while(getDistance() <= (wall_distance - noise_margin)){} //let spin until distance enters margin

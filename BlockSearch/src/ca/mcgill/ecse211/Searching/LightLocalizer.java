@@ -46,8 +46,8 @@ public class LightLocalizer {
 		rightMotor.stop();
 		odo.setX(-Light_Sensor_Position); // set position to offset of light sensor (x)
 		nav.turnTo(315);
-		leftMotor.rotate(nav.convertDistance(Lab5.WHEEL_RAD, 12.8), true);	//travel to (0,0) coordinate
-		rightMotor.rotate(nav.convertDistance(Lab5.WHEEL_RAD, 12.8), false);
+		leftMotor.rotate(nav.convertDistance(SearchLab.WHEEL_RAD, 12.8), true);	//travel to (0,0) coordinate
+		rightMotor.rotate(nav.convertDistance(SearchLab.WHEEL_RAD, 12.8), false);
 		//nav.turnTo(315);
 		leftMotor.stop(true);
 		rightMotor.stop();
