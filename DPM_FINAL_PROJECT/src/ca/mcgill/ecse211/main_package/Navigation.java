@@ -7,7 +7,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 //import lejos.hardware.motor.Motor;
 import lejos.robotics.RegulatedMotor;
 
-
 public class Navigation {
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
@@ -47,16 +46,17 @@ public class Navigation {
 		return odometer.getXYT();
 	}
 
-	//travels straight
+	// travels straight
 	public void travelTo(double xf, double yf) {
 		position = get_position();
 		motorcontrol.forward(left_speed, right_speed);
-//		if (Math.abs(position[2] - getHeading(xf - position[0], yf - position[1])) > HEADING_THRESHOLD) {
-//			angle_correction(position[2]);
-//		} else {
-			left_speed = FORWARD_SPEED;
-			right_speed = FORWARD_SPEED;
-//		}
+		// if (Math.abs(position[2] - getHeading(xf - position[0], yf - position[1])) >
+		// HEADING_THRESHOLD) {
+		// angle_correction(position[2]);
+		// } else {
+		left_speed = FORWARD_SPEED;
+		right_speed = FORWARD_SPEED;
+		// }
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class Navigation {
 	 */
 	private static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
-		//System.out.println(error);
+		// System.out.println(error);
 		return error;
 	}
 
@@ -149,9 +149,10 @@ public class Navigation {
 		Sound.beep();
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
-		System.out.println("dx"+ dx +" dy"+ dy +" initial heading"+ initial_heading +" final heading"+ final_heading +" turning angle"+ turning_angle );
+		System.out.println("dx" + dx + " dy" + dy + " initial heading" + initial_heading + " final heading"
+				+ final_heading + " turning angle" + turning_angle);
 		motorcontrol.dime_turn(turning_angle);
-		
+
 	}
 
 	public boolean destination_reached(double xf, double yf) {
@@ -161,5 +162,5 @@ public class Navigation {
 		}
 		return false;
 	}
-	
+
 }

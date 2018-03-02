@@ -17,10 +17,10 @@ public class MotorControl {
 	static RegulatedMotor rightMotor;
 	private double bridge_radius = 2.05;
 	private double bridge_track = 14.45;
-	
+
 	private double tunnel_radius = 2.05;
 	private double tunnel_track = 14.45;
-	
+
 	private double radius = 2.05;
 	private double track = 14.45;
 	private final int ROTATE_SPEED = 100;
@@ -95,8 +95,21 @@ public class MotorControl {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
-	
-	
+
+	/**
+	 * moves left motors forwards
+	 */
+	public void leftforward() {
+		leftMotor.forward();
+	}
+
+	/**
+	 * Moves right motor forwards
+	 */
+	public void rightforward() {
+		rightMotor.forward();
+	}
+
 	/**
 	 * gives the forward command to both motors
 	 */
@@ -104,8 +117,20 @@ public class MotorControl {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
-	
-	
+
+	/**
+	 * left motor stops
+	 */
+	public void leftStop() {
+		leftMotor.stop(true);
+	}
+
+	/**
+	 * right motor stops
+	 */
+	public void rightStop() {
+		rightMotor.stop(true);
+	}
 
 	/**
 	 * This method stops the left and right motors almost simultaneously
@@ -178,26 +203,24 @@ public class MotorControl {
 	// }
 
 	/**
-	 * Works exactly like the default rotate function for the left motor execpt you only need to input
-	 * the distance you want
+	 * Works exactly like the default rotate function for the left motor execpt you
+	 * only need to input the distance you want
 	 * 
 	 * @param rotation
 	 * @param block
 	 */
 	public void leftRot(double distance, boolean block) {
-		if(distance>0) {
+		if (distance > 0) {
 			leftMotor.rotate(convertDistance(radius, Math.abs(distance)), block);
-		}
-		else {
+		} else {
 			leftMotor.rotate(-convertDistance(radius, Math.abs(distance)), block);
 		}
 	}
 
 	public void rightRot(double distance, boolean block) {
-		if(distance>0) {
+		if (distance > 0) {
 			rightMotor.rotate(convertDistance(radius, Math.abs(distance)), block);
-		}
-		else {
+		} else {
 			rightMotor.rotate(-convertDistance(radius, Math.abs(distance)), block);
 		}
 	}

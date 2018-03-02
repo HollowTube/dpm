@@ -54,7 +54,7 @@ public class OdometryCorrection implements Runnable {
 		int currentYQuad, currentXQuad;
 		double newy, newx = 0;
 		while (true) {
-			correctionStart =	 System.currentTimeMillis();
+			correctionStart = System.currentTimeMillis();
 			// TODO variable lightsensor offset
 
 			if (correctionTrigger()) {

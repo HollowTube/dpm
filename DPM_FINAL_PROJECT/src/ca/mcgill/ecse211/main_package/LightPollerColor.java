@@ -19,8 +19,8 @@ public class LightPollerColor {
 
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
-	private Color red_block = new Color(0.20767974f, 0.027133795f, 0.015695887f, 0.3038505f, 0.04516072f,
-			0.02923487f, "red");
+	private Color red_block = new Color(0.20767974f, 0.027133795f, 0.015695887f, 0.3038505f, 0.04516072f, 0.02923487f,
+			"red");
 	private Color blue_block = new Color(0.035873442f, 0.058556151f, 0.059581107f, 0.04077874f, 0.05821204f,
 			0.004725411f, "blue");
 	private Color yellow_block = new Color(0.30775123f, 0.221819854f, 0.246875f, 0.9973893f, 0.5888729f, 0.1106323f,
@@ -92,8 +92,7 @@ public class LightPollerColor {
 		return (red_prob + green_prob + blue_prob) / 3;
 	}
 
-	
-	/** 
+	/**
 	 * displays the color detected, either red, blue, yellow or white.
 	 */
 	public void detectColor() {
@@ -108,11 +107,10 @@ public class LightPollerColor {
 		prob_red = getProbability(red_block, reading);
 		prob_white = getProbability(white_block, reading);
 
-
-//		 System.out.println("yellow " + prob_yellow);
-//		 System.out.println("blue " + prob_blue);
-//		 System.out.println("red " + prob_red);
-//		 System.out.println("white " + prob_white);
+		// System.out.println("yellow " + prob_yellow);
+		// System.out.println("blue " + prob_blue);
+		// System.out.println("red " + prob_red);
+		// System.out.println("white " + prob_white);
 
 		max_prob = Math.max(Math.max(Math.max(prob_blue, prob_yellow), prob_red), prob_white);
 
@@ -121,16 +119,16 @@ public class LightPollerColor {
 		} else if (max_prob == prob_blue) {
 			LCD.drawString(("its Blue  "), 0, 1);
 		} else if (max_prob == prob_yellow) {
-			LCD.drawString(("its Yellow  " ), 0, 1);
+			LCD.drawString(("its Yellow  "), 0, 1);
 		} else {
 			LCD.drawString(("its White "), 0, 1);
 		}
 	}
 
-	
 	/**
 	 * if the color scanned is the target color, will beep twice and return true
 	 * else will beep once and return false
+	 * 
 	 * @param name
 	 * @return
 	 */
@@ -146,14 +144,14 @@ public class LightPollerColor {
 		prob_blue = getProbability(blue_block, reading);
 		prob_red = getProbability(red_block, reading);
 		prob_white = getProbability(white_block, reading);
-		
-		 System.out.println("yellow " + prob_yellow);
-		 System.out.println("blue " + prob_blue);
-		 System.out.println("red " + prob_red);
-		 System.out.println("white " + prob_white);
-		
+
+		System.out.println("yellow " + prob_yellow);
+		System.out.println("blue " + prob_blue);
+		System.out.println("red " + prob_red);
+		System.out.println("white " + prob_white);
+
 		max_prob = Math.max(Math.max(Math.max(prob_blue, prob_yellow), prob_red), prob_white);
-		
+
 		if (max_prob == prob_red) {
 			max_color = "red";
 		} else if (max_prob == prob_blue) {

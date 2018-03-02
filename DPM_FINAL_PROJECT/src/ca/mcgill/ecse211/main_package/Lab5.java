@@ -29,11 +29,7 @@ public class Lab5 {
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
-	
-	static Port portUS2 = LocalEV3.get().getPort("S4");
-	static SensorModes myUS2 = new EV3UltrasonicSensor(portUS2);
-	static SampleProvider myDistance2 = myUS.getMode("Distance");
-	static float[] sampleUS2 = new float[myDistance2.sampleSize()];
+
 
 	static EV3ColorSensor colorSensorReflected = new EV3ColorSensor(sensorPort);
 	static SampleProvider colorRGBSensorReflected = colorSensorReflected.getRedMode();
@@ -41,29 +37,31 @@ public class Lab5 {
 	static float[] sampleReflected = new float[sampleSizeReflected];
 
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
-	static SampleProvider colorRGBSensor = colorSensor.getRGBMode();
+	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
 	static int sampleSize = colorRGBSensor.sampleSize();
 	static float[] sample = new float[sampleSize];
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	final static myUSPoller usPoller2 = new myUSPoller(myDistance2, sampleUS2);
-	
-	final static LightPollerColor lightPoller = new LightPollerColor(colorRGBSensor, sample);
-	final static LightPoller lightPollerReflected = new LightPoller(colorRGBSensorReflected, sampleReflected);
-	
+
+	// final static LightPollerColor lightPoller = new
+	// LightPollerColor(colorRGBSensor, sample);
+	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
+	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
+
 	final static String target_color = "red";
 
-	//TODO implement heading correction with 2 light sensors, or just 1
-	//TODO breakdown waypoints into x and y coordinates
-	
-	//TODO heading correction to be done before every turn
-	//TODO display current state on machine
-	//TODO convert parameters of course into workable coordinates
-	//TODO extra localization on bridge and tunnel
-	//TODO 
+	// TODO implement heading correction with 2 light sensors, or just 1
+	// TODO breakdown waypoints into x and y coordinates
+
+	// TODO heading correction to be done before every turn
+	// TODO display current state on machine
+	// TODO convert parameters of course into workable coordinates
+	// TODO extra localization on bridge and tunnel
+	// TODO
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH, TEST
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION
 	}
+
 	static List_of_states state;
 
 	public static void main(String[] args) throws OdometerExceptions {
@@ -79,7 +77,7 @@ public class Lab5 {
 
 		final Localization localizer = new Localization(motorControl);
 		final Navigation navigator = new Navigation();
-
+		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		// final Nav nav = new Nav(leftMotor, rightMotor,WHEEL_RAD, TRACK, odometer);
 		// final UltrasonicLocalizer USLoc = new UltrasonicLocalizer(odometer, nav,
 		// (EV3UltrasonicSensor) myDistance, 1);
@@ -147,7 +145,7 @@ public class Lab5 {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.TURNING;
+						state = List_of_states.ANGLE_LOCALIZATION;
 						break;
 					// dime turn towards necessary destination
 					case TURNING:
@@ -166,12 +164,12 @@ public class Lab5 {
 						// it stays on course
 						navigator.travelTo(xf, yf);
 
-						if (usPoller2.obstacleDetected(50)) {
-							motorControl.stop();
-							state = List_of_states.TRAVEL_TO_TARGET;
-							break;
-						}
-						
+//						if (usPoller2.obstacleDetected(50)) {
+//							motorControl.stop();
+//							state = List_of_states.TRAVEL_TO_TARGET;
+//							break;
+//						}
+
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
 							motorControl.stop();
@@ -213,8 +211,8 @@ public class Lab5 {
 
 						// identifies the color on screen
 					case IDENTIFYING:
-						
-						lightPoller.target_found(target_color);
+
+						// lightPoller.target_found(target_color);
 						state = List_of_states.IDLE;
 						break;
 
@@ -222,12 +220,18 @@ public class Lab5 {
 						lcd.clear();
 						while (usPoller.obstacleDetected(10)) {
 							lcd.drawString("Oject detected", 0, 0);
-							lightPoller.detectColor();
+							// lightPoller.detectColor();
 							while (Button.waitForAnyPress() != Button.ID_UP)
 								sleeptime(50); // waits until the up button is pressed
-							
+
 						}
 						break;
+					case ANGLE_LOCALIZATION:
+						A_loc.fix_angle();
+						motorControl.stop();
+						state = List_of_states.IDLE;
+						break;
+
 					case TEST:
 						motorControl.dime_turn(90);
 						state = List_of_states.IDLE;
@@ -239,7 +243,8 @@ public class Lab5 {
 			}
 		}).start();
 
-		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
+		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
+			;
 		System.exit(0);
 	}
 

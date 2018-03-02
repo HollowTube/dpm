@@ -6,29 +6,32 @@ import lejos.robotics.filter.MedianFilter;
 public class myUSPoller {
 
 	// Class Variables
-	
+
 	private final int BUFFER_SIZE = 5;
 	private float[] sampleUS;
 	SampleProvider myDistance;
 	double wallDist;
-	//MedianFilter myfilter = new MedianFilter(myDistance, BUFFER_SIZE);
+	// MedianFilter myfilter = new MedianFilter(myDistance, BUFFER_SIZE);
 
-	public  myUSPoller(SampleProvider us, float[] usdata) {
-		this.myDistance = us;	
+	public myUSPoller(SampleProvider us, float[] usdata) {
+		this.myDistance = us;
 		this.sampleUS = usdata;
 	}
+
 	public synchronized double getDist() {
 		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
 		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
-		
-		if(wallDist > 250) {
+
+		if (wallDist > 250) {
 			return 250;
 		}
 		return wallDist;
 	}
 
-	/** 
-	 * this method returns true if the on object is detected within the threshold distance
+	/**
+	 * this method returns true if the on object is detected within the threshold
+	 * distance
+	 * 
 	 * @param threshold
 	 * @return boolean
 	 */
@@ -41,10 +44,10 @@ public class myUSPoller {
 			return false;
 		}
 	}
-//	public double getMedian(int filtersize) {
-//		double dist = 0;
-//		myfilter.fetchSample(sampleUS, 0);
-//		dist = sampleUS[0];
-//		return dist;
-//	}
+	// public double getMedian(int filtersize) {
+	// double dist = 0;
+	// myfilter.fetchSample(sampleUS, 0);
+	// dist = sampleUS[0];
+	// return dist;
+	// }
 }
