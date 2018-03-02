@@ -27,15 +27,6 @@ public class LightPollerColor {
 			"yellow");
 	private Color white_block = new Color(0.325635933f, 0.246581879f, 0.145455755f, 0.32806904f, 0.33583433f,
 			0.1739245f, "white");
-	// private Color orange = new Color(0.164809809f, 0.128121575f, 0.096505883f,
-	// 0.1574731f, 0.1548986f, 0.15302903f,
-	// "orange");
-	// private Color green = new Color(0.139549027f, 0.160666671f, 0.050921569f,
-	// 0.19885207f, 0.18045974f, 0.16318f,
-	// "green");
-	// private Color table = new Color(0.139549027f, 0.160666671f, 0.050921569f,
-	// 0.19885207f, 0.18045974f, 0.16318f,
-	// "table");
 	ArrayList<Color> colors = new ArrayList<Color>();
 
 	public LightPollerColor(SampleProvider lt, float[] ltdata) {
@@ -97,14 +88,6 @@ public class LightPollerColor {
 		blue_prob = (float) (1
 				- (color.red.probability(color.getBlue_mean() - blue_dist, color.getBlue_mean() + blue_dist)));
 
-		// System.out.println("red prob: " + red_prob);
-		// System.out.println("green prob: " + green_prob);
-		// System.out.println("blue prob: " + blue_prob);
-		//
-		// lcd.drawString("Red: " + Float.toString(red_prob), 0, 0);
-		// lcd.drawString("Green: " + Float.toString(green_prob), 0, 1);
-		// lcd.drawString("Blue: " + Float.toString(blue_prob), 0, 2);
-
 		// returns the average probability of each probability
 		return (red_prob + green_prob + blue_prob) / 3;
 	}
@@ -120,13 +103,6 @@ public class LightPollerColor {
 		lt.fetchSample(ltdata, 0);
 		float[] reading = getAverageMeasurement();
 
-		// System.out.println("red read: " + reading[0]);
-		// System.out.println("green read: " + reading[1]);
-		// System.out.println("blue read: " + reading[2]);
-
-		// prob_red = getProbability(red_block, reading);
-		// prob_green = getProbability(blue_block, reading);
-		// prob_blue = getProbability(yellow_block, reading);
 		prob_yellow = getProbability(yellow_block, reading);
 		prob_blue = getProbability(blue_block, reading);
 		prob_red = getProbability(red_block, reading);
@@ -139,11 +115,6 @@ public class LightPollerColor {
 //		 System.out.println("white " + prob_white);
 
 		max_prob = Math.max(Math.max(Math.max(prob_blue, prob_yellow), prob_red), prob_white);
-
-		// lcd.drawString("Red: " + Float.toString(reading[0]), 0, 3);
-		// lcd.drawString("Green: " + Float.toString(reading[1]), 0, 4);
-		// lcd.drawString("Blue: " + Float.toString(reading[2]), 0, 5);
-		// lcd.drawString("Orange: " +Double.toString(prob_orange), 0, 3);
 
 		if (max_prob == prob_red) {
 			LCD.drawString(("its Red "), 0, 1);
