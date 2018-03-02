@@ -21,6 +21,7 @@ public class UltrasonicLocalizer {
 		this.type=type;
 		this.us.enable();
 	}
+	
 	public void Localize(){
 		if(this.type==1){
 			fallingEdge();
@@ -48,6 +49,7 @@ public class UltrasonicLocalizer {
 		xyt = odo.getXYT();
 		edgeDetect[1] = xyt[2];
 	}
+	
 	public void risingEdge(){
 		while(getDistance()<(wall_distance-noise_margin)){
 			xyt = odo.getXYT();

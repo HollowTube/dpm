@@ -109,6 +109,10 @@ public class LightPollerColor {
 		return (red_prob + green_prob + blue_prob) / 3;
 	}
 
+	
+	/** 
+	 * displays the color detected, either red, blue, yellow or white.
+	 */
 	public void detectColor() {
 		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0,
 				prob_white = 0;
@@ -152,6 +156,13 @@ public class LightPollerColor {
 		}
 	}
 
+	
+	/**
+	 * if the color scanned is the target color, will beep twice and return true
+	 * else will beep once and return false
+	 * @param name
+	 * @return
+	 */
 	public boolean target_found(String name) {
 		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0,
 				prob_white = 0, max_prob = 0;
