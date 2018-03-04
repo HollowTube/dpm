@@ -1,7 +1,6 @@
 package ca.mcgill.ecse211.main_package;
 
-import ca.mcgill.ecse211.odometer.Odometer;
-import ca.mcgill.ecse211.odometer.OdometerExceptions;
+import ca.mcgill.ecse211.Odometer.*;
 
 public class Angle_Localization {
 
@@ -19,7 +18,7 @@ public class Angle_Localization {
 	}
 
 	public void fix_angle() {
-		motorcontrol.forward(100, 100);
+		//motorcontrol.forward(100, 100);
 		while (true) {
 			if (right_sensor.lessThan(threshold)) {
 				motorcontrol.rightStop();
@@ -40,8 +39,8 @@ public class Angle_Localization {
 				} while (true);
 				break;
 
-			} else
-				motorcontrol.forward(100, 100);
+			} //else
+				//motorcontrol.forward(100, 100);
 		}
 		double heading = odometer.getXYT()[2];
 		if (heading > 315 && heading < 45) {
