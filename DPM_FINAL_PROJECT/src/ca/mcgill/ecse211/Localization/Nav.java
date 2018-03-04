@@ -1,7 +1,7 @@
 package ca.mcgill.ecse211.Localization;
 
 import ca.mcgill.ecse211.main_package.*;
-import ca.mcgill.ecse211.Odometer.*;
+import ca.mcgill.ecse211.odometer.*;
 
 public class Nav extends OdometerData {
 	private static final int FORWARD_SPEED = 250;

@@ -1,7 +1,7 @@
 /*
  * OdometryCorrection.java
  */
-package ca.mcgill.ecse211.Odometer;
+package ca.mcgill.ecse211.odometer;
 
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;

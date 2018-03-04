@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.main_package;
 
-import ca.mcgill.ecse211.Odometer.*;
+import ca.mcgill.ecse211.odometer.*;
 
 public class Angle_Localization {
 

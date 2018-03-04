@@ -1,7 +1,7 @@
 
 package ca.mcgill.ecse211.main_package;
 
-import ca.mcgill.ecse211.Odometer.*;
+import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;

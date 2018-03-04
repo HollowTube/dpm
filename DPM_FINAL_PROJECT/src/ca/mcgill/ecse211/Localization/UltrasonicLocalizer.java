@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.Localization;
 
-import ca.mcgill.ecse211.Odometer.*;
+import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.main_package.*;
