@@ -130,7 +130,7 @@ public class Main {
 					switch (state) {
 
 					// TODO implement localization, set odometer to (30,30,0)
-					// intial state of the robot, localization should be implemented here
+					// initial state of the robot, localization should be implemented here
 					case INITIALIZE:
 						odometer.setXYT(0.01, 0.01, 0.01);
 						state = List_of_states.IDLE;
@@ -184,23 +184,20 @@ public class Main {
 						}
 						break;
 
-					// TODO after the sensor pick up an object to the side, rotates 90 degrees and
-					// moves
-					// until the color sensor is in position
-					// be sure to test this
 					case TRAVEL_TO_TARGET:
 
 						motorControl.dime_turn(-90);
-						motorControl.forward(100, 100);
+						motorControl.forward();
 						while (usPoller.obstacleDetected(10)) {
 						}
 						motorControl.stop();
 						state = List_of_states.IDENTIFYING;
 
+
+					case RETURN_TO_PATH:
 						// TODO subroutine to get back on the travel path should be done here
 						// suggest to store the position when the object is detected and return to that
 						// after
-					case RETURN_TO_PATH:
 
 						state = List_of_states.TURNING;
 

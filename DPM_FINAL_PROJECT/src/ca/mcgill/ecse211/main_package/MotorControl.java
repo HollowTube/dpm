@@ -1,10 +1,8 @@
 package ca.mcgill.ecse211.main_package;
 
-import ca.mcgill.ecse211.odometer.Odometer;
-import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
-
+import ca.mcgill.ecse211.odometer.*;
 /**
  * This class handles all of the motor control. If a method wants to access the
  * motors, it should do so through this class
@@ -13,8 +11,8 @@ import lejos.robotics.RegulatedMotor;
  *
  */
 public class MotorControl {
-	static RegulatedMotor leftMotor;
-	static RegulatedMotor rightMotor;
+	public static RegulatedMotor leftMotor;
+	public static RegulatedMotor rightMotor;
 	private double bridge_radius = 2.05;
 	private double bridge_track = 14.45;
 
@@ -93,29 +91,35 @@ public class MotorControl {
 	 * @param leftSpeed
 	 * @param rightSpeed
 	 */
-	public void forward(int leftSpeed, int rightSpeed) {
-
-		leftMotor.setSpeed(leftSpeed);
-		rightMotor.setSpeed(rightSpeed);
-
-		leftMotor.forward();
-		rightMotor.forward();
+	public void moveSetDistance(double path_distance) {
+		leftMotor.rotate(convertDistance(radius, path_distance), true); // travel straight
+		rightMotor.rotate(convertDistance(radius, path_distance), false);
 	}
 
 	/**
-	 * moves left motors forwards
+	 * moves left motor forwards
 	 */
 	public void leftforward() {
 		leftMotor.forward();
 	}
-
+	/**
+	 * moves left motor backwards
+	 */
+	public void leftbackward(){
+		leftMotor.backward();
+	}
 	/**
 	 * Moves right motor forwards
 	 */
 	public void rightforward() {
 		rightMotor.forward();
 	}
-
+	/*
+	 * Moves right motor backwards
+	 */
+	public void rightbackward(){
+		rightMotor.backward();
+	}
 	/**
 	 * gives the forward command to both motors
 	 */
@@ -145,7 +149,30 @@ public class MotorControl {
 		leftMotor.stop(true);
 		rightMotor.stop(false);
 	}
-
+	/*
+	 * This method makes the robot turn clockwise 
+	 */
+	public void turnCW(){
+		leftMotor.forward();
+		rightMotor.backward();
+	}
+	/*
+	 * This method makes the robot turn counter-clockwise 
+	 */
+	public void turnCCW(){
+		leftMotor.backward();
+		rightMotor.forward();
+	}
+	
+	/**
+	 * Set acceleration of the motors
+	 */
+	public void setAcceleration(int acceleration){
+		leftMotor.setAcceleration(acceleration);
+		rightMotor.setAcceleration(acceleration);
+	}
+	
+	
 	/**
 	 * This method makes the robot turn on a dime for a certain amount of degrees,
 	 * positive rotation means clockwise ,negative rotation means counter-clockwise
@@ -153,6 +180,8 @@ public class MotorControl {
 	 * @param rotation
 	 */
 	public void dime_turn(double rotation) {
+		
+		
 		leftMotor.setSpeed(TURNING_SPEED);
 		rightMotor.setSpeed(TURNING_SPEED);
 
@@ -163,6 +192,7 @@ public class MotorControl {
 			leftMotor.rotate(convertAngle(radius, track, Math.abs(rotation)), true);
 			rightMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), false);
 		}
+		
 	}
 
 	public boolean isMoving() {
@@ -177,16 +207,14 @@ public class MotorControl {
 			leftMotor.forward();
 		else
 			leftMotor.backward();
-
 	}
-
+	
 	public void rightMotor(int speed) {
 		rightMotor.setSpeed(speed);
 		if (speed > 0)
 			rightMotor.forward();
 		else
 			rightMotor.backward();
-
 	}
 
 	public void setLeftSpeed(int speed) {
@@ -197,21 +225,8 @@ public class MotorControl {
 		rightMotor.setSpeed(speed);
 	}
 
-	// public void turn_to_heading(double finalHead) {
-	//
-	// double initial_heading, turning_angle;
-	//
-	// initial_heading = odometer.getXYT()[2];
-	//
-	// turning_angle = Navigation.min_angle(initial_heading, finalHead);
-	//
-	// dime_turn(turning_angle, 100, true);
-	// stop();
-	//
-	// }
-
 	/**
-	 * Works exactly like the default rotate function for the left motor execpt you
+	 * Works exactly like the default rotate function for the left motor except you
 	 * only need to input the distance you want
 	 * 
 	 * @param rotation
@@ -224,7 +239,14 @@ public class MotorControl {
 			leftMotor.rotate(-convertDistance(radius, Math.abs(distance)), block);
 		}
 	}
-
+	
+	/**
+	 * Works exactly like the default rotate function for the left motor except you
+	 * only need to input the distance you want
+	 * 
+	 * @param rotation
+	 * @param block
+	 */
 	public void rightRot(double distance, boolean block) {
 		if (distance > 0) {
 			rightMotor.rotate(convertDistance(radius, Math.abs(distance)), block);
@@ -242,19 +264,36 @@ public class MotorControl {
 	}
 
 	public void turnto(double theta) {
-		double absTheta = Math.abs(theta);
-		leftMotor.stop(true);
-		rightMotor.stop(false);
-
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
-
-		if (theta > 0) {
-			leftMotor.rotate(convertAngle(radius, track, absTheta), true);
-			rightMotor.rotate(-convertAngle(radius, track, absTheta), false);
+		// if theta > 180 || theta < -180
+		// then turn 360-theta or 360-Math.abs(theta)
+		if (theta >= 180) {
+			// turn negative direction (left)
+			theta = (360 - theta);
+			setLeftSpeed(ROTATE_SPEED);
+			setRightSpeed(ROTATE_SPEED);
+			leftMotor.rotate(-convertAngle(radius, track, theta), true);
+			rightMotor.rotate(convertAngle(radius, track, theta), false);
+		} else if (theta < -180) {
+			// turn positive direciton (right)
+			theta = 360 - Math.abs(theta);
+			setLeftSpeed(ROTATE_SPEED);
+			setRightSpeed(ROTATE_SPEED);
+			leftMotor.rotate(convertAngle(radius, track, theta), true);
+			rightMotor.rotate(-convertAngle(radius, track, theta), false);
 		} else {
-			leftMotor.rotate(-convertAngle(radius, track, absTheta), true);
-			rightMotor.rotate(convertAngle(radius, track, absTheta), false);
-		}
+			if (theta < 0) {
+				// negative, turn left
+				setLeftSpeed(ROTATE_SPEED);
+				setRightSpeed(ROTATE_SPEED);
+				leftMotor.rotate(-convertAngle(radius, track, Math.abs(theta)), true);
+				rightMotor.rotate(convertAngle(radius, track, Math.abs(theta)), false);
+			} else {
+				// positive, turn right
+				setLeftSpeed(ROTATE_SPEED);
+				setRightSpeed(ROTATE_SPEED);
+				leftMotor.rotate(convertAngle(radius, track, theta), true);
+				rightMotor.rotate(-convertAngle(radius, track, theta), false);
+				}
+			}
 	}
 }

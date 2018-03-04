@@ -13,12 +13,9 @@ public class Navigation {
 
 	private double position[];
 	// private double newheading;
-	private final int FORWARD_SPEED = 250;
-	private final int ROTATE_SPEED = 120;
-	private final double RANGE_THRESHOLD = 0.5;
+	private final int FORWARD_SPEED = 150;
 	private final int HEADING_THRESHOLD = 1;
-	private final double TILE_SIZE = 30.48;
-	private final double P_CONST = 5;
+
 
 	public static double final_heading = 0;
 	public static double absolute_distance = 0;
@@ -40,7 +37,9 @@ public class Navigation {
 	// travels straight
 	public void travelTo(double xf, double yf) {
 		position = get_position();
-		motorcontrol.forward(left_speed, right_speed);
+		motorcontrol.setLeftSpeed(left_speed);
+		motorcontrol.setRightSpeed(right_speed);
+		motorcontrol.forward();
 		heading_error = position[2] - getHeading(xf - position[0], yf - position[1]);
 		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
 			angle_correction(heading_error);
@@ -90,20 +89,21 @@ public class Navigation {
 	}
 
 	/**
-	 * This method uses a simple p-controller to correct differences between the
+	 * This method uses a simple bang bang controller to correct differences between the
 	 * desired heading, and actual desired heading
 	 * 
 	 * @param turning_angle
 	 */
 	private void angle_correction(double turning_angle) {
-		int correction;
+		int correction = 5;
 		if(turning_angle<0) {
-			left_speed = FORWARD_SPEED-5;
-			right_speed = FORWARD_SPEED+5;
+			left_speed = FORWARD_SPEED-correction;
+			right_speed = FORWARD_SPEED+correction;
 		}
+		
 		else {
-			left_speed = FORWARD_SPEED+5;
-			right_speed = FORWARD_SPEED-5;
+			left_speed = FORWARD_SPEED+correction;
+			right_speed = FORWARD_SPEED-correction;
 		}
 	}
 
@@ -148,6 +148,7 @@ public class Navigation {
 		motorcontrol.dime_turn(turning_angle);
 	}
 
+	
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
 		if (euclidian_error(xf - position[0], yf - position[1]) < 0.75) {
