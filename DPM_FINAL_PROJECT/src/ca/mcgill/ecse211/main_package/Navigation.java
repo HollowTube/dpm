@@ -26,22 +26,13 @@ public class Navigation {
 	public static double dy = 0;
 	private int left_speed;
 	private int right_speed;
+	private double heading_error;
 
 	public Navigation() throws OdometerExceptions {
 		Navigation.odometer = Odometer.getOdometer();
 		Navigation.motorcontrol = MotorControl.getMotor();
 	}
-
-	/**
-	 * This method makes the robot travel to a certain coordinate, it will also hand
-	 * control to another method if an obstacle is ever detected. It depends on the
-	 * odometer data to get the correct heading
-	 * 
-	 * @param xf
-	 * @param yf
-	 * 
-	 * @throws OdometerExceptions
-	 */
+	
 	private double[] get_position() {
 		return odometer.getXYT();
 	}
@@ -50,13 +41,13 @@ public class Navigation {
 	public void travelTo(double xf, double yf) {
 		position = get_position();
 		motorcontrol.forward(left_speed, right_speed);
-		// if (Math.abs(position[2] - getHeading(xf - position[0], yf - position[1])) >
-		// HEADING_THRESHOLD) {
-		// angle_correction(position[2]);
-		// } else {
-		left_speed = FORWARD_SPEED;
-		right_speed = FORWARD_SPEED;
-		// }
+		heading_error = position[2] - getHeading(xf - position[0], yf - position[1]);
+		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
+			angle_correction(heading_error);
+		} else {
+			left_speed = FORWARD_SPEED;
+			right_speed = FORWARD_SPEED;
+		}
 	}
 
 	/**
@@ -106,9 +97,14 @@ public class Navigation {
 	 */
 	private void angle_correction(double turning_angle) {
 		int correction;
-		correction = (int) (P_CONST * turning_angle);
-		left_speed = left_speed + correction;
-		right_speed = right_speed - correction;
+		if(turning_angle<0) {
+			left_speed = FORWARD_SPEED-5;
+			right_speed = FORWARD_SPEED+5;
+		}
+		else {
+			left_speed = FORWARD_SPEED+5;
+			right_speed = FORWARD_SPEED-5;
+		}
 	}
 
 	/**
@@ -149,15 +145,12 @@ public class Navigation {
 		Sound.beep();
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
-		System.out.println("dx" + dx + " dy" + dy + " initial heading" + initial_heading + " final heading"
-				+ final_heading + " turning angle" + turning_angle);
 		motorcontrol.dime_turn(turning_angle);
-
 	}
 
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (euclidian_error(xf - position[0], yf - position[1]) < 5) {
+		if (euclidian_error(xf - position[0], yf - position[1]) < 0.75) {
 			return true;
 		}
 		return false;

@@ -38,6 +38,7 @@ public class LightPoller {
 		boolean edge;
 		current_light = getValue();
 
+		
 		if (first_time) {
 			prev_light = current_light;
 			first_time = false;
@@ -45,8 +46,10 @@ public class LightPoller {
 
 		if (current_light < threshold && prev_light > threshold)
 			edge = true;
-		else
+		else {
 			edge = false;
+		}
+			
 		prev_light = current_light;
 		return edge;
 	}
@@ -55,6 +58,7 @@ public class LightPoller {
 		boolean edge;
 		current_light = getValue();
 
+
 		if (first_time) {
 			prev_light = current_light;
 			first_time = false;
@@ -62,8 +66,10 @@ public class LightPoller {
 
 		if (current_light > threshold && prev_light < threshold)
 			edge = true;
-		else
+		else {
 			edge = false;
+		}
+			
 		prev_light = current_light;
 		return edge;
 	}

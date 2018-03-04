@@ -21,26 +21,32 @@ public class MotorControl {
 	private double tunnel_radius = 2.05;
 	private double tunnel_track = 14.45;
 
-	private double radius = 2.05;
-	private double track = 14.45;
-	private final int ROTATE_SPEED = 100;
+	private static double radius;
+	private static double track ; //14.45
+	private final int ROTATE_SPEED = 80;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol = null;
+	
+	private static int TURNING_SPEED = 100;
 
-	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor) {
+	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double radius, double track) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
+		MotorControl.radius = radius;
+		MotorControl.track = track;
+		leftMotor.setAcceleration(1000);
+		rightMotor.setAcceleration(1000);
 		// MotorControl.odometer = Odometer.getOdometer();
 	}
 
 	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor,
-			EV3LargeRegulatedMotor rightMotor) {
-		leftMotor.setSpeed(100);
-		rightMotor.setSpeed(100);
+			EV3LargeRegulatedMotor rightMotor, double radius, double track) {
+		leftMotor.setSpeed(80);
+		rightMotor.setSpeed(80);
 		if (motorcontrol != null) { // Return existing object
 			return motorcontrol;
 		} else { // create object and return it
-			motorcontrol = new MotorControl(leftMotor, rightMotor);
+			motorcontrol = new MotorControl(leftMotor, rightMotor,radius,track);
 			return motorcontrol;
 		}
 
@@ -147,6 +153,8 @@ public class MotorControl {
 	 * @param rotation
 	 */
 	public void dime_turn(double rotation) {
+		leftMotor.setSpeed(TURNING_SPEED);
+		rightMotor.setSpeed(TURNING_SPEED);
 
 		if (rotation < 0) {
 			leftMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), true);

@@ -16,7 +16,7 @@ public class LightPollerColor {
 	private SampleProvider lt;
 	private float[] ltdata;
 	public MotorControl motorcontrol;
-
+ 
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
 	private Color red_block = new Color(0.20767974f, 0.027133795f, 0.015695887f, 0.3038505f, 0.04516072f, 0.02923487f,
