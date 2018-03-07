@@ -1,5 +1,7 @@
-package ca.mcgill.ecse211.main_package;
+package ca.mcgill.ecse211.Localization;
 
+import ca.mcgill.ecse211.main_package.LightPoller;
+import ca.mcgill.ecse211.main_package.MotorControl;
 import ca.mcgill.ecse211.odometer.*;
 
 public class Angle_Localization {

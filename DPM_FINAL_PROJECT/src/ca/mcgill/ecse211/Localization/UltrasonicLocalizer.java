@@ -1,7 +1,6 @@
 package ca.mcgill.ecse211.Localization;
 
 import ca.mcgill.ecse211.odometer.*;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.main_package.*;
 
@@ -10,7 +9,7 @@ public class UltrasonicLocalizer {
 	private static double noise_margin = 2;
 	private final Odometer odo;
 	private final Nav nav;
-	private final EV3UltrasonicSensor us;
+	//private final EV3UltrasonicSensor us;
 	private MotorControl motorcontrol;
 	private SampleProvider sampleProv;
 	private final int type;
@@ -19,11 +18,10 @@ public class UltrasonicLocalizer {
 	public double[] edgeDetect = new double[2];
 	public double[] wallSpots = new double[2];
 	
-	public UltrasonicLocalizer(Odometer odo, Nav nav, EV3UltrasonicSensor us, int type, MotorControl motorcontrol){
+	public UltrasonicLocalizer(Odometer odo, Nav nav, SampleProvider us, int type, MotorControl motorcontrol){
 		this.odo=odo;
 		this.nav=nav;
-		this.us= us;
-		this.sampleProv = us.getDistanceMode();
+		this.sampleProv = us;
 		this.type=type;
 		this.motorcontrol = motorcontrol;
 	}
@@ -65,14 +63,14 @@ public class UltrasonicLocalizer {
 		 * - reverse and beep at what point the sensor reads a value entering the wall_distance + noise
 		 * - exit fallingEdge method and determine correction angle
 		 * */
-		motorcontrol.setLeftSpeed(125);
-		motorcontrol.setRightSpeed(125);
+		motorcontrol.setLeftSpeed(175);
+		motorcontrol.setRightSpeed(175);
 		motorcontrol.leftforward();
 		motorcontrol.rightbackward();
 		while(getDistance() < 150){} //spin until pointing away
 
-		motorcontrol.setLeftSpeed(70); //begin slowly turning left to find a wall
-		motorcontrol.setRightSpeed(70);
+		motorcontrol.setLeftSpeed(150); //begin slowly turning left to find a wall
+		motorcontrol.setRightSpeed(150);
 		motorcontrol.leftbackward();
 		motorcontrol.rightforward();
 		
@@ -86,7 +84,7 @@ public class UltrasonicLocalizer {
 		motorcontrol.rightbackward();
 		
 		try{
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		}catch(Exception e){}
 		
 		while(getDistance() >= (wall_distance + noise_margin)){} //let spin until distance enters margin, stop when wall is found
@@ -103,15 +101,15 @@ public class UltrasonicLocalizer {
 		 * - continue same spin and beep at what point the sensor reads a value entering the wall_distance - noise
 		 * - exit fallingEdge method and determine correction angle
 		 * */
-		motorcontrol.setLeftSpeed(125);
-		motorcontrol.setRightSpeed(125);
+		motorcontrol.setLeftSpeed(175);
+		motorcontrol.setRightSpeed(175);
 		motorcontrol.leftforward();
 		motorcontrol.rightbackward();
 		
 		while(getDistance() < 150){} //spin until pointing towards
 
-		motorcontrol.setLeftSpeed(70);
-		motorcontrol.setRightSpeed(70);
+		motorcontrol.setLeftSpeed(150);
+		motorcontrol.setRightSpeed(150);
 		motorcontrol.leftbackward();
 		motorcontrol.rightforward();
 		
@@ -125,7 +123,7 @@ public class UltrasonicLocalizer {
 		motorcontrol.rightforward();
 		
 		try{
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		}catch(Exception e){}
 		
 		while(getDistance() <= (wall_distance - noise_margin)){} //let spin until distance enters margin
