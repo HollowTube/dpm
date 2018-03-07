@@ -19,9 +19,10 @@ public class MotorControl {
 	private double tunnel_radius = 2.05;
 	private double tunnel_track = 14.45;
 
-	private static double radius;
-	private static double track ; //14.45
-	private final int ROTATE_SPEED = 80;
+	private double radius = 2.05;
+	private double track = 14.45;
+	private final int ROTATE_SPEED = 150;
+	private final int PATH_SPEED = 200;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol = null;
 	
@@ -126,6 +127,10 @@ public class MotorControl {
 	public void forward() {
 		leftMotor.forward();
 		rightMotor.forward();
+	}
+	public void backward(){
+		leftMotor.backward();
+		rightMotor.backward();
 	}
 
 	/**

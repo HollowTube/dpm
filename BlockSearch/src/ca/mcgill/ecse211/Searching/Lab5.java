@@ -26,7 +26,7 @@ public class Lab5 {
 	public static final double TILE_SIZE = 30.48;
 	public static Odometer odometer;
 	private static EV3UltrasonicSensor usSensor = new EV3UltrasonicSensor(LocalEV3.get().getPort("S2"));
-	private static EV3UltrasonicSensor usSensorBlock = new EV3UltrasonicSensor(LocalEV3.get().getPort("S4"));
+	//private static EV3UltrasonicSensor usSensorBlock = new EV3UltrasonicSensor(LocalEV3.get().getPort("S4"));
 	public static Audio noisemaker = LocalEV3.get().getAudio();
 	private static UltrasonicLocalizer usLocalizer;
 	private static Navigation nav;
@@ -56,7 +56,7 @@ public class Lab5 {
 		nav = new Navigation(leftMotor, rightMotor, WHEEL_RAD, TRACK, odometer);
 		odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		waypointer = new Waypoints(nav, odometer);
-		search = new Searching(leftMotor, rightMotor, odometer, nav, usSensorBlock, usSensor, colorSensorBlock);
+		//search = new Searching(leftMotor, rightMotor, odometer, nav, usSensorBlock, usSensor, colorSensorBlock);
 		Display odometryDisplay = new Display(lcd);
 		
 		SampleProvider usDistance = usSensor.getMode("Distance"); // usDistance provides samples from this instance
