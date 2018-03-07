@@ -13,12 +13,9 @@ public class Navigation {
 
 	private double position[];
 	// private double newheading;
-	private final int FORWARD_SPEED = 250;
-	private final int ROTATE_SPEED = 120;
-	private final double RANGE_THRESHOLD = 0.5;
+	private final int FORWARD_SPEED = 150;
 	private final int HEADING_THRESHOLD = 1;
-	private final double TILE_SIZE = 30.48;
-	private final double P_CONST = 5;
+
 
 	public static double final_heading = 0;
 	public static double absolute_distance = 0;
@@ -26,22 +23,13 @@ public class Navigation {
 	public static double dy = 0;
 	private int left_speed;
 	private int right_speed;
+	private double heading_error;
 
 	public Navigation() throws OdometerExceptions {
 		Navigation.odometer = Odometer.getOdometer();
 		Navigation.motorcontrol = MotorControl.getMotor();
 	}
-
-	/**
-	 * This method makes the robot travel to a certain coordinate, it will also hand
-	 * control to another method if an obstacle is ever detected. It depends on the
-	 * odometer data to get the correct heading
-	 * 
-	 * @param xf
-	 * @param yf
-	 * 
-	 * @throws OdometerExceptions
-	 */
+	
 	private double[] get_position() {
 		return odometer.getXYT();
 	}
@@ -49,14 +37,16 @@ public class Navigation {
 	// travels straight
 	public void travelTo(double xf, double yf) {
 		position = get_position();
-		motorcontrol.forward(left_speed, right_speed);
-		// if (Math.abs(position[2] - getHeading(xf - position[0], yf - position[1])) >
-		// HEADING_THRESHOLD) {
-		// angle_correction(position[2]);
-		// } else {
-		left_speed = FORWARD_SPEED;
-		right_speed = FORWARD_SPEED;
-		// }
+		motorcontrol.setLeftSpeed(left_speed);
+		motorcontrol.setRightSpeed(right_speed);
+		motorcontrol.forward();
+		heading_error = position[2] - getHeading(xf - position[0], yf - position[1]);
+		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
+			angle_correction(heading_error);
+		} else {
+			left_speed = FORWARD_SPEED;
+			right_speed = FORWARD_SPEED;
+		}
 	}
 
 	/**
@@ -90,25 +80,31 @@ public class Navigation {
 		return angle * 180 / Math.PI;
 	}
 
-	public static int convertAngle(double radius, double width, double angle) {
+	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
-	public static int convertDistance(double radius, double distance) {
+	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
 	/**
-	 * This method uses a simple p-controller to correct differences between the
+	 * This method uses a simple bang bang controller to correct differences between the
 	 * desired heading, and actual desired heading
 	 * 
 	 * @param turning_angle
 	 */
 	private void angle_correction(double turning_angle) {
-		int correction;
-		correction = (int) (P_CONST * turning_angle);
-		left_speed = left_speed + correction;
-		right_speed = right_speed - correction;
+		int correction = 5;
+		if(turning_angle<0) {
+			left_speed = FORWARD_SPEED-correction;
+			right_speed = FORWARD_SPEED+correction;
+		}
+		
+		else {
+			left_speed = FORWARD_SPEED+correction;
+			right_speed = FORWARD_SPEED-correction;
+		}
 	}
 
 	/**
@@ -127,15 +123,26 @@ public class Navigation {
 		else
 			return theta - 360;
 	}
-
+	
+	/**
+	 * calculates the smallest angle to rotate to desired heading and turns on a dime to it
+	 * @param angle
+	 */
+	public void turn_to_angle(double angle) {
+		double initial_heading, turning_angle;
+		initial_heading = odometer.getXYT()[2];
+		final_heading = angle;
+		turning_angle = min_angle(initial_heading, final_heading);
+		motorcontrol.dime_turn(turning_angle);
+	}
 	/**
 	 * this method calculates the smallest angle to rotate to the correct heading
-	 * and then turns on a dime to reach it
+	 * and then turns on a dime to reach it, inputs are the desired x and y positions
 	 * 
 	 * @param xf
 	 * @param yf
 	 */
-	public void turn_to_heading(double xf, double yf) {
+	public void turn_to_destination(double xf, double yf) {
 		double position[];
 		double dx, dy;
 		double initial_heading, turning_angle, xi, yi;
@@ -149,15 +156,13 @@ public class Navigation {
 		Sound.beep();
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
-		System.out.println("dx" + dx + " dy" + dy + " initial heading" + initial_heading + " final heading"
-				+ final_heading + " turning angle" + turning_angle);
 		motorcontrol.dime_turn(turning_angle);
-
 	}
 
+	
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (euclidian_error(xf - position[0], yf - position[1]) < 5) {
+		if (euclidian_error(xf - position[0], yf - position[1]) < 0.75) {
 			return true;
 		}
 		return false;

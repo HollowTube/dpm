@@ -1,35 +1,30 @@
 package ca.mcgill.ecse211.Localization;
 
+import ca.mcgill.ecse211.main_package.*;
 import ca.mcgill.ecse211.odometer.*;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Nav extends OdometerData {
 	private static final int FORWARD_SPEED = 250;
-	private static final int ROTATE_SPEED = 150;
 	private static double path_distance;
 	public double Wheel_Radius;
 	public double track;
+	private double TILE_SIZE =30.48;
 	private static double xyt[] = new double[3];
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
+	private MotorControl motorcontrol; 
 	Odometer odometer;
 	public OdometerData odoData;
 
-	// initiate the Navigation system and give the class the motors and odometer to
-	// use
-	public Nav(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, double Wheel_Radius, double track,
-			Odometer odometer) {
+	/* initiate the Navigation system and give the class the motors and odometer to
+	 * use
+	 * */
+	public Nav(MotorControl motorcontrol, double Wheel_Radius, double track,Odometer odometer) {
 		this.Wheel_Radius = Wheel_Radius;
 		this.track = track;
 		this.odometer = odometer;
-		this.leftMotor = leftMotor;
-		this.rightMotor = rightMotor;
-		// set motor acceleration
-		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor, rightMotor }) {
-			motor.stop();
-			motor.setAcceleration(1000);
-		}
-		// Set up the odometer to receive data
+		this.motorcontrol = motorcontrol;
+		/* set motor acceleration*/
+		motorcontrol.setAcceleration(1000);
+		/* Set up the odometer to receive data*/
 		try {
 			odoData = odometer.getOdometerData(); // synchronize with the odometer data
 		} catch (Exception e) {
@@ -40,48 +35,42 @@ public class Nav extends OdometerData {
 	void travelTo(double x, double y) {
 		xyt = odometer.getXYT(); // get current position
 		path_distance = Math.pow(Math.pow(x - xyt[0], 2) + Math.pow(y - xyt[1], 2), 0.5); // calculate length of path
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
-		leftMotor.rotate(convertDistance(Wheel_Radius, path_distance), true); // travel straight
-		rightMotor.rotate(convertDistance(Wheel_Radius, path_distance), false);
+		motorcontrol.setLeftSpeed(FORWARD_SPEED);
+		motorcontrol.setRightSpeed(FORWARD_SPEED);
+		motorcontrol.moveSetDistance(path_distance);   //move forward by the distance calculated
 	}
 
-	void turnTo(double theta) {
-		// if theta > 180 || theta < -180
-		// then turn 360-theta or 360-Math.abs(theta)
-		if (theta >= 180) {
-			// turn negative direction (left)
-			theta = (360 - theta);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.rotate(-convertAngle(Wheel_Radius, track, theta), true);
-			rightMotor.rotate(convertAngle(Wheel_Radius, track, theta), false);
-		} else if (theta < -180) {
-			// turn positive direciton (right)
-			theta = 360 - Math.abs(theta);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.rotate(convertAngle(Wheel_Radius, track, theta), true);
-			rightMotor.rotate(-convertAngle(Wheel_Radius, track, theta), false);
-		} else {
-			if (theta < 0) {
-				// negative, turn left
-				leftMotor.setSpeed(ROTATE_SPEED);
-				rightMotor.setSpeed(ROTATE_SPEED);
-				leftMotor.rotate(-convertAngle(Wheel_Radius, track, Math.abs(theta)), true);
-				rightMotor.rotate(convertAngle(Wheel_Radius, track, Math.abs(theta)), false);
-			} else {
-				// positive, turn right
-				leftMotor.setSpeed(ROTATE_SPEED);
-				rightMotor.setSpeed(ROTATE_SPEED);
-				leftMotor.rotate(convertAngle(Wheel_Radius, track, theta), true);
-				rightMotor.rotate(-convertAngle(Wheel_Radius, track, theta), false);
-			}
+	void turnToCoord(double x, double y){
+		xyt = odometer.getXYT();
+		if(x >= 0 && y >= 0){										//angles are from the y-axis instead of x-axis
+			turnTo((180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/TILE_SIZE)), y-(Math.round(xyt[1]/TILE_SIZE)))-xyt[2]);  		//angles in positive xy-plane
+		}else if(y < 0){							
+			turnTo(180+(180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/TILE_SIZE)), y-(Math.round(xyt[1]/TILE_SIZE)))-xyt[2]);	//angles in the negative y-plane
+		}else{
+			turnTo(360+(180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/TILE_SIZE)), y-(Math.round(xyt[1]/TILE_SIZE)))-xyt[2]); 	//angles in negative x-plane and positive y-plane
 		}
+		//turnTo((180/Math.PI)*Math.atan2(x-(Math.round(xyt[0]/Lab4.TILE_SIZE)), y-(Math.round(xyt[1]/Lab4.TILE_SIZE))));
+	}
+	
+	/**
+	 * Turn to the specific coordinates provided by x, y relative to the robot's current position
+	 * x, y should be in cm, not coordinates
+	 * @param x
+	 * @param y
+	 */
+	void turnToPoint(double x, double y){
+		xyt = odometer.getXYT();
+		double currentX = xyt[0];
+		double currentY = xyt[1];
+		double path_angle = (180/Math.PI)*Math.atan2(x-(Math.round(currentX/TILE_SIZE)), y-(Math.round(currentY/TILE_SIZE)));
+		turnTo(path_angle-xyt[2]);
+	}
+	void turnTo(double theta) {
+		motorcontrol.turnto(theta);   //turn by the angle input 
 	}
 
 	boolean isNavigating() {
-		return leftMotor.isMoving();
+		return motorcontrol.isMoving();   //verify if motor is moving
 	}
 
 	private static int convertDistance(double radius, double distance) {

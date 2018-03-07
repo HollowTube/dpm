@@ -1,8 +1,12 @@
 package ca.mcgill.ecse211.main_package;
 
+<<<<<<< HEAD
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
+=======
+import ca.mcgill.ecse211.odometer.*;
+>>>>>>> 0943d13db20c9fda1a3e7f7a55c81b03fcca8678
 
 public class Angle_Localization {
 
