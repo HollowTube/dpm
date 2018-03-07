@@ -30,7 +30,6 @@ public class Lab5 {
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
 
-
 	static EV3ColorSensor colorSensorReflected = new EV3ColorSensor(sensorPort);
 	static SampleProvider colorRGBSensorReflected = colorSensorReflected.getRedMode();
 	static int sampleSizeReflected = colorRGBSensorReflected.sampleSize();
@@ -50,11 +49,9 @@ public class Lab5 {
 
 	final static String target_color = "red";
 
-	// TODO implement heading correction with 2 light sensors, or just 1
 	// TODO breakdown waypoints into x and y coordinates
 
 	// TODO heading correction to be done before every turn
-	// TODO display current state on machine
 	// TODO convert parameters of course into workable coordinates
 	// TODO extra localization on bridge and tunnel
 	// TODO
@@ -75,7 +72,6 @@ public class Lab5 {
 
 		Display odometryDisplay = new Display(lcd); // No need to change
 
-		final Localization localizer = new Localization(motorControl);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		// final Nav nav = new Nav(leftMotor, rightMotor,WHEEL_RAD, TRACK, odometer);
@@ -119,12 +115,11 @@ public class Lab5 {
 
 				// simply imput waypoints here, will only update after it reaches the
 				// destination
-				double[][] waypoints = { { 212, 0 }, { 212, 212 }, { 0, 212 }, { 0, 0 } };
+				double[][] waypoints = { { 30, 0 }, { 30, 30 }, { 0, 30 }, { 0, 0 } };
 				int i = 0;
 				double xf = 0;
 				double yf = 0;
 
-				boolean detection = true;
 
 				// state machine implementation, if you add any states makes sure that it does
 				// not get stuck in a loop
@@ -145,7 +140,7 @@ public class Lab5 {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.ANGLE_LOCALIZATION;
+						state = List_of_states.TURNING;
 						break;
 					// dime turn towards necessary destination
 					case TURNING:
@@ -163,12 +158,13 @@ public class Lab5 {
 						// TODO implement simple control feedback while the robot is travelling so that
 						// it stays on course
 						navigator.travelTo(xf, yf);
+						A_loc.fix_angle();
 
-//						if (usPoller2.obstacleDetected(50)) {
-//							motorControl.stop();
-//							state = List_of_states.TRAVEL_TO_TARGET;
-//							break;
-//						}
+						// if (usPoller2.obstacleDetected(50)) {
+						// motorControl.stop();
+						// state = List_of_states.TRAVEL_TO_TARGET;
+						// break;
+						// }
 
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
@@ -227,13 +223,14 @@ public class Lab5 {
 						}
 						break;
 					case ANGLE_LOCALIZATION:
+						motorControl.forward();
 						A_loc.fix_angle();
-						motorControl.stop();
-						state = List_of_states.IDLE;
+						//state = List_of_states.IDLE;
 						break;
 
 					case TEST:
-						motorControl.dime_turn(90);
+						motorControl.leftRot(100, true);
+						motorControl.rightRot(100, false);
 						state = List_of_states.IDLE;
 						break;
 					}

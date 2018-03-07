@@ -11,7 +11,7 @@ public class OdometryCorrection implements Runnable {
 	private static final double SQUARE_LENGTH = 30.48;
 	private static final double ANGLE_THRESHOLD = 20;
 	private static final double LIGHTSENS_OFFSET = 3.5;
-	private static final double LIGHTSENS_THRESHOLD = 10;
+	private static final double LIGHTSENS_THRESHOLD = 25;
 	private Odometer odometer;
 	private SampleProvider lt;
 	private float[] ltdata;
