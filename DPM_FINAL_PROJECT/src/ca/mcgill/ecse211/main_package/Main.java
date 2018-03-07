@@ -58,7 +58,6 @@ public class Main {
 
 	// TODO heading correction to be done before every turn
 	// TODO convert parameters of course into workable coordinates
-	// TODO extra localization on bridge and tunnel
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION
 	}
@@ -155,15 +154,11 @@ public class Main {
 					// travels to waypoints while scanning for objects
 					case SEARCHING:
 
-						// TODO implement simple control feedback while the robot is travelling so that
-						// it stays on course
 						navigator.travelTo(xf, yf);
 
-//						if (usPoller2.obstacleDetected(50)) {
-//							motorControl.stop();
-//							state = List_of_states.TRAVEL_TO_TARGET;
-//							break;
-//						}
+						if(tunnel_bridge_reached()) {
+							
+						}
 
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
@@ -232,6 +227,11 @@ public class Main {
 
 					sleeptime(50);
 				}
+			}
+
+			private boolean tunnel_bridge_reached() {
+				
+				return false;
 			}
 		}).start();
 
