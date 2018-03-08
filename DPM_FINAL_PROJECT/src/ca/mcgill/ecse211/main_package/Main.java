@@ -2,6 +2,9 @@
 package ca.mcgill.ecse211.main_package;
 
 import ca.mcgill.ecse211.odometer.*;
+
+import java.util.ArrayList;
+
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
@@ -14,7 +17,7 @@ import lejos.robotics.SampleProvider;
 import lejos.robotics.navigation.Navigator;
 import ca.mcgill.ecse211.Localization.*;
 
-public class Lab5 {
+public class Main {
 
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
@@ -23,13 +26,12 @@ public class Lab5 {
 	private static final Port sensorPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 17.0;
+	public static final double TRACK = 16.85;
 
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
-
 
 	static EV3ColorSensor colorSensorReflected = new EV3ColorSensor(sensorPort);
 	static SampleProvider colorRGBSensorReflected = colorSensorReflected.getRedMode();
@@ -50,16 +52,12 @@ public class Lab5 {
 
 	final static String target_color = "red";
 
-	// TODO implement heading correction with 2 light sensors, or just 1
 	// TODO breakdown waypoints into x and y coordinates
 
 	// TODO heading correction to be done before every turn
-	// TODO display current state on machine
 	// TODO convert parameters of course into workable coordinates
-	// TODO extra localization on bridge and tunnel
-	// TODO
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING
 	}
 
 	static List_of_states state;
@@ -67,22 +65,18 @@ public class Lab5 {
 	public static void main(String[] args) throws OdometerExceptions {
 
 		int buttonChoice;
-
+		int current_waypoint = 0;
 		// Odometer related objects
-		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
+		
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
-
 		Display odometryDisplay = new Display(lcd); // No need to change
 
-		final Localization localizer = new Localization(motorControl);
+		
+		//Various class initialization
+		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD,TRACK);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-		// final Nav nav = new Nav(leftMotor, rightMotor,WHEEL_RAD, TRACK, odometer);
-		// final UltrasonicLocalizer USLoc = new UltrasonicLocalizer(odometer, nav,
-		// (EV3UltrasonicSensor) myDistance, 1);
-		// final LightLocalizer lightLoc = new LightLocalizer(odometer, nav,
-		// colorSensorReflected, leftMotor, rightMotor);
 
 		// clear the display
 		lcd.clear();
@@ -109,22 +103,19 @@ public class Lab5 {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
 			odoCorrectionThread.start();
 		}
+		ArrayList<Double[]> list = new ArrayList<Double[]>();
 
 		// spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
 			public void run() {
 
-				// TODO algorithm to determine the necessary waypoints with given Lower left
-				// corner and upper right corner
-
-				// simply imput waypoints here, will only update after it reaches the
+				// simply input waypoints here, will only update after it reaches the
 				// destination
-				double[][] waypoints = { { 212, 0 }, { 212, 212 }, { 0, 212 }, { 0, 0 } };
-				int i = 0;
+				double[][] waypoints = { { 30, 0 }, { 30, 30 }, { 0, 30 }, { 0, 0 } };
+				int current_waypoint = 0;
 				double xf = 0;
 				double yf = 0;
 
-				boolean detection = true;
 
 				// state machine implementation, if you add any states makes sure that it does
 				// not get stuck in a loop
@@ -135,7 +126,7 @@ public class Lab5 {
 					switch (state) {
 
 					// TODO implement localization, set odometer to (30,30,0)
-					// intial state of the robot, localization should be implemented here
+					// initial state of the robot, localization should be implemented here
 					case INITIALIZE:
 						odometer.setXYT(0.01, 0.01, 0.01);
 						state = List_of_states.IDLE;
@@ -145,41 +136,34 @@ public class Lab5 {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.ANGLE_LOCALIZATION;
+						state = List_of_states.TURNING;
 						break;
 					// dime turn towards necessary destination
 					case TURNING:
 
 						Sound.beep();
-						xf = waypoints[i][0];
-						yf = waypoints[i][1];
-						navigator.turn_to_heading(xf, yf);
+						xf = waypoints[current_waypoint][0];
+						yf = waypoints[current_waypoint][1];
+						navigator.turn_to_destination(xf, yf);
 						state = List_of_states.SEARCHING;
 						break;
 
-					// travels to waypoint while scanning for objects
-					case SEARCHING:
+					// travels to waypoints while scanning for objects
+					case TRAVELLING:
 
-						// TODO implement simple control feedback while the robot is travelling so that
-						// it stays on course
 						navigator.travelTo(xf, yf);
-
-//						if (usPoller2.obstacleDetected(50)) {
-//							motorControl.stop();
-//							state = List_of_states.TRAVEL_TO_TARGET;
-//							break;
-//						}
+						A_loc.fix_angle();
 
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
 							motorControl.stop();
 							sleeptime(2000);
-							i++;
+							current_waypoint++;
 							Sound.beep();
 
 							// resets the machine to its initial state
-							if (i > waypoints.length) {
-								i = 0;
+							if (current_waypoint == waypoints.length) {
+								current_waypoint = 0;
 								state = List_of_states.IDLE;
 
 							} else {
@@ -189,23 +173,20 @@ public class Lab5 {
 						}
 						break;
 
-					// TODO after the sensor pick up an object to the side, rotates 90 degrees and
-					// moves
-					// until the color sensor is in position
-					// be sure to test this
 					case TRAVEL_TO_TARGET:
 
 						motorControl.dime_turn(-90);
-						motorControl.forward(100, 100);
+						motorControl.forward();
 						while (usPoller.obstacleDetected(10)) {
 						}
 						motorControl.stop();
 						state = List_of_states.IDENTIFYING;
 
+
+					case RETURN_TO_PATH:
 						// TODO subroutine to get back on the travel path should be done here
 						// suggest to store the position when the object is detected and return to that
 						// after
-					case RETURN_TO_PATH:
 
 						state = List_of_states.TURNING;
 
@@ -215,38 +196,45 @@ public class Lab5 {
 						// lightPoller.target_found(target_color);
 						state = List_of_states.IDLE;
 						break;
+						
+					case BRIDGE_CROSSING:
+						motorControl.transform();
+//						localize.localize_bridge;
+						navigator.turn_to_destination(xf, yf);
+						double bridge_length = 0;
+						motorControl.leftRot(bridge_length, true);
+						motorControl.rightRot(bridge_length, false);
+						
+						
+					
+						
 
-					case COLOR_DEMO:
-						lcd.clear();
-						while (usPoller.obstacleDetected(10)) {
-							lcd.drawString("Oject detected", 0, 0);
-							// lightPoller.detectColor();
-							while (Button.waitForAnyPress() != Button.ID_UP)
-								sleeptime(50); // waits until the up button is pressed
-
-						}
-						break;
 					case ANGLE_LOCALIZATION:
+						motorControl.forward();
 						A_loc.fix_angle();
-						motorControl.stop();
-						state = List_of_states.IDLE;
+						//state = List_of_states.IDLE;
 						break;
 
 					case TEST:
-						motorControl.dime_turn(90);
+						motorControl.leftRot(100, true);
+						motorControl.rightRot(100, false);
+						//A_loc.fix_angle();
+						motorControl.stop();
 						state = List_of_states.IDLE;
 						break;
 					}
-
 					sleeptime(50);
 				}
 			}
+
+
 		}).start();
 
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
 			;
 		System.exit(0);
 	}
+	
 
 	public static void sleeptime(int time) {
 		try {
