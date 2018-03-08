@@ -1,7 +1,7 @@
 package ca.mcgill.ecse211.Localization;
 
 import ca.mcgill.ecse211.main_package.*;
-import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.sensor.*;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 

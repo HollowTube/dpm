@@ -74,10 +74,11 @@ public class Main {
 
 		
 		//Various class initialization
-		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD,TRACK);
+		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-
+		final Nav nav = new Nav(motorControl, WHEEL_RAD, TRACK, odometer);
+		final Full_Localization Localize = new Full_Localization(odometer, nav, myDistance, motorControl, lightPollerleft, lightPollerright);
 		// clear the display
 		lcd.clear();
 
@@ -128,7 +129,12 @@ public class Main {
 					// TODO implement localization, set odometer to (30,30,0)
 					// initial state of the robot, localization should be implemented here
 					case INITIALIZE:
-						odometer.setXYT(0.01, 0.01, 0.01);
+						try {
+							Localize.Corner_Localize();
+						} catch (OdometerExceptions e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						state = List_of_states.IDLE;
 						break;
 
@@ -198,7 +204,7 @@ public class Main {
 						break;
 						
 					case BRIDGE_CROSSING:
-						motorControl.transform();
+						
 //						localize.localize_bridge;
 						navigator.turn_to_destination(xf, yf);
 						double bridge_length = 0;
