@@ -44,6 +44,7 @@ public class Full_Localization {
 			Thread.sleep(200);
 		}catch (Exception e){}
 		motorcontrol.moveSetDistance(LS_offset);
+
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}
@@ -60,6 +61,7 @@ public class Full_Localization {
 			Thread.sleep(200);
 		}catch (Exception e){}
 		motorcontrol.moveSetDistance(LS_offset);
+
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}

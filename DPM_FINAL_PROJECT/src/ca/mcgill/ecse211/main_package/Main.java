@@ -26,8 +26,7 @@ public class Main {
 	private static final Port sensorPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 16.85;
-
+	public static final double TRACK = 14.8;
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
@@ -63,6 +62,25 @@ public class Main {
 	static List_of_states state;
 
 	public static void main(String[] args) throws OdometerExceptions {
+//		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
+//		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
+//		final Nav nav = new Nav(motorControl, WHEEL_RAD, TRACK, odometer);
+//		final Full_Localization Localize = new Full_Localization(odometer, nav, myDistance, motorControl, lightPollerleft, lightPollerright);
+//		Display odometryDisplay = new Display(lcd); // No need to change
+//		Thread odo = new Thread(odometer);
+//		odo.start();
+//		Thread odoDisplay = new Thread(odometryDisplay);
+//		odoDisplay.start();
+//		(new Thread(){
+//			public void run(){
+//				try{
+//					Localize.Corner_Localize();
+//				}catch(Exception e){}
+//			}
+//		}).start();
+//		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
+//		System.exit(0);
+//	}
 
 		int buttonChoice;
 		int current_waypoint = 0;
@@ -163,7 +181,6 @@ public class Main {
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
 							motorControl.stop();
-							sleeptime(2000);
 							current_waypoint++;
 							Sound.beep();
 
@@ -240,7 +257,6 @@ public class Main {
 			;
 		System.exit(0);
 	}
-	
 
 	public static void sleeptime(int time) {
 		try {
