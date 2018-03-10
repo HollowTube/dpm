@@ -1,12 +1,10 @@
-package ca.mcgill.ecse211.main_package;
+package ca.mcgill.ecse211.Localization;
 
-<<<<<<< HEAD
-import ca.mcgill.ecse211.odometer.Odometer;
-import ca.mcgill.ecse211.odometer.OdometerExceptions;
-import lejos.hardware.Sound;
-=======
+
+import ca.mcgill.ecse211.main_package.LightPoller;
+import ca.mcgill.ecse211.main_package.MotorControl;
 import ca.mcgill.ecse211.odometer.*;
->>>>>>> 0943d13db20c9fda1a3e7f7a55c81b03fcca8678
+
 
 public class Angle_Localization {
 
@@ -29,7 +27,6 @@ public class Angle_Localization {
 			do {
 				if (left_sensor.lessThan(threshold)) {
 					motorcontrol.leftStop();
-					Sound.beep();
 					motorcontrol.leftRot(5, true);
 					motorcontrol.rightRot(5, false);
 					correctOdometryAngle();

@@ -60,6 +60,7 @@ public class Display implements Runnable {
 			lcd.drawString("Y: " + numberFormat.format(position[1]), 0, 1);
 			lcd.drawString("T: " + numberFormat.format(position[2]), 0, 2);
 			lcd.drawString("State " + Main.state.name(), 0, 3);
+
 			// lcd.drawString("New Heading: " +
 			// numberFormat.format(Navigation.final_heading), 0, 3);
 			// lcd.drawString("Distance: " + numberFormat.format(dist), 0, 4);

@@ -17,34 +17,29 @@ public class MotorControl {
 	private double bridge_track = 14.45;
 
 	private double tunnel_radius = 2.05;
-	private double tunnel_track = 14.45;
+	private double tunnel_track = 14.85;
 
-	private static double radius;
-	private static double track ; //14.45
-	private final int ROTATE_SPEED = 80;
+	private double radius = 2.05;
+	private double track = 14.85;
+	private final int ROTATE_SPEED = 150;
+	private final int PATH_SPEED = 200;
 	private static Odometer odometer;
 	private static MotorControl motorcontrol = null;
-	
-	private static int TURNING_SPEED = 100;
 
-	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double radius, double track) {
+	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
-		MotorControl.radius = radius;
-		MotorControl.track = track;
-		leftMotor.setAcceleration(1000);
-		rightMotor.setAcceleration(1000);
 		// MotorControl.odometer = Odometer.getOdometer();
 	}
 
 	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor,
-			EV3LargeRegulatedMotor rightMotor, double radius, double track) {
-		leftMotor.setSpeed(80);
-		rightMotor.setSpeed(80);
+			EV3LargeRegulatedMotor rightMotor) {
+		leftMotor.setSpeed(100);
+		rightMotor.setSpeed(100);
 		if (motorcontrol != null) { // Return existing object
 			return motorcontrol;
 		} else { // create object and return it
-			motorcontrol = new MotorControl(leftMotor, rightMotor,radius,track);
+			motorcontrol = new MotorControl(leftMotor, rightMotor);
 			return motorcontrol;
 		}
 
@@ -75,7 +70,7 @@ public class MotorControl {
 		rightMotor.rotate(-convertAngle(radius, track, 90.0), false);
 
 		leftMotor.rotate(convertDistance(radius, dist), true);
-		rightMotor.rotate(convertDistance(radius, dist), false);
+		rightMotor.rotate(convertDistance(radius, dist), false);	
 
 		leftMotor.rotate(-convertAngle(radius, track, 90.0), true);
 		rightMotor.rotate(convertAngle(radius, track, 90.0), false);
@@ -83,7 +78,6 @@ public class MotorControl {
 		leftMotor.rotate(convertDistance(radius, dist), true);
 		rightMotor.rotate(convertDistance(radius, dist), false);
 	}
-
 	/**
 	 * This method moves the bot forward and sets the left and right motor speeds
 	 * independently
@@ -127,6 +121,10 @@ public class MotorControl {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
+	public void backward(){
+		leftMotor.backward();
+		rightMotor.backward();
+	}
 
 	/**
 	 * left motor stops
@@ -163,16 +161,13 @@ public class MotorControl {
 		leftMotor.backward();
 		rightMotor.forward();
 	}
-	
 	/**
-	 * Set acceleration of the motors
+	 * Set accelearation of the motors
 	 */
 	public void setAcceleration(int acceleration){
 		leftMotor.setAcceleration(acceleration);
 		rightMotor.setAcceleration(acceleration);
 	}
-	
-	
 	/**
 	 * This method makes the robot turn on a dime for a certain amount of degrees,
 	 * positive rotation means clockwise ,negative rotation means counter-clockwise
@@ -180,10 +175,6 @@ public class MotorControl {
 	 * @param rotation
 	 */
 	public void dime_turn(double rotation) {
-		
-		
-		leftMotor.setSpeed(TURNING_SPEED);
-		rightMotor.setSpeed(TURNING_SPEED);
 
 		if (rotation < 0) {
 			leftMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), true);
@@ -192,7 +183,6 @@ public class MotorControl {
 			leftMotor.rotate(convertAngle(radius, track, Math.abs(rotation)), true);
 			rightMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), false);
 		}
-		
 	}
 
 	public boolean isMoving() {
@@ -225,8 +215,21 @@ public class MotorControl {
 		rightMotor.setSpeed(speed);
 	}
 
+	// public void turn_to_heading(double finalHead) {
+	//
+	// double initial_heading, turning_angle;
+	//
+	// initial_heading = odometer.getXYT()[2];
+	//
+	// turning_angle = Navigation.min_angle(initial_heading, finalHead);
+	//
+	// dime_turn(turning_angle, 100, true);
+	// stop();
+	//
+	// }
+
 	/**
-	 * Works exactly like the default rotate function for the left motor except you
+	 * Works exactly like the default rotate function for the left motor execpt you
 	 * only need to input the distance you want
 	 * 
 	 * @param rotation
@@ -239,18 +242,7 @@ public class MotorControl {
 			leftMotor.rotate(-convertDistance(radius, Math.abs(distance)), block);
 		}
 	}
-	
-	public void transform() {
-		
-	}
-	
-	/**
-	 * Works exactly like the default rotate function for the left motor except you
-	 * only need to input the distance you want
-	 * 
-	 * @param rotation
-	 * @param block
-	 */
+
 	public void rightRot(double distance, boolean block) {
 		if (distance > 0) {
 			rightMotor.rotate(convertDistance(radius, Math.abs(distance)), block);

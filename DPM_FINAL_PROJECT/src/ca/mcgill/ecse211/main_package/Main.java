@@ -26,8 +26,7 @@ public class Main {
 	private static final Port sensorPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 16.85;
-
+	public static final double TRACK = 14.8;
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
@@ -74,10 +73,11 @@ public class Main {
 
 		
 		//Various class initialization
-		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD,TRACK);
+		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-
+		final Nav nav = new Nav(motorControl, WHEEL_RAD, TRACK, odometer);
+		final Full_Localization Localize = new Full_Localization(odometer, nav, myDistance, motorControl, lightPollerleft, lightPollerright);
 		// clear the display
 		lcd.clear();
 
@@ -116,7 +116,6 @@ public class Main {
 				double xf = 0;
 				double yf = 0;
 
-
 				// state machine implementation, if you add any states makes sure that it does
 				// not get stuck in a loop
 
@@ -128,7 +127,12 @@ public class Main {
 					// TODO implement localization, set odometer to (30,30,0)
 					// initial state of the robot, localization should be implemented here
 					case INITIALIZE:
-						odometer.setXYT(0.01, 0.01, 0.01);
+						try {
+							Localize.Corner_Localize();
+						} catch (OdometerExceptions e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						state = List_of_states.IDLE;
 						break;
 
@@ -157,7 +161,6 @@ public class Main {
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
 							motorControl.stop();
-							sleeptime(2000);
 							current_waypoint++;
 							Sound.beep();
 
@@ -182,7 +185,6 @@ public class Main {
 						motorControl.stop();
 						state = List_of_states.IDENTIFYING;
 
-
 					case RETURN_TO_PATH:
 						// TODO subroutine to get back on the travel path should be done here
 						// suggest to store the position when the object is detected and return to that
@@ -196,29 +198,25 @@ public class Main {
 						// lightPoller.target_found(target_color);
 						state = List_of_states.IDLE;
 						break;
-						
+
 					case BRIDGE_CROSSING:
-						motorControl.transform();
-//						localize.localize_bridge;
+
+						// localize.localize_bridge;
 						navigator.turn_to_destination(xf, yf);
 						double bridge_length = 0;
 						motorControl.leftRot(bridge_length, true);
 						motorControl.rightRot(bridge_length, false);
-						
-						
-					
-						
 
 					case ANGLE_LOCALIZATION:
 						motorControl.forward();
 						A_loc.fix_angle();
-						//state = List_of_states.IDLE;
+						// state = List_of_states.IDLE;
 						break;
 
 					case TEST:
 						motorControl.leftRot(100, true);
 						motorControl.rightRot(100, false);
-						//A_loc.fix_angle();
+						// A_loc.fix_angle();
 						motorControl.stop();
 						state = List_of_states.IDLE;
 						break;
@@ -227,14 +225,13 @@ public class Main {
 				}
 			}
 
-
 		}).start();
 
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
 			;
 		System.exit(0);
 	}
-	
+
 
 	public static void sleeptime(int time) {
 		try {
