@@ -17,10 +17,10 @@ public class MotorControl {
 	private double bridge_track = 14.45;
 
 	private double tunnel_radius = 2.05;
-	private double tunnel_track = 14.45;
+	private double tunnel_track = 14.85;
 
 	private double radius = 2.05;
-	private double track = 14.45;
+	private double track = 14.85;
 	private final int ROTATE_SPEED = 150;
 	private final int PATH_SPEED = 200;
 	private static Odometer odometer;
@@ -70,7 +70,7 @@ public class MotorControl {
 		rightMotor.rotate(-convertAngle(radius, track, 90.0), false);
 
 		leftMotor.rotate(convertDistance(radius, dist), true);
-		rightMotor.rotate(convertDistance(radius, dist), false);
+		rightMotor.rotate(convertDistance(radius, dist), false);	
 
 		leftMotor.rotate(-convertAngle(radius, track, 90.0), true);
 		rightMotor.rotate(convertAngle(radius, track, 90.0), false);
@@ -78,7 +78,6 @@ public class MotorControl {
 		leftMotor.rotate(convertDistance(radius, dist), true);
 		rightMotor.rotate(convertDistance(radius, dist), false);
 	}
-
 	/**
 	 * This method moves the bot forward and sets the left and right motor speeds
 	 * independently
