@@ -223,7 +223,6 @@ public class Lab5 {
 							// lightPoller.detectColor();
 							while (Button.waitForAnyPress() != Button.ID_UP)
 								sleeptime(50); // waits until the up button is pressed
-
 						}
 						break;
 					case ANGLE_LOCALIZATION:
