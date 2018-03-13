@@ -11,6 +11,8 @@ public class Angle_Localization {
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
 	private int threshold = 25;
+	public int x_line_count;
+	public int y_line_count;
 
 	public Angle_Localization(LightPoller L_sens, LightPoller R_sens) throws OdometerExceptions {
 		this.odometer = Odometer.getOdometer();
@@ -55,5 +57,4 @@ public class Angle_Localization {
 			odometer.setTheta(270);
 		}
 	}
-
 }

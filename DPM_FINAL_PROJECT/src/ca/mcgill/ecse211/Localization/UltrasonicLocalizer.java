@@ -8,7 +8,6 @@ public class UltrasonicLocalizer {
 	private static double wall_distance = 40;
 	private static double noise_margin = 2;
 	private final Odometer odo;
-	private final Nav nav;
 	//private final EV3UltrasonicSensor us;
 	private MotorControl motorcontrol;
 	private SampleProvider sampleProv;
@@ -18,9 +17,8 @@ public class UltrasonicLocalizer {
 	public double[] edgeDetect = new double[2];
 	public double[] wallSpots = new double[2];
 	
-	public UltrasonicLocalizer(Odometer odo, Nav nav, SampleProvider us, int type, MotorControl motorcontrol){
+	public UltrasonicLocalizer(Odometer odo, SampleProvider us, int type, MotorControl motorcontrol){
 		this.odo=odo;
-		this.nav=nav;
 		this.sampleProv = us;
 		this.type=type;
 		this.motorcontrol = motorcontrol;
@@ -38,7 +36,7 @@ public class UltrasonicLocalizer {
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){}
-			nav.turnTo(-odo.getXYT()[2]);
+			motorcontrol.turnto(-odo.getXYT()[2]);
 		}
 		else{
 			double correctionAngle = 45-((edgeDetect[0]+edgeDetect[1])%360)/2;
@@ -46,11 +44,11 @@ public class UltrasonicLocalizer {
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){}
-			nav.turnTo(-odo.getXYT()[2]);
+			motorcontrol.turnto(-odo.getXYT()[2]);
 		}
 		if(getDistance() < 40) {//if angles were passing over 360, use wall to correct theta and orientation
 			odo.setTheta(180);
-			nav.turnTo(180);
+			motorcontrol.turnto(180);
 		}
 	}
 	public void fallingEdge(){

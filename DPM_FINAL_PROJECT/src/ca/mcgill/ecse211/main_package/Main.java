@@ -76,8 +76,7 @@ public class Main {
 		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-		final Nav nav = new Nav(motorControl, WHEEL_RAD, TRACK, odometer);
-		final Full_Localization Localize = new Full_Localization(odometer, nav, myDistance, motorControl, lightPollerleft, lightPollerright);
+		final Full_Localization Localize = new Full_Localization(odometer, myDistance, motorControl, lightPollerleft, lightPollerright);
 		// clear the display
 		lcd.clear();
 
@@ -128,7 +127,7 @@ public class Main {
 					// initial state of the robot, localization should be implemented here
 					case INITIALIZE:
 						try {
-							Localize.Corner_Localize();
+							Localize.Corner_Localize(1,1);
 						} catch (OdometerExceptions e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -156,7 +155,7 @@ public class Main {
 					case TRAVELLING:
 
 						navigator.travelTo(xf, yf);
-						A_loc.fix_angle();
+						//A_loc.fix_angle();
 
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
