@@ -140,7 +140,7 @@ public class Main {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.TURNING;
+						state = List_of_states.INITIALIZE;
 						break;
 					// dime turn towards necessary destination
 					case TURNING:
@@ -231,7 +231,8 @@ public class Main {
 			;
 		System.exit(0);
 	}
-
+	
+	
 
 	public static void sleeptime(int time) {
 		try {
