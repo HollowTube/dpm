@@ -1,10 +1,8 @@
 package ca.mcgill.ecse211.Localization;
 
-
 import ca.mcgill.ecse211.main_package.LightPoller;
 import ca.mcgill.ecse211.main_package.MotorControl;
 import ca.mcgill.ecse211.odometer.*;
-
 
 public class Angle_Localization {
 
@@ -22,35 +20,30 @@ public class Angle_Localization {
 	}
 
 	public void fix_angle() {
-		if (right_sensor.lessThan(threshold)) {
-			motorcontrol.rightStop();
-			do {
-				if (left_sensor.lessThan(threshold)) {
-					motorcontrol.leftStop();
-					motorcontrol.leftRot(5, true);
-					motorcontrol.rightRot(5, false);
-					correctOdometryAngle();
-					break;
-				}
-			} while (true);
-		} else if (left_sensor.lessThan(threshold)) {
-			motorcontrol.leftStop();
-			do {
-				if (right_sensor.lessThan(threshold)) {
-					motorcontrol.rightStop();
-					motorcontrol.leftRot(5, true);
-					motorcontrol.rightRot(5, false);
-					correctOdometryAngle();
-					break;
-				}
-			} while (true);
-		}
-	}
+		//motorcontrol.forward(100, 100);
+		while (true) {
+			if (right_sensor.lessThan(threshold)) {
+				motorcontrol.rightStop();
+				do {
+					if (left_sensor.lessThan(threshold)) {
+						motorcontrol.leftStop();
+						break;
+					}
+				} while (true);
+				break;
+			} else if (left_sensor.lessThan(threshold)) {
+				motorcontrol.leftStop();
+				do {
+					if (right_sensor.lessThan(threshold)) {
+						motorcontrol.rightStop();
+						break;
+					}
+				} while (true);
+				break;
 
-	/**
-	 * 
-	 */
-	private void correctOdometryAngle() {
+			} //else
+				//motorcontrol.forward(100, 100);
+		}
 		double heading = odometer.getXYT()[2];
 		if (heading > 315 && heading < 45) {
 			odometer.setTheta(0);
