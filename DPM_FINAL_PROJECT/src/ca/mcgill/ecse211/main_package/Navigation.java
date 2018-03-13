@@ -3,9 +3,7 @@ package ca.mcgill.ecse211.main_package;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
 //import lejos.hardware.motor.Motor;
-import lejos.robotics.RegulatedMotor;
 
 /**
  * This class is used for the robot's navigation in a grid.
@@ -18,25 +16,21 @@ public class Navigation {
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
 
-	private double position[];
-	// private double newheading;
+	
 	private final int FORWARD_SPEED = 150;
 	private final int HEADING_THRESHOLD = 1;
 
-
-	public static double final_heading = 0;
-	public static double absolute_distance = 0;
-	public static double dx = 0;
-	public static double dy = 0;
+	
+//	private double[] position;
+	private static double final_heading = 0;
 	private int left_speed;
 	private int right_speed;
-	private double heading_error;
 
 	public Navigation() throws OdometerExceptions {
 		Navigation.odometer = Odometer.getOdometer();
 		Navigation.motorcontrol = MotorControl.getMotor();
 	}
-	
+
 	private double[] get_position() {
 		return odometer.getXYT();
 	}
@@ -48,17 +42,17 @@ public class Navigation {
 	 * @param yf
 	 */
 	public void travelTo(double xf, double yf) {
-		position = get_position();
+//		position = get_position();
 		motorcontrol.setLeftSpeed(left_speed);
 		motorcontrol.setRightSpeed(right_speed);
 		motorcontrol.forward();
-		heading_error = position[2] - getHeading(xf - position[0], yf - position[1]);
-		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
-			angle_correction(heading_error);
-		} else {
-			left_speed = FORWARD_SPEED;
-			right_speed = FORWARD_SPEED;
-		}
+		// heading_error = position[2] - getHeading(xf - position[0], yf - position[1]);
+		// if (Math.abs(heading_error) > HEADING_THRESHOLD) {
+		// angle_correction(heading_error);
+		// } else {
+		left_speed = FORWARD_SPEED;
+		right_speed = FORWARD_SPEED;
+		// }
 	}
 
 	/**
@@ -92,30 +86,22 @@ public class Navigation {
 		return angle * 180 / Math.PI;
 	}
 
-	private static int convertAngle(double radius, double width, double angle) {
-		return convertDistance(radius, Math.PI * width * angle / 360.0);
-	}
-
-	private static int convertDistance(double radius, double distance) {
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-
 	/**
-	 * This method uses a simple bang bang controller to correct differences between the
-	 * desired heading, and actual desired heading
+	 * This method uses a simple bang bang controller to correct differences between
+	 * the desired heading, and actual desired heading
 	 * 
 	 * @param turning_angle
 	 */
 	private void angle_correction(double turning_angle) {
-		int correction = 5;
-		if(turning_angle<0) {
-			left_speed = FORWARD_SPEED-correction;
-			right_speed = FORWARD_SPEED+correction;
+		int correction = 10;
+		if (turning_angle > 0) {
+			left_speed = FORWARD_SPEED - correction;
+			right_speed = FORWARD_SPEED + correction;
 		}
-		
+
 		else {
-			left_speed = FORWARD_SPEED+correction;
-			right_speed = FORWARD_SPEED-correction;
+			left_speed = FORWARD_SPEED + correction;
+			right_speed = FORWARD_SPEED - correction;
 		}
 	}
 
@@ -135,9 +121,11 @@ public class Navigation {
 		else
 			return theta - 360;
 	}
-	
+
 	/**
-	 * calculates the smallest angle to rotate to desired heading and turns on a dime to it
+	 * calculates the smallest angle to rotate to desired heading and turns on a
+	 * dime to it
+	 * 
 	 * @param angle
 	 */
 	public void turn_to_angle(double angle) {
@@ -147,9 +135,11 @@ public class Navigation {
 		turning_angle = min_angle(initial_heading, final_heading);
 		motorcontrol.dime_turn(turning_angle);
 	}
+
 	/**
 	 * this method calculates the smallest angle to rotate to the correct heading
-	 * and then turns on a dime to reach it, inputs are the desired x and y positions
+	 * and then turns on a dime to reach it, inputs are the desired x and y
+	 * positions
 	 * 
 	 * @param xf
 	 * @param yf
@@ -171,6 +161,7 @@ public class Navigation {
 		motorcontrol.dime_turn(turning_angle);
 	}
 
+<<<<<<< HEAD
 	/**
 	 * This boolean method indicates to the robot id a destination is reached yet. (within some error.)
 	 * 
@@ -178,6 +169,8 @@ public class Navigation {
 	 * @param yf
 	 * @return
 	 */
+=======
+>>>>>>> cleaning up some unused code
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
 		if (euclidian_error(xf - position[0], yf - position[1]) < 0.75) {

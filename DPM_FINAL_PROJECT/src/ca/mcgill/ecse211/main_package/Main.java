@@ -1,10 +1,6 @@
 
 package ca.mcgill.ecse211.main_package;
-
 import ca.mcgill.ecse211.odometer.*;
-
-import java.util.ArrayList;
-
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
@@ -14,8 +10,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.*;
 import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
-import lejos.robotics.navigation.Navigator;
-import ca.mcgill.ecse211.Localization.*;
 
 /**
  * Main class, meant to conduct the entire run and manage all the different threads. 
@@ -55,8 +49,6 @@ public class Main {
 	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
 	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
 
-	final static String target_color = "red";
-
 	// TODO breakdown waypoints into x and y coordinates
 
 	// TODO heading correction to be done before every turn
@@ -77,16 +69,14 @@ public class Main {
 
 		int buttonChoice;
 		int current_waypoint = 0;
-		
-		
+
 		// Odometer related objects
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
 		Display odometryDisplay = new Display(lcd); // No need to change
 
-		
-		//Various class initialization
-		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
+		// Various class initialization
+		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD, TRACK);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
@@ -122,7 +112,6 @@ public class Main {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
 			odoCorrectionThread.start();
 		}
-		ArrayList<Double[]> list = new ArrayList<Double[]>();
 
 		// spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
@@ -152,6 +141,7 @@ public class Main {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+
 						state = List_of_states.IDLE;
 						break;
 
@@ -159,7 +149,7 @@ public class Main {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.INITIALIZE;
+						state = List_of_states.TEST;
 						break;
 					// dime turn towards necessary destination
 					case TURNING:
@@ -168,14 +158,15 @@ public class Main {
 						xf = waypoints[current_waypoint][0];
 						yf = waypoints[current_waypoint][1];
 						navigator.turn_to_destination(xf, yf);
-						state = List_of_states.SEARCHING;
+						state = List_of_states.TRAVELLING;
 						break;
 
 					// travels to waypoints while scanning for objects
 					case TRAVELLING:
 
 						navigator.travelTo(xf, yf);
-						//A_loc.fix_angle();
+
+						// A_loc.fix_angle_on_path();
 
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
@@ -195,23 +186,6 @@ public class Main {
 						}
 						break;
 
-					case TRAVEL_TO_TARGET:
-
-						motorControl.dime_turn(-90);
-						motorControl.forward();
-						while (usPoller.obstacleDetected(10)) {
-						}
-						motorControl.stop();
-						state = List_of_states.IDENTIFYING;
-
-					case RETURN_TO_PATH:
-						// TODO subroutine to get back on the travel path should be done here
-						// suggest to store the position when the object is detected and return to that
-						// after
-
-						state = List_of_states.TURNING;
-
-						// identifies the color on screen
 					case IDENTIFYING:
 
 						// lightPoller.target_found(target_color);
@@ -226,18 +200,14 @@ public class Main {
 						motorControl.leftRot(bridge_length, true);
 						motorControl.rightRot(bridge_length, false);
 
-					case ANGLE_LOCALIZATION:
+					case TEST:
 						motorControl.forward();
-						A_loc.fix_angle();
+						// motorControl.dime_turn(720);
+						// A_loc.fix_angle();
+						// motorControl.stop();
 						// state = List_of_states.IDLE;
 						break;
-
-					case TEST:
-						motorControl.leftRot(100, true);
-						motorControl.rightRot(100, false);
-						// A_loc.fix_angle();
-						motorControl.stop();
-						state = List_of_states.IDLE;
+					default:
 						break;
 					}
 					sleeptime(50);
@@ -249,9 +219,7 @@ public class Main {
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
 			;
 		System.exit(0);
-	}
-	
-	
+	}	
 	/**
 	 * This method sets a time for the thread sleep.
 	 * 

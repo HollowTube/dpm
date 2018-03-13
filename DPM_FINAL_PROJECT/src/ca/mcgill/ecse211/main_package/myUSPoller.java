@@ -12,7 +12,11 @@ import lejos.robotics.filter.MedianFilter;
 public class myUSPoller {
 
 	// Class Variables
+<<<<<<< HEAD
 	private final int BUFFER_SIZE = 5;
+=======
+
+>>>>>>> cleaning up some unused code
 	private float[] sampleUS;
 	SampleProvider myDistance;
 	double wallDist;

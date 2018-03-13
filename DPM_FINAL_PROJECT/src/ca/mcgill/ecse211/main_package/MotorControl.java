@@ -2,7 +2,6 @@ package ca.mcgill.ecse211.main_package;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
-import ca.mcgill.ecse211.odometer.*;
 /**
  * This class handles all of the motor control. If a method wants to access the
  * motors, it should do so through this class.
@@ -13,33 +12,28 @@ import ca.mcgill.ecse211.odometer.*;
 public class MotorControl {
 	public static RegulatedMotor leftMotor;
 	public static RegulatedMotor rightMotor;
-	private double bridge_radius = 2.05;
-	private double bridge_track = 14.45;
 
-	private double tunnel_radius = 2.05;
-	private double tunnel_track = 14.85;
-
-	private double radius = 2.05;
-	private double track = 14.85;
+	private static double radius;
+	private static double track;
 	private final int ROTATE_SPEED = 150;
 	private final int PATH_SPEED = 200;
-	private static Odometer odometer;
 	private static MotorControl motorcontrol = null;
 
-	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor) {
+	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double radius, double track) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
-		// MotorControl.odometer = Odometer.getOdometer();
+		MotorControl.radius = radius;
+		MotorControl.track = track;
 	}
 
 	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor,
-			EV3LargeRegulatedMotor rightMotor) {
+			EV3LargeRegulatedMotor rightMotor, double radius, double track) {
 		leftMotor.setSpeed(100);
 		rightMotor.setSpeed(100);
 		if (motorcontrol != null) { // Return existing object
 			return motorcontrol;
 		} else { // create object and return it
-			motorcontrol = new MotorControl(leftMotor, rightMotor);
+			motorcontrol = new MotorControl(leftMotor, rightMotor, radius, track);
 			return motorcontrol;
 		}
 
