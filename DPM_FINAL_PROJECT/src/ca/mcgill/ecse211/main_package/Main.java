@@ -26,7 +26,7 @@ public class Main {
 	private static final Port sensorPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 14.8;
+	public static final double TRACK = 15.28;
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
@@ -76,7 +76,7 @@ public class Main {
 		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-		final Full_Localization Localize = new Full_Localization(odometer, myDistance, motorControl, lightPollerleft, lightPollerright);
+		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
 		// clear the display
 		lcd.clear();
 
