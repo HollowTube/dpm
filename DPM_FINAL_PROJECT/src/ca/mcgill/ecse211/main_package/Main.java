@@ -2,6 +2,7 @@
 package ca.mcgill.ecse211.main_package;
 
 import ca.mcgill.ecse211.odometer.*;
+
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
@@ -26,8 +27,10 @@ public class Main {
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 	private static final Port leftPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
+	
+	
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 15.28;
+	public static final double TRACK = 15.65;
 	
 	//ultrasonic sensor initialization
 	static Port portUS = LocalEV3.get().getPort("S2");
@@ -101,6 +104,7 @@ public class Main {
 		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 		lcd.clear();
 		
+<<<<<<< HEAD
 		if (buttonChoice == Button.ID_DOWN) {
 			Calibration.radius_calibration();
 		}
@@ -108,6 +112,11 @@ public class Main {
 			Calibration.track_calibration();
 		}
 
+=======
+		
+		
+		
+>>>>>>> some cleanup, adjustment of track values
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
@@ -127,7 +136,7 @@ public class Main {
 
 				// simply input waypoints here, will only update after it reaches the
 				// destination
-				double[][] waypoints = { { 30, 0 }, { 30, 30 }, { 0, 30 }, { 0, 0 } };
+				double[][] waypoints = { { 120, 0 }, { 120, 120 }, { 0, 120 }, { 0, 0 } };
 				int current_waypoint = 0;
 				double xf = 0;
 				double yf = 0;
@@ -141,12 +150,13 @@ public class Main {
 					switch (state) {
 					
 					case INITIALIZE:
-						try {
-							Localize.Corner_Localize(1,1);
-						} catch (OdometerExceptions e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+//						try {
+//							Localize.Corner_Localize(1,1);
+//						} catch (OdometerExceptions e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+						odometer.setXYT(0.1, 0.1, 0.1);
 						state = List_of_states.IDLE;
 						break;
 
@@ -171,7 +181,7 @@ public class Main {
 
 						navigator.travelTo(xf, yf);
 
-						// A_loc.fix_angle_on_path();
+						A_loc.fix_angle_on_path();
 
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
@@ -197,19 +207,33 @@ public class Main {
 						break;
 
 					case BRIDGE_CROSSING:
+						
 
-						// localize.localize_bridge;
-						navigator.turn_to_destination(xf, yf);
+						navigator.turn_to_angle(90);
+						motorControl.moveSetDistance(15);
+						navigator.turn_to_angle(0);
 						double bridge_length = 0;
-						motorControl.leftRot(bridge_length, true);
-						motorControl.rightRot(bridge_length, false);
+						
+						
+						motorControl.moveSetDistance(bridge_length);
+						try {
+							Localize.Tile_Localize(1,1);
+						} catch (OdometerExceptions e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						state = List_of_states.TURNING;
+						break;
+						
+						
 
 					case TEST:
-						motorControl.forward();
-						// motorControl.dime_turn(720);
-						 A_loc.fix_angle();
+						//motorControl.forward();
+						motorControl.dime_turn(720);
+						// A_loc.fix_angle();
 						// motorControl.stop();
-						// state = List_of_states.IDLE;
+						
+						 state = List_of_states.IDLE;
 						break;
 					default:
 						break;

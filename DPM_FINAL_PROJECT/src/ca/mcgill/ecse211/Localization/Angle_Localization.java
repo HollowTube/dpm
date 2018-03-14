@@ -106,7 +106,7 @@ public class Angle_Localization {
 			} while (true);
 		}
 	}
-
+ 
 	/**
 	 * Method to correct the odometer angle. Takes the previous heading to know in
 	 * which direction the robot is facing. Sets the angle to the heading it is
