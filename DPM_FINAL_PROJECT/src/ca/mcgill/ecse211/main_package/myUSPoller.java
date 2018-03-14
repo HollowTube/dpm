@@ -1,7 +1,7 @@
 package ca.mcgill.ecse211.main_package;
 
 import lejos.robotics.SampleProvider;
-import lejos.robotics.filter.MedianFilter;
+
 
 /**
  * This class handles the data received by the Ultrasonic Sensor for localization.

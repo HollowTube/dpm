@@ -1,5 +1,6 @@
 
 package ca.mcgill.ecse211.main_package;
+
 import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
@@ -49,7 +50,6 @@ public class Main {
 	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
 	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
 
-	// TODO breakdown waypoints into x and y coordinates
 
 	// TODO heading correction to be done before every turn
 	// TODO convert parameters of course into workable coordinates
@@ -68,7 +68,6 @@ public class Main {
 	public static void main(String[] args) throws OdometerExceptions {
 
 		int buttonChoice;
-		int current_waypoint = 0;
 
 		// Odometer related objects
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
@@ -131,9 +130,7 @@ public class Main {
 				state = List_of_states.INITIALIZE;
 				while (true) {
 					switch (state) {
-
-					// TODO implement localization, set odometer to (30,30,0)
-					// initial state of the robot, localization should be implemented here
+					
 					case INITIALIZE:
 						try {
 							Localize.Corner_Localize(1,1);
@@ -141,7 +138,6 @@ public class Main {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-
 						state = List_of_states.IDLE;
 						break;
 
@@ -149,7 +145,7 @@ public class Main {
 					case IDLE:
 						while (Button.waitForAnyPress() != Button.ID_UP)
 							sleeptime(50); // waits until the up button is pressed
-						state = List_of_states.TEST;
+						state = List_of_states.TURNING;
 						break;
 					// dime turn towards necessary destination
 					case TURNING:
@@ -203,7 +199,7 @@ public class Main {
 					case TEST:
 						motorControl.forward();
 						// motorControl.dime_turn(720);
-						// A_loc.fix_angle();
+						 A_loc.fix_angle();
 						// motorControl.stop();
 						// state = List_of_states.IDLE;
 						break;

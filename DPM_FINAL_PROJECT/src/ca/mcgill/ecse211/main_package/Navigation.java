@@ -93,8 +93,8 @@ public class Navigation {
 	 * @param turning_angle
 	 */
 	private void angle_correction(double turning_angle) {
-		int correction = 10;
-		if (turning_angle > 0) {
+		int correction = 5;
+		if (turning_angle < 0) {
 			left_speed = FORWARD_SPEED - correction;
 			right_speed = FORWARD_SPEED + correction;
 		}
