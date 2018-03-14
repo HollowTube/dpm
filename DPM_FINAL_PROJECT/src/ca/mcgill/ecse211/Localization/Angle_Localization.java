@@ -42,6 +42,8 @@ public class Angle_Localization {
 	 * line until it detects it and stops. It will then correct the odometer angle
 	 * heading.
 	 * 
+	 * This method will block
+	 * 
 	 * @author Tri-tin Truong
 	 */
 	public void fix_angle() {
@@ -68,7 +70,19 @@ public class Angle_Localization {
 		}
 		angle_correction();
 	}
-
+	/**
+	 * 
+	 * 
+	 * Method to stop with wheel track parallel to grid line The robot must be put
+	 * in forward motion before calling the method. The light sensor will stop its
+	 * motor when it detects the line. The other motor will continue to approach the
+	 * line until it detects it and stops. It will then correct the odometer angle
+	 * heading.
+	 * 
+	 * This method will not block
+	 * 
+	 * @author Tri-tin Truong
+	 */
 	public void fix_angle_on_path() {
 		if (right_sensor.lessThan(threshold)) {
 			motorcontrol.rightStop();

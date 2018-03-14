@@ -19,6 +19,8 @@ public class MotorControl {
 	private final int PATH_SPEED = 200;
 	private static MotorControl motorcontrol = null;
 
+	
+	
 	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double radius, double track) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;

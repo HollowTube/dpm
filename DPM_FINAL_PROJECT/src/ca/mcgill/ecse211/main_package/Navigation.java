@@ -3,25 +3,29 @@ package ca.mcgill.ecse211.main_package;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
-//import lejos.hardware.motor.Motor;
 
 /**
+<<<<<<< HEAD
  * This class is used for the robot's navigation in a grid.
  * It obtains the correct heading, rotates the robot towards it and moves the robot to the next point.
  * 
  * @author Tritin
+=======
+ * Navigation class, methods related to getting the robot where it needs to be
+ * are gathered here
+ * 
+ * @author Tritin Truong
+>>>>>>> general commenting in navigation and main
  *
  */
 public class Navigation {
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
 
-	
 	private final int FORWARD_SPEED = 150;
 	private final int HEADING_THRESHOLD = 1;
 
-	
-//	private double[] position;
+	// private double[] position;
 	private static double final_heading = 0;
 	private int left_speed;
 	private int right_speed;
@@ -42,7 +46,7 @@ public class Navigation {
 	 * @param yf
 	 */
 	public void travelTo(double xf, double yf) {
-//		position = get_position();
+		// position = get_position();
 		motorcontrol.setLeftSpeed(left_speed);
 		motorcontrol.setRightSpeed(right_speed);
 		motorcontrol.forward();
@@ -60,7 +64,7 @@ public class Navigation {
 	 * 
 	 * @param dx
 	 * @param dy
-	 * @return
+	 * @return euclidean error in cm
 	 */
 	private static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
@@ -70,7 +74,7 @@ public class Navigation {
 
 	/**
 	 * This method gives the heading of the next way point, that is, what angle
-	 * should the robot be at in order to arrive at the location quickly
+	 * should the robot turn to in order to arrive at the location quickly
 	 * 
 	 * @param dx
 	 * @param dy
@@ -110,10 +114,12 @@ public class Navigation {
 	 * negative to turn counterclockwise and return positive for clockwise
 	 * 
 	 * @param ihead
+	 *            intial heading of robot
 	 * @param fhead
+	 *            desired heading of robot
 	 * @return Angle in degrees
 	 */
-	public static double min_angle(double ihead, double fhead) {
+	private static double min_angle(double ihead, double fhead) {
 		double theta;
 		theta = (fhead + 360 - ihead) % (360);
 		if (theta < 180)
@@ -161,7 +167,6 @@ public class Navigation {
 		motorcontrol.dime_turn(turning_angle);
 	}
 
-<<<<<<< HEAD
 	/**
 	 * This boolean method indicates to the robot id a destination is reached yet. (within some error.)
 	 * 
@@ -169,8 +174,7 @@ public class Navigation {
 	 * @param yf
 	 * @return
 	 */
-=======
->>>>>>> cleaning up some unused code
+
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
 		if (euclidian_error(xf - position[0], yf - position[1]) < 0.75) {

@@ -24,29 +24,38 @@ public class Main {
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
-	private static final Port sensorPort = LocalEV3.get().getPort("S1");
+	private static final Port leftPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	public static final double WHEEL_RAD = 2.2;
 	public static final double TRACK = 15.28;
+	
+	//ultrasonic sensor initialization
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
 
-	static EV3ColorSensor colorSensorReflected = new EV3ColorSensor(sensorPort);
+	
+	//left light sensor initialization
+	static EV3ColorSensor colorSensorReflected = new EV3ColorSensor(leftPort);
 	static SampleProvider colorRGBSensorReflected = colorSensorReflected.getRedMode();
 	static int sampleSizeReflected = colorRGBSensorReflected.sampleSize();
 	static float[] sampleReflected = new float[sampleSizeReflected];
 
+	//right light sensor intialization
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
 	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
 	static int sampleSize = colorRGBSensor.sampleSize();
 	static float[] sample = new float[sampleSize];
 
-	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
+	
 
 	// final static LightPollerColor lightPoller = new
 	// LightPollerColor(colorRGBSensor, sample);
+	
+	
+	//initialization of poller classes
+	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
 	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
 
@@ -54,7 +63,7 @@ public class Main {
 	// TODO heading correction to be done before every turn
 	// TODO convert parameters of course into workable coordinates
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, TRAVEL_TO_TARGET, LOCALIZE_WITH_PATH, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING
 	}
 
 	static List_of_states state;
@@ -68,7 +77,6 @@ public class Main {
 	public static void main(String[] args) throws OdometerExceptions {
 
 		int buttonChoice;
-
 		// Odometer related objects
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
@@ -79,9 +87,10 @@ public class Main {
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
+		
+		
 		// clear the display
 		lcd.clear();
-
 		// ask the user whether odometery correction should be run or not
 		lcd.drawString("< Left | Right >", 0, 0);
 		lcd.drawString("  No   | with   ", 0, 1);
@@ -98,13 +107,14 @@ public class Main {
 		else if(buttonChoice == Button.ID_UP) {
 			Calibration.track_calibration();
 		}
-		// Start odometer and display threads
 
+		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
+		
 		// TODO make sure odometry correction works properly, adjust values as necessary
 		// Start correction if right button was pressed
 		if (buttonChoice == Button.ID_RIGHT) {
@@ -112,7 +122,6 @@ public class Main {
 			odoCorrectionThread.start();
 		}
 
-		// spawn a new Thread to avoid SquareDriver.drive() from blocking
 		(new Thread() {
 			public void run() {
 
@@ -184,7 +193,6 @@ public class Main {
 
 					case IDENTIFYING:
 
-						// lightPoller.target_found(target_color);
 						state = List_of_states.IDLE;
 						break;
 
