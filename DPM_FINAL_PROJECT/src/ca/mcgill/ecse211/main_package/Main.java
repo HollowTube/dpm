@@ -26,7 +26,7 @@ public class Main {
 	private static final Port sensorPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 14.8;
+	public static final double TRACK = 15.28;
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
@@ -76,8 +76,7 @@ public class Main {
 		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
 		final Navigation navigator = new Navigation();
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-		final Nav nav = new Nav(motorControl, WHEEL_RAD, TRACK, odometer);
-		final Full_Localization Localize = new Full_Localization(odometer, nav, myDistance, motorControl, lightPollerleft, lightPollerright);
+		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
 		// clear the display
 		lcd.clear();
 
@@ -128,7 +127,7 @@ public class Main {
 					// initial state of the robot, localization should be implemented here
 					case INITIALIZE:
 						try {
-							Localize.Corner_Localize();
+							Localize.Corner_Localize(1,1);
 						} catch (OdometerExceptions e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -156,7 +155,7 @@ public class Main {
 					case TRAVELLING:
 
 						navigator.travelTo(xf, yf);
-						A_loc.fix_angle();
+						//A_loc.fix_angle();
 
 						// triggers when the destination is reached
 						if (navigator.destination_reached(xf, yf)) {
