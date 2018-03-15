@@ -25,8 +25,10 @@ public class Main {
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 	private static final Port sensorPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
+	
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 15.28;
+	public static final double TRACK = 14.2969;
+	
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
