@@ -19,6 +19,7 @@ public class Angle_Localization {
 	private int threshold = 25;
 	public int x_line_count;
 	public int y_line_count;
+	public double LIGHT_OFFSET = 0.5;
 
 	/**
 	 * Class constructor
@@ -84,12 +85,14 @@ public class Angle_Localization {
 	 * @author Tri-tin Truong
 	 */
 	public void fix_angle_on_path() {
+		
+		
 		if (right_sensor.lessThan(threshold)) {
 			motorcontrol.rightStop();
 			do {
 				if (left_sensor.lessThan(threshold)) {
 					motorcontrol.leftStop();
-					motorcontrol.moveSetDistance(5);
+					motorcontrol.moveSetDistance(1);
 					angle_correction();
 					break;
 				}
@@ -99,7 +102,7 @@ public class Angle_Localization {
 			do {
 				if (right_sensor.lessThan(threshold)) {
 					motorcontrol.rightStop();
-					motorcontrol.moveSetDistance(5);
+					motorcontrol.moveSetDistance(1);
 					angle_correction();
 					break;
 				}
