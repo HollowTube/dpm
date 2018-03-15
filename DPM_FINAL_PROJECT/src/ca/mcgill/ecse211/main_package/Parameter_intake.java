@@ -34,6 +34,11 @@ public class Parameter_intake {
 	public int SG_UR_x;			//x coordinate of upper right corner of the search region in green player zone
 	public int SG_UR_y;			//y coordinate of upper right corner of the search region in green player zone
 	
+	private static Parameter_intake parameters=null;
+	/**
+	 * Class constructor
+	 * @author Alexandre Coulombe
+	 */
 	public Parameter_intake(){
 		
 	}
@@ -106,6 +111,15 @@ public class Parameter_intake {
 		this.SG_UR_x=SG_UR_x;
 		this.SG_UR_y=SG_UR_y;
 	}
+
+	public synchronized static Parameter_intake getParameter(){
+		if (parameters != null) { // Return existing object
+			return parameters;
+		} else { // create object and return it
+			parameters = new Parameter_intake();
+			return parameters;
+		}
+	}
 	/**
 	 * Method to return the color of the target block
 	 * @author Alexandre Coulombe
@@ -149,7 +163,7 @@ public class Parameter_intake {
 	 */
 	 public int start_coord_x(){
 		 if(GreenTeam==13){
-			switch (OG){
+			switch (GreenCorner){
 				case 1:
 					return 0;
 				case 2:
@@ -161,7 +175,7 @@ public class Parameter_intake {
 			}
 		 }
 		else if(RedTeam==13){
-			switch (OR){
+			switch (RedCorner){
 				case 1:
 					return 0;
 				case 2:
@@ -181,7 +195,7 @@ public class Parameter_intake {
 	  */
 	 public int start_coord_y(){
 		 if(GreenTeam==13){
-			switch (OG){
+			switch (GreenCorner){
 				case 1:
 					return 0;
 				case 2:
@@ -193,7 +207,7 @@ public class Parameter_intake {
 			}
 		 }
 		else if(RedTeam==13){
-			switch (OR){
+			switch (RedCorner){
 				case 1:
 					return 0;
 				case 2:
