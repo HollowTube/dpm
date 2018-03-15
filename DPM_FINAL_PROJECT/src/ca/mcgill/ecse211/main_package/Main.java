@@ -28,17 +28,11 @@ public class Main {
 	private static final Port leftPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 	
-<<<<<<< HEAD
-	
 	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 15.65;
+	public static final double TRACK = 15.35;
 	
 	//ultrasonic sensor initialization
-=======
-	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 14.2969;
-	
->>>>>>> adjusted track values
+
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
@@ -110,19 +104,12 @@ public class Main {
 		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 		lcd.clear();
 		
-<<<<<<< HEAD
 		if (buttonChoice == Button.ID_DOWN) {
 			Calibration.radius_calibration();
 		}
 		else if(buttonChoice == Button.ID_UP) {
 			Calibration.track_calibration();
 		}
-
-=======
-		
-		
-		
->>>>>>> some cleanup, adjustment of track values
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
