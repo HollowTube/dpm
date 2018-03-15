@@ -37,17 +37,17 @@ public class Main {
 	static int sampleSizeReflected = colorRGBSensorReflected.sampleSize();
 	static float[] sampleReflected = new float[sampleSizeReflected];
 
-//	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
-//	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
-//	static int sampleSize = colorRGBSensor.sampleSize();
-//	static float[] sample = new float[sampleSize];
+	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
+	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
+	static int sampleSize = colorRGBSensor.sampleSize();
+	static float[] sample = new float[sampleSize];
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 
 	// final static LightPollerColor lightPoller = new
 	// LightPollerColor(colorRGBSensor, sample);
 	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
-//	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
+	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
 
 	final static String target_color = "red";
 
@@ -76,8 +76,8 @@ public class Main {
 		//Various class initialization
 		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
 		final Navigation navigator = new Navigation();
-//		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-//		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
+		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
+		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
 		// clear the display
 		lcd.clear();
 
