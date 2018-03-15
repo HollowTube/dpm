@@ -321,4 +321,11 @@ public class MotorControl {
 				}
 			}
 	}
+	public void setRadius(double new_radius) {
+		this.radius = new_radius;
+	}
+	
+	public void setTrack(double new_track) {
+		this.track = new_track;
+	}
 }

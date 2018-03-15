@@ -77,8 +77,9 @@ public class Main {
 
 		int buttonChoice;
 		int current_waypoint = 0;
-		// Odometer related objects
 		
+		
+		// Odometer related objects
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
 		Display odometryDisplay = new Display(lcd); // No need to change
@@ -101,6 +102,13 @@ public class Main {
 
 		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 		lcd.clear();
+		
+		if (buttonChoice == Button.ID_DOWN) {
+			Calibration.radius_calibration();
+		}
+		else if(buttonChoice == Button.ID_UP) {
+			Calibration.track_calibration();
+		}
 		// Start odometer and display threads
 
 		Thread odoDisplayThread = new Thread(odometryDisplay);
