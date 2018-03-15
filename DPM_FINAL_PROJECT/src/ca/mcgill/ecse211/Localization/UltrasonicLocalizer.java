@@ -5,7 +5,7 @@ import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.main_package.*;
 
 /**
- * This class is meant to perform the ultrasonic sensor localization no matter
+ * This class is meant to perform the Ultrasonic sensor localization no matter
  * the initial orientation of the robot.
  * 
  * @author Matthew and Alexandre

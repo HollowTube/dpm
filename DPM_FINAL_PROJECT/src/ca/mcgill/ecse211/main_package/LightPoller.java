@@ -4,8 +4,8 @@ import lejos.robotics.SampleProvider;
 
 
 /**
- * This class handles the data collected by the light sensor used for localization,
- * odometry correction and block identification. 
+ * This class handles the data collected by the light sensor used for localization and
+ * odometry correction. 
  * 
  * @author tritin
  *

@@ -8,7 +8,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 
 /**
- * This class is used for the robot's navigation everywhere in the field.
+ * This class is used for the robot's navigation in a grid.
  * It obtains the correct heading, rotates the robot towards it and moves the robot to the next point.
  * 
  * @author Tritin

@@ -6,7 +6,7 @@ import ca.mcgill.ecse211.main_package.LightPoller;
 import ca.mcgill.ecse211.main_package.MotorControl;
 
 /**
- * This class is in charge of performing the full localization using the ultrasonic sensor first
+ * This class is in charge of performing the full localization using the Ultrasonic sensor first
  * and then the lightsensor afterwards.
  * 
  * @author Alexandre

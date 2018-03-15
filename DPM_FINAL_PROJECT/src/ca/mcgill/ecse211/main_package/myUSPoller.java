@@ -4,7 +4,7 @@ import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.MedianFilter;
 
 /**
- * This class handles the data received by the Ultrasonic Sensor.
+ * This class handles the data received by the Ultrasonic Sensor for localization.
  * 
  * @author tritin
  *

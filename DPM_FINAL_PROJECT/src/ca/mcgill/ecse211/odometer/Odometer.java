@@ -14,7 +14,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 
 /**
- * This class handles the odometer working in a thread during the run.
+ * This class handles the odometer working as a thread during the run.
  * 
  * @author Tritin
  *

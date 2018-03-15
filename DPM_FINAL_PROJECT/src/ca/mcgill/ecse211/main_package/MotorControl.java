@@ -5,7 +5,7 @@ import lejos.robotics.RegulatedMotor;
 import ca.mcgill.ecse211.odometer.*;
 /**
  * This class handles all of the motor control. If a method wants to access the
- * motors, it should do so through this class
+ * motors, it should do so through this class.
  * 
  * @author tritin
  *

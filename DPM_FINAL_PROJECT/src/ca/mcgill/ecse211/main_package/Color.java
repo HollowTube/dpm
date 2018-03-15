@@ -3,7 +3,7 @@ package ca.mcgill.ecse211.main_package;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
- * This class is meant to store the values for each colored block sample normal distributions,
+ * This class is used to store the values for each colored block sample normal distributions,
  * mean and standard deviation.
  * 
  * @author tritin

@@ -7,7 +7,7 @@ import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
 /**
- * This class is in charge of the odometry correction for the robot to
+ * This class is in charge of the odometry correction to
  * keep a good sense of its position during the entire run. 
  * 
  * @author Tritin

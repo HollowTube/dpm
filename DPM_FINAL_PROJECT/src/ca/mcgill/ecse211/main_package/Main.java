@@ -18,7 +18,7 @@ import lejos.robotics.navigation.Navigator;
 import ca.mcgill.ecse211.Localization.*;
 
 /**
- * Main class, meant to conduct the entire run and manage all different threads. 
+ * Main class, meant to conduct the entire run and manage all the different threads. 
  * 
  * @author 
  *

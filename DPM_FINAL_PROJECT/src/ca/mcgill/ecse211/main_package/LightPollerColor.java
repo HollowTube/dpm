@@ -12,8 +12,8 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.lcd.TextLCD;
 
 /**
- * This class handles the use of a probabilistic model to detect the right colored blocks.
- * It allows identification of the correct block choosing the highest probable one.
+ * This class uses a probabilistic model to detect the right colored blocks.
+ * It allows identification of the correct block by choosing the highest probable one.
  * 
  * @author tritin
  *
