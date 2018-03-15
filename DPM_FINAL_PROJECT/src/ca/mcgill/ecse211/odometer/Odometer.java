@@ -12,6 +12,13 @@ package ca.mcgill.ecse211.odometer;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
+
+/**
+ * This class handles the odometer working in a thread during the run.
+ * 
+ * @author Tritin
+ *
+ */
 public class Odometer extends OdometerData implements Runnable {
 
 	private OdometerData odoData;

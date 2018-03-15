@@ -4,6 +4,13 @@ import ca.mcgill.ecse211.odometer.*;
 import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.main_package.*;
 
+/**
+ * This class is meant to perform the ultrasonic sensor localization no matter
+ * the initial orientation of the robot.
+ * 
+ * @author Matthew and Alexandre
+ *
+ */
 public class UltrasonicLocalizer {
 	private static double wall_distance = 40;
 	private static double noise_margin = 2;

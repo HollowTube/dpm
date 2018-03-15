@@ -6,6 +6,13 @@ package ca.mcgill.ecse211.odometer;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
+/**
+ * This class is in charge of the odometry correction for the robot to
+ * keep a good sense of its position during the entire run. 
+ * 
+ * @author Tritin
+ *
+ */
 public class OdometryCorrection implements Runnable {
 	private static final long CORRECTION_PERIOD = 10;
 	private static final double SQUARE_LENGTH = 30.48;

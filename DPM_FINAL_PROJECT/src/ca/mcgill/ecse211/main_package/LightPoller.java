@@ -2,6 +2,14 @@ package ca.mcgill.ecse211.main_package;
 
 import lejos.robotics.SampleProvider;
 
+
+/**
+ * This class handles the data collected by the light sensor used for localization,
+ * odometry correction and block identification. 
+ * 
+ * @author tritin
+ *
+ */
 public class LightPoller {
 
 	private SampleProvider lt;
@@ -13,6 +21,12 @@ public class LightPoller {
 
 	private boolean first_time = true;
 
+	/**
+	 * Class constructor
+	 * 
+	 * @param lt
+	 * @param ltdata
+	 */
 	public LightPoller(SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
 		this.ltdata = ltdata;
@@ -25,6 +39,12 @@ public class LightPoller {
 		return lightVal;
 
 	}
+	/**
+	 * Boolean method to determine if a light value is lower than the threshold set.
+	 * 
+	 * @param threshold
+	 * @return
+	 */
 	public boolean lessThan(int threshold) {
 		current_light = getValue();
 
@@ -34,6 +54,12 @@ public class LightPoller {
 			return false;
 	}
 
+	/**
+	 * Boolean method to determine if the data value is reducing. (between tile and line)
+	 * 
+	 * @param threshold
+	 * @return
+	 */
 	public boolean falling(int threshold) {
 		boolean edge;
 		current_light = getValue();
@@ -54,6 +80,12 @@ public class LightPoller {
 		return edge;
 	}
 
+	/**
+	 * Boolean method to determine if the data value is rising. (between end of line and next tile) 
+	 * 
+	 * @param threshold
+	 * @return
+	 */
 	public boolean rising(int threshold) {
 		boolean edge;
 		current_light = getValue();

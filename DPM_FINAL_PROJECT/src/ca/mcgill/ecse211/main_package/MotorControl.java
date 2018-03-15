@@ -185,12 +185,22 @@ public class MotorControl {
 		}
 	}
 
+	/**
+	 * Boolean method to detect if the robot is moving or not.
+	 * 
+	 * @return true or false following condition
+	 */
 	public boolean isMoving() {
 		if (leftMotor.isMoving() || rightMotor.isMoving())
 			return true;
 		return false;
 	}
 
+	/**
+	 * Method to set the speed for the left motor.
+	 * 
+	 * @param speed
+	 */
 	public void leftMotor(int speed) {
 		leftMotor.setSpeed(speed);
 		if (speed > 0)
@@ -199,6 +209,11 @@ public class MotorControl {
 			leftMotor.backward();
 	}
 	
+	/**
+	 * Method to set the speed for the right motor.
+	 * 
+	 * @param speed
+	 */
 	public void rightMotor(int speed) {
 		rightMotor.setSpeed(speed);
 		if (speed > 0)
@@ -229,7 +244,7 @@ public class MotorControl {
 	// }
 
 	/**
-	 * Works exactly like the default rotate function for the left motor execpt you
+	 * Works exactly like the default rotate function for the left motor except you
 	 * only need to input the distance you want
 	 * 
 	 * @param rotation
@@ -243,6 +258,13 @@ public class MotorControl {
 		}
 	}
 
+	/**
+	 * Works exactly like the default rotate function for the right motor except you
+	 * only need to input the distance you want.
+	 * 
+	 * @param distance
+	 * @param block
+	 */
 	public void rightRot(double distance, boolean block) {
 		if (distance > 0) {
 			rightMotor.rotate(convertDistance(radius, Math.abs(distance)), block);
@@ -259,6 +281,13 @@ public class MotorControl {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
+	/**
+	 * Method to change the heading of the robot towards the proper destination.
+	 * This is done using the angle received as a parameter.
+	 * 
+	 * @param theta
+	 * @author Alexandre
+	 */
 	public void turnto(double theta) {
 		// if theta > 180 || theta < -180
 		// then turn 360-theta or 360-Math.abs(theta)
