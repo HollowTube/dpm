@@ -37,17 +37,17 @@ public class Main {
 	static int sampleSizeReflected = colorRGBSensorReflected.sampleSize();
 	static float[] sampleReflected = new float[sampleSizeReflected];
 
-	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
-	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
-	static int sampleSize = colorRGBSensor.sampleSize();
-	static float[] sample = new float[sampleSize];
+//	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
+//	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
+//	static int sampleSize = colorRGBSensor.sampleSize();
+//	static float[] sample = new float[sampleSize];
 
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 
 	// final static LightPollerColor lightPoller = new
 	// LightPollerColor(colorRGBSensor, sample);
 	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
-	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
+//	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
 
 	final static String target_color = "red";
 
@@ -65,8 +65,9 @@ public class Main {
 
 		int buttonChoice;
 		int current_waypoint = 0;
-		// Odometer related objects
 		
+		
+		// Odometer related objects
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
 		Display odometryDisplay = new Display(lcd); // No need to change
@@ -75,8 +76,8 @@ public class Main {
 		//Various class initialization
 		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor);
 		final Navigation navigator = new Navigation();
-		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
+//		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
+//		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
 		// clear the display
 		lcd.clear();
 
@@ -89,6 +90,13 @@ public class Main {
 
 		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 		lcd.clear();
+		
+		if (buttonChoice == Button.ID_DOWN) {
+			Calibration.radius_calibration();
+		}
+		else if(buttonChoice == Button.ID_UP) {
+			Calibration.track_calibration();
+		}
 		// Start odometer and display threads
 
 		Thread odoDisplayThread = new Thread(odometryDisplay);
