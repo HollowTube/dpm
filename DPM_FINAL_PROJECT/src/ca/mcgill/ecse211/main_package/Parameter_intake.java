@@ -161,39 +161,43 @@ public class Parameter_intake {
 	 * @author Alexandre Coulombe
 	 * @return x coordinate of starting corner
 	 */
-	 public int start_coord_x(){
-		 if(GreenTeam==13){
-			switch (GreenCorner){
-				case 1:
-					return 0;
-				case 2:
-					return 8;
-				case 3:
-					return 8;
-				case 4:
-					return 0;
-			}
-		 }
-		else if(RedTeam==13){
-			switch (RedCorner){
-				case 1:
-					return 0;
-				case 2:
-					return 8;
-				case 3:
-					return 8;
-				case 4:
-					return 0;
-			}
+	 public int Green_start_coord_x(){
+		switch (GreenCorner){
+			case 1:
+				return 0;
+			case 2:
+				return 8;
+			case 3:
+				return 8;
+			case 4:
+				return 0;
 		}
 		return -1;
 	 }
 	 /**
-	  * Method to return the x coordinate of the starting corner of the robot
+	  * Method to return the x coordinate of the starting corner of Red team 
 	  * @author Alexandre Coulombe
 	  * @return x coordinate of starting corner
 	  */
-	 public int start_coord_y(){
+	public int Red_start_coord_x(){
+		switch (RedCorner){
+			case 1:
+				return 0;
+			case 2:
+				return 8;
+			case 3:
+				return 8;
+			case 4:
+				return 0;
+		}
+		return -1;
+	 }
+	 /**
+	  * Method to return the x coordinate of the starting corner of Green team 
+	  * @author Alexandre Coulombe
+	  * @return y coordinate of starting corner
+	  */
+	 public int Green_start_coord_y(){
 		 if(GreenTeam==13){
 			switch (GreenCorner){
 				case 1:
@@ -206,18 +210,105 @@ public class Parameter_intake {
 					return 8;
 			}
 		 }
-		else if(RedTeam==13){
-			switch (RedCorner){
-				case 1:
-					return 0;
-				case 2:
-					return 0;
-				case 3:
-					return 8;
-				case 4:
-					return 8;
-			}
+		 return -1;
+	 }
+	 /**
+	  * Method to return the y coordinate of the starting corner of Red team 
+	  * @author Alexandre Coulombe
+	  * @return y coordinate of starting corner
+	  */
+	public int Red_start_coord_y(){
+		switch (RedCorner){
+			case 1:
+				return 0;
+			case 2:
+				return 0;
+			case 3:
+				return 8;
+			case 4:
+				return 8;
 		}
 		return -1;
 	 }
+	 /**
+	  * Method to get the x coordinate needed to place the robot before starting the tunnel crossing
+	  * @author Alexandre Coulombe
+	  * @return x coordinate to go to before crossing the tunnel
+	  */
+	 public int TN_coord_x(){
+		 if(Green_UR_y==TN_LL_y){
+			 return (TN_LL_x+1);
+		 }
+		 else if(Green_LL_y==TN_UR_y){
+			 return (TN_UR_x-1);
+		 }
+		 else if(Green_LL_x==TN_UR_x){
+			 return (TN_UR_x+1);
+		 }
+		 else if(Green_UR_x==TN_LL_x){
+			 return (TN_LL_x-1);
+		 }
+		 return -1;
+	 }
+	 /**
+	  * Method to get the y coordinate needed to place the robot before starting the tunnel crossing
+	  * @author Alexandre Coulombe
+	  * @return y coordinate to go to before crossing the tunnel
+	  */
+	 public int TN_coord_y(){
+		 if(Green_LL_y==TN_UR_y){
+			 return (TN_UR_y+1);  		//if Green zone is "above" tunnel area
+		 }
+		 else if(Green_UR_y==TN_LL_y){	//if Green zone is "below" tunnel area
+			 return (TN_LL_y-1);		
+		 }
+		 else if(Green_UR_x==TN_LL_x){	//if Green zone is "left" to tunnel area
+			 return TN_LL_y;
+		 }
+		 else if(Green_LL_x==TN_UR_x){	//if Green zone is "right" to tunnel area
+			 return TN_UR_y;
+		 }
+		 return -1;
+	 }
+	 /**
+	  * Method to get the x coordinate needed to place the robot before starting the bridge crossing
+	  * @author Alexandre Coulombe
+	  * @return x coordinate to go to before crossing the bridge
+	  */
+	 public int BR_coord_x(){
+		 if(Red_UR_y==BR_LL_y){
+			 return (BR_LL_x+1);
+		 }
+		 else if(Red_LL_y==BR_UR_y){
+			 return (BR_UR_x-1);
+		 }
+		 else if(Red_LL_x==BR_UR_x){
+			 return (BR_UR_x+1);
+		 }
+		 else if(Red_UR_x==BR_LL_x){
+			 return (BR_LL_x-1);
+		 }
+		 return -1;
+	 }
+	 /**
+	  * Method to get the y coordinate needed to place the robot before starting the bridge crossing
+	  * @author Alexandre Coulombe
+	  * @return y coordinate to go to before crossing the bridge
+	  */
+	 public int BR_coord_y(){
+		 if(Red_LL_y==BR_UR_y){
+			 return (BR_UR_y+1);  		//if Green zone is "above" tunnel area
+		 }
+		 else if(Red_UR_y==BR_LL_y){	//if Green zone is "below" tunnel area
+			 return (BR_LL_y-1);		
+		 }
+		 else if(Red_UR_x==BR_LL_x){	//if Green zone is "left" to tunnel area
+			 return BR_LL_y;
+		 }
+		 else if(Red_LL_x==BR_UR_x){	//if Green zone is "right" to tunnel area
+			 return BR_UR_y;
+		 }
+		 return -1;
+	 }
+	 
 }
