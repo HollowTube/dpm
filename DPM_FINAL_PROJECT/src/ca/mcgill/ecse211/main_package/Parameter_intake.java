@@ -271,6 +271,51 @@ public class Parameter_intake {
 		 return -1;
 	 }
 	 /**
+	  * Method to get the expected x coordinate of the robot after crossing the tunnelS
+	  * @param TN_coord_x
+	  * @return expected x coordinate after crossing the tunnel
+	  */
+	 public int TN_end_x(int TN_coord_x){
+		 int TN_length=TN_UR_x-TN_LL_x;
+		 if(TN_length==1){								//get the length of the tunnel, if the first equation gives 1 it may not be the long side
+			 TN_length=TN_UR_y-TN_LL_y;
+		 }
+		 if(TN_coord_x==TN_UR_x || TN_coord_x==TN_LL_x){	//if the robot is moving up or down the map
+			 return TN_coord_x;
+		 }
+		 else if(TN_coord_x<TN_LL_x){					//robot is moving to the right
+			 return (TN_coord_x+2+TN_length);
+		 }
+		 else if(TN_coord_x>TN_UR_x){					//robot is moving to the left
+			 return (TN_coord_x-2-TN_length);
+		 }
+		 return -1;
+	 }
+	 /**
+	  * Method to get the expected y coordinate of the robot after crossing the tunnel
+	  * @param TN_coord_y
+	  * @return expected y coordinate after crossing the tunnel
+	  */
+	 public int TN_end_y(int TN_coord_y){
+		 int TN_length=TN_UR_x-TN_LL_x;
+		 if(TN_length==1){								//get the length of the tunnel, if the first equation gives 1 it may not be the long side
+			 TN_length=TN_UR_y-TN_LL_y;
+		 }
+		 if(TN_coord_y==TN_UR_y){						//if the robot is moving left or right the map
+			 return (TN_coord_y+1);
+		 }
+		 else if(TN_coord_y==TN_LL_y){
+			 return (TN_coord_y-1);
+		 }
+		 else if(TN_coord_y<TN_LL_y){					//robot is moving to the up
+			 return (TN_coord_y+2+TN_length);
+		 }
+		 else if(TN_coord_y>TN_UR_y){					//robot is moving to the down
+			 return (TN_coord_y-2-TN_length);
+		 }
+		 return -1;
+	 }
+	 /**
 	  * Method to get the x coordinate needed to place the robot before starting the bridge crossing
 	  * @author Alexandre Coulombe
 	  * @return x coordinate to go to before crossing the bridge
@@ -307,6 +352,51 @@ public class Parameter_intake {
 		 }
 		 else if(Red_LL_x==BR_UR_x){	//if Green zone is "right" to tunnel area
 			 return BR_UR_y;
+		 }
+		 return -1;
+	 }
+	 /**
+	  * Method to get the expected x coordinate of the robot after crossing the bridge
+	  * @param BR_coord_x
+	  * @return expected x coordinate after crossing the bridge
+	  */
+	 public int BR_end_x(int BR_coord_x){
+		 int BR_length=BR_UR_x-BR_LL_x;
+		 if(BR_length==1){								//get the length of the bridge, if the first equation gives 1 it may not be the long side
+			 BR_length=BR_UR_y-BR_LL_y;
+		 }
+		 if(BR_coord_x==BR_UR_x || BR_coord_x==BR_LL_x){	//if the robot is moving up or down the map
+			 return BR_coord_x;
+		 }
+		 else if(BR_coord_x<BR_LL_x){					//robot is moving to the right
+			 return (BR_coord_x+2+BR_length);
+		 }
+		 else if(BR_coord_x>BR_UR_x){					//robot is moving to the left
+			 return (BR_coord_x-2-BR_length);
+		 }
+		 return -1;
+	 }
+	 /**
+	  * Method to get the expected y coordinate of the robot after crossing the bridge
+	  * @param BR_coord_y
+	  * @return expected y coordinate after crossing the bridge
+	  */
+	 public int BR_end_y(int BR_coord_y){
+		 int BR_length=BR_UR_x-BR_LL_x;
+		 if(BR_length==1){								//get the length of the bridge, if the first equation gives 1 it may not be the long side
+			 BR_length=BR_UR_y-BR_LL_y;
+		 }
+		 if(BR_coord_y==BR_UR_y){	//if the robot is moving left or right the map
+			 return (BR_coord_y+1);
+		 }
+		 else if(BR_coord_y==BR_LL_y){
+			 return (BR_coord_y-1);
+		 }
+		 else if(BR_coord_y<BR_LL_y){					//robot is moving to the up
+			 return (BR_coord_y+2+BR_length);
+		 }
+		 else if(BR_coord_y>BR_UR_y){					//robot is moving to the down
+			 return (BR_coord_y-2-BR_length);
 		 }
 		 return -1;
 	 }
