@@ -33,10 +33,10 @@ public class LightPoller {
 
 	}
 
-	public int getValue() {
+	public void getValue() {
 		lt.fetchSample(ltdata, 0);
 		lightVal = (int) (ltdata[0] * 100);
-		return lightVal;
+		current_light = lightVal;
 
 	}
 	/**
@@ -46,8 +46,7 @@ public class LightPoller {
 	 * @return
 	 */
 	public boolean lessThan(int threshold) {
-		current_light = getValue();
-
+		getValue();
 		if (current_light < threshold) {
 			return true;
 		} else
@@ -62,16 +61,20 @@ public class LightPoller {
 	 */
 	public boolean falling(int threshold) {
 		boolean edge;
-		current_light = getValue();
+		double change_in_light;
+		getValue();
 
 		
 		if (first_time) {
 			prev_light = current_light;
 			first_time = false;
 		}
-
-		if (current_light < threshold && prev_light > threshold)
+		
+		
+		change_in_light = current_light-prev_light;
+		if (change_in_light < -threshold) {
 			edge = true;
+		}
 		else {
 			edge = false;
 		}
@@ -88,16 +91,17 @@ public class LightPoller {
 	 */
 	public boolean rising(int threshold) {
 		boolean edge;
-		current_light = getValue();
-
+		double change_in_light;
+		getValue();
 
 		if (first_time) {
 			prev_light = current_light;
 			first_time = false;
 		}
-
-		if (current_light > threshold && prev_light < threshold)
+		change_in_light = current_light-prev_light;
+		if (change_in_light > threshold) {
 			edge = true;
+		}
 		else {
 			edge = false;
 		}
@@ -105,4 +109,5 @@ public class LightPoller {
 		prev_light = current_light;
 		return edge;
 	}
+	
 }

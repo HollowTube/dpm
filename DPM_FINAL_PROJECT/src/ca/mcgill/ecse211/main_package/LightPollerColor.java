@@ -2,14 +2,9 @@ package ca.mcgill.ecse211.main_package;
 
 import java.util.ArrayList;
 
-import org.apache.commons.math3.distribution.*;
-import org.apache.commons.math3.exception.MathArithmeticException;
-import lejos.hardware.Button;
 import lejos.hardware.Sound;
-import lejos.hardware.ev3.LocalEV3;
 import lejos.robotics.SampleProvider;
 import lejos.hardware.lcd.LCD;
-import lejos.hardware.lcd.TextLCD;
 
 /**
  * This class uses a probabilistic normal distribution model to detect the right colored blocks.
@@ -24,7 +19,6 @@ public class LightPollerColor {
 	private float[] ltdata;
 	public MotorControl motorcontrol;
  
-	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
 	private Color red_block = new Color(0.20767974f, 0.027133795f, 0.015695887f, 0.3038505f, 0.04516072f, 0.02923487f,
 			"red");
@@ -109,7 +103,7 @@ public class LightPollerColor {
 	 * @return
 	 */
 	private double getProbability(Color color, float[] reading) {
-		float sum_prob = 0, red_dist = 0, green_dist = 0, blue_dist = 0;
+		float red_dist = 0, green_dist = 0, blue_dist = 0;
 		float red_prob = 0, blue_prob = 0, green_prob = 0;
 
 		red_dist = Math.abs(color.red_mean - reading[0]);
@@ -134,7 +128,7 @@ public class LightPollerColor {
 	 * 
 	 */
 	public void detectColor() {
-		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0,
+		double prob_red = 0, prob_blue = 0, prob_yellow = 0,
 				prob_white = 0;
 		double max_prob;
 		lt.fetchSample(ltdata, 0);
@@ -171,7 +165,7 @@ public class LightPollerColor {
 	 * @return
 	 */
 	public boolean target_found(String name) {
-		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0,
+		double prob_red = 0, prob_blue = 0, prob_yellow = 0,
 				prob_white = 0, max_prob = 0;
 		String max_color;
 

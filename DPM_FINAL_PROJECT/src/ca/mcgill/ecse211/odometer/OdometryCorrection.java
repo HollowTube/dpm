@@ -59,15 +59,14 @@ public class OdometryCorrection implements Runnable {
 		double head = 0;
 		int currentYQuad, currentXQuad;
 		double newy, newx = 0;
-		
+
 		while (true) {
 			correctionStart = System.currentTimeMillis();
 
 			if (correctionTrigger()) {
 				position = odometer.getXYT(); // get current position and heading from odometer
 				head = position[2]; // get current heading
-				
-				
+
 				// going up
 				if (head > 350 || head < 10) {
 
@@ -79,10 +78,10 @@ public class OdometryCorrection implements Runnable {
 					// i.e 1 or 2 tiles up from the defined
 					// origin),
 					newy = SQUARE_LENGTH * currentYQuad - LIGHTSENS_OFFSET;
-					odometer.setY(newy); 
-					Sound.buzz(); 
+					odometer.setY(newy);
+					Sound.buzz();
 
-				// going down , same as above but in other direction
+					// going down , same as above but in other direction
 				} else if (Math.abs(head - 180) < ANGLE_THRESHOLD) {
 					currentYQuad = (int) ((position[1] + 10) / SQUARE_LENGTH);
 					newy = SQUARE_LENGTH * currentYQuad + LIGHTSENS_OFFSET;
@@ -95,7 +94,7 @@ public class OdometryCorrection implements Runnable {
 					// calculates its horizontal tile location (i.e. 1
 					// or 2 tiles left or right from the defined origin
 					currentXQuad = (int) ((position[0] + 10) / SQUARE_LENGTH);
-					
+
 					// calculates its actual x position, includes
 					// the offset from the light sensor
 					newx = SQUARE_LENGTH * currentXQuad - LIGHTSENS_OFFSET;
