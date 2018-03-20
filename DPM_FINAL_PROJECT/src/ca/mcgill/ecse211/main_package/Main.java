@@ -30,6 +30,7 @@ public class Main {
 	
 	public static final double WHEEL_RAD = 2.2;
 	public static final double TRACK = 15.35;
+	public static final double TILE_SIZE = 30.48;
 	
 	//ultrasonic sensor initialization
 
@@ -129,7 +130,7 @@ public class Main {
 
 				// simply input waypoints here, will only update after it reaches the
 				// destination
-				double[][] waypoints = { { 120, 0 }, { 120, 120 }, { 0, 120 }, { 0, 0 } };
+				double[][] waypoints = { { 60, 0 }, { 60, 60 }, { 0, 60 }, { 0, 0 } };
 				int current_waypoint = 0;
 				double xf = 0;
 				double yf = 0;
@@ -149,7 +150,7 @@ public class Main {
 //							// TODO Auto-generated catch block
 //							e.printStackTrace();
 //						}
-						odometer.setXYT(0.1, 0.1, 0.1);
+						odometer.setXYT(0.01, 0.01, 0.01);
 						state = List_of_states.IDLE;
 						break;
 
@@ -172,12 +173,12 @@ public class Main {
 					// travels to waypoints while scanning for objects
 					case TRAVELLING:
 
-						navigator.travelTo(xf, yf);
+						navigator.travelTo(xf,yf);
 
 						A_loc.fix_angle_on_path();
 
 						// triggers when the destination is reached
-						if (navigator.destination_reached(xf, yf)) {
+						if (navigator.destination_reached(xf,yf)) {
 							motorControl.stop();
 							current_waypoint++;
 							Sound.beep();
@@ -202,7 +203,7 @@ public class Main {
 					case BRIDGE_CROSSING:
 						
 
-						navigator.turn_to_angle(90);
+						navigator.turn_to_angle(270);
 						motorControl.moveSetDistance(15);
 						navigator.turn_to_angle(0);
 						double bridge_length = 0;
@@ -221,17 +222,22 @@ public class Main {
 						
 
 					case TEST:
-						//motorControl.forward();
-						motorControl.dime_turn(720);
-						// A_loc.fix_angle();
+						motorControl.forward();
+////						motorControl.dime_turn(720);
+						 A_loc.fix_angle_on_path();
 						// motorControl.stop();
-						
-						 state = List_of_states.IDLE;
+//						if(lightPollerleft.falling(15)) {
+//							Sound.beep();
+//						}
+//						if(lightPollerright.rising(12)) {
+//							Sound.buzz();
+//						}
+//						 state = List_of_states.IDLE;
 						break;
 					default:
 						break;
 					}
-					sleeptime(50);
+					sleeptime(10);
 				}
 			}
 

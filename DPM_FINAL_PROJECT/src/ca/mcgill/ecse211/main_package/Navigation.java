@@ -5,18 +5,11 @@ import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
 
 /**
-<<<<<<< HEAD
- * This class is used for the robot's navigation in a grid.
- * It obtains the correct heading, rotates the robot towards it and moves the robot to the next point.
+ *This class is used for the robot's navigation in a grid. It
+ * obtains the correct heading, rotates the robot towards it and moves the robot
+ * to the next point.
  * 
- * @author Tritin
-=======
- * Navigation class, methods related to getting the robot where it needs to be
- * are gathered here
- * 
- * @author Tritin Truong
->>>>>>> general commenting in navigation and main
- *
+ * @author Tritin 
  */
 public class Navigation {
 	private static Odometer odometer;
@@ -25,7 +18,7 @@ public class Navigation {
 	private final int FORWARD_SPEED = 150;
 	private final int HEADING_THRESHOLD = 1;
 
-	// private double[] position;
+	private double[] position;
 	private static double final_heading = 0;
 	private int left_speed;
 	private int right_speed;
@@ -46,17 +39,21 @@ public class Navigation {
 	 * @param yf
 	 */
 	public void travelTo(double xf, double yf) {
-		// position = get_position();
-		motorcontrol.setLeftSpeed(left_speed);
-		motorcontrol.setRightSpeed(right_speed);
+		position = get_position();
 		motorcontrol.forward();
-		// heading_error = position[2] - getHeading(xf - position[0], yf - position[1]);
-		// if (Math.abs(heading_error) > HEADING_THRESHOLD) {
-		// angle_correction(heading_error);
-		// } else {
-		left_speed = FORWARD_SPEED;
-		right_speed = FORWARD_SPEED;
-		// }
+		
+//		double heading_error = min_angle(position[2], getHeading(xf - position[0], yf - position[1]));
+//		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
+//			angle_correction(heading_error);
+//			motorcontrol.forward();
+//		}
+//		else {
+//			left_speed = FORWARD_SPEED;
+//			right_speed = FORWARD_SPEED;
+//			motorcontrol.setLeftSpeed(left_speed);
+//			motorcontrol.setRightSpeed(right_speed);
+//			motorcontrol.forward();
+//		}
 	}
 
 	/**
@@ -66,7 +63,7 @@ public class Navigation {
 	 * @param dy
 	 * @return euclidean error in cm
 	 */
-	private static double euclidian_error(double dx, double dy) {
+	public static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
 		// System.out.println(error);
 		return error;
@@ -97,7 +94,7 @@ public class Navigation {
 	 * @param turning_angle
 	 */
 	private void angle_correction(double turning_angle) {
-		int correction = 5;
+		int correction = 10;
 		if (turning_angle < 0) {
 			left_speed = FORWARD_SPEED - correction;
 			right_speed = FORWARD_SPEED + correction;
@@ -107,6 +104,8 @@ public class Navigation {
 			left_speed = FORWARD_SPEED + correction;
 			right_speed = FORWARD_SPEED - correction;
 		}
+		motorcontrol.setLeftSpeed(left_speed);
+		motorcontrol.setRightSpeed(right_speed);
 	}
 
 	/**
@@ -166,18 +165,18 @@ public class Navigation {
 		turning_angle = min_angle(initial_heading, final_heading);
 		motorcontrol.dime_turn(turning_angle);
 	}
-
+	
 	/**
-	 * This boolean method indicates to the robot id a destination is reached yet. (within some error.)
+	 * This boolean method indicates to the robot id a destination is reached yet.
+	 * (within some error.)
 	 * 
 	 * @param xf
 	 * @param yf
 	 * @return
 	 */
-
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (euclidian_error(xf - position[0], yf - position[1]) < 0.75) {
+		if (Math.abs(xf - position[0]) < 0.5 && Math.abs(yf - position[1]) < 0.5) {
 			return true;
 		}
 		return false;
