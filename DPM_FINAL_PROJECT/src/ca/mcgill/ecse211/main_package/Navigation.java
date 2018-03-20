@@ -122,7 +122,7 @@ public class Navigation {
 		theta = (fhead + 360 - ihead) % (360);
 		if (theta < 180)
 			return theta;
-		else
+		else	
 			return theta - 360;
 	}
 
@@ -137,7 +137,7 @@ public class Navigation {
 		initial_heading = odometer.getXYT()[2];
 		final_heading = angle;
 		turning_angle = min_angle(initial_heading, final_heading);
-		motorcontrol.dime_turn(turning_angle);
+		motorcontrol.dimeTurn(turning_angle);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class Navigation {
 		Sound.beep();
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
-		motorcontrol.dime_turn(turning_angle);
+		motorcontrol.dimeTurn(turning_angle);
 	}
 	
 	/**

@@ -60,7 +60,7 @@ public class MotorControl {
 	 * @param ROTATE_SPEED
 	 * @param dist
 	 */
-	public void go_around(int rotate_speed, int dist) {
+	public void goAround(int rotate_speed, int dist) {
 		leftMotor.setSpeed(rotate_speed);
 		rightMotor.setSpeed(rotate_speed);
 
@@ -91,25 +91,25 @@ public class MotorControl {
 	/**
 	 * moves left motor forwards
 	 */
-	public void leftforward() {
+	public void leftForwards() {
 		leftMotor.forward();
 	}
 	/**
 	 * moves left motor backwards
 	 */
-	public void leftbackward(){
+	public void leftBackwards(){
 		leftMotor.backward();
 	}
 	/**
 	 * Moves right motor forwards
 	 */
-	public void rightforward() {
+	public void rightForwards() {
 		rightMotor.forward();
 	}
 	/*
 	 * Moves right motor backwards
 	 */
-	public void rightbackward(){
+	public void rightBackwards(){
 		rightMotor.backward();
 	}
 	/**
@@ -172,7 +172,7 @@ public class MotorControl {
 	 * 
 	 * @param rotation
 	 */
-	public void dime_turn(double rotation) {
+	public void dimeTurn(double rotation) {
 
 		if (rotation < 0) {
 			leftMotor.rotate(-convertAngle(radius, track, Math.abs(rotation)), true);
@@ -286,7 +286,7 @@ public class MotorControl {
 	 * @param theta
 	 * @author Alexandre
 	 */
-	public void turnto(double theta) {
+	public void turnTo(double theta) {
 		// if theta > 180 || theta < -180
 		// then turn 360-theta or 360-Math.abs(theta)
 		if (theta >= 180) {

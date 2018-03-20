@@ -54,7 +54,7 @@ public class Calibration {
 		while (true) {
 			mid = (top_bound-bottom_bound)/2 + bottom_bound;
 			motorcontrol.setTrack(mid);
-			motorcontrol.dime_turn(720);
+			motorcontrol.dimeTurn(720);
 			
 			
 			DecimalFormat numberFormat = new DecimalFormat("######0.0000");
