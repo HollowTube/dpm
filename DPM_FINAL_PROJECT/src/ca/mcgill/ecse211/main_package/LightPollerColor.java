@@ -12,10 +12,10 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.lcd.TextLCD;
 
 /**
- * This class uses a probabilistic model to detect the right colored blocks.
- * It allows identification of the correct block by choosing the highest probable one.
+ * This class uses a probabilistic normal distribution model to detect the right colored blocks.
+ * It allows identification of the correct block by choosing the highest probable one as the right one.
  * 
- * @author tritin
+ * @author Tritin
  *
  */
 public class LightPollerColor {
@@ -38,6 +38,7 @@ public class LightPollerColor {
 
 	/**
 	 * LightPollerColor class constructor.
+	 * It is comprised of the SampleProvider sample of the sensor and its value.
 	 * 
 	 * @param lt
 	 * @param ltdata
@@ -49,6 +50,7 @@ public class LightPollerColor {
 
 	/**
 	 * Method to calibrate the light sensor.
+	 * 
 	 */
 	public void calibrate() {
 		lt.fetchSample(ltdata, 0);
@@ -68,6 +70,12 @@ public class LightPollerColor {
 		Sound.beep();
 	}
 
+	/**
+	 * This method obtains the average out of 10 samples for RGB values detected by the light sensor.
+	 * This is used when trying to identify the right colored block.
+	 * 
+	 * @return Average array [avg_red, avg_green, avg_blue]
+	 */
 	private float[] getAverageMeasurement() {
 		float[] avg_values = { 0, 0, 0 };
 		float red_sum = 0, green_sum = 0, blue_sum = 0;
@@ -90,6 +98,16 @@ public class LightPollerColor {
 		return avg_values;
 	}
 
+	/**
+	 * This method uses the mean and standard deviation found for each color during calibration
+	 * to obtain the probability for each color. It uses a normal distribution model of each sample.
+	 * 
+	 * It firsts gets the distance between the reading and the mean for each color.
+	 * 
+	 * @param color
+	 * @param reading
+	 * @return
+	 */
 	private double getProbability(Color color, float[] reading) {
 		float sum_prob = 0, red_dist = 0, green_dist = 0, blue_dist = 0;
 		float red_prob = 0, blue_prob = 0, green_prob = 0;
@@ -110,6 +128,10 @@ public class LightPollerColor {
 
 	/**
 	 * This method displays the color detected, either red, blue, yellow or white.
+	 * It uses the reading from the light sensor and finds the probability of that reading with each color.
+	 * It then chooses the largest one by comparing each value once and retaining the larger one each team.
+	 * Whichever color has the maximum probability, the LCD displays it.
+	 * 
 	 */
 	public void detectColor() {
 		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0,
@@ -143,7 +165,7 @@ public class LightPollerColor {
 
 	/**
 	 * If the color scanned is the target color, the robot will beep twice and return true
-	 * else will beep once and return false
+	 * else will beep once and return false.
 	 * 
 	 * @param name
 	 * @return
