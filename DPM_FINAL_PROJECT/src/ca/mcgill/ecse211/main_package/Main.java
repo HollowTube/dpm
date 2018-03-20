@@ -111,6 +111,10 @@ public class Main {
 		else if(buttonChoice == Button.ID_UP) {
 			Calibration.track_calibration();
 		}
+		
+		else if(buttonChoice == Button.ID_ENTER) {
+			Testing.straightLine();
+		}
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
@@ -222,17 +226,8 @@ public class Main {
 						
 
 					case TEST:
-						motorControl.forward();
-////						motorControl.dime_turn(720);
-						 A_loc.fix_angle_on_path();
-						// motorControl.stop();
-//						if(lightPollerleft.falling(15)) {
-//							Sound.beep();
-//						}
-//						if(lightPollerright.rising(12)) {
-//							Sound.buzz();
-//						}
-//						 state = List_of_states.IDLE;
+						motorControl.moveSetDistance(120);
+						state = List_of_states.IDLE;
 						break;
 					default:
 						break;
