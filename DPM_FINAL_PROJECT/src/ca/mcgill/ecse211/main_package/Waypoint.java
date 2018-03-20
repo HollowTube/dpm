@@ -1,5 +1,11 @@
 package ca.mcgill.ecse211.main_package;
 
+/**
+ * This class is experimental for now. It would be a data class with coordinates and identifiers.
+ * 
+ * @author Tritin
+ *
+ */
 public class Waypoint {
 	double x;
 	double y;

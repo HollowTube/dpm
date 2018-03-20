@@ -3,16 +3,27 @@ package ca.mcgill.ecse211.main_package;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.MedianFilter;
 
+/**
+ * This class handles the data received by the Ultrasonic Sensor for localization.
+ * 
+ * @author tritin
+ *
+ */
 public class myUSPoller {
 
 	// Class Variables
-
 	private final int BUFFER_SIZE = 5;
 	private float[] sampleUS;
 	SampleProvider myDistance;
 	double wallDist;
 	// MedianFilter myfilter = new MedianFilter(myDistance, BUFFER_SIZE);
 
+	/**
+	 * myUSPoller Class constructor.
+	 * 
+	 * @param us
+	 * @param usdata
+	 */
 	public myUSPoller(SampleProvider us, float[] usdata) {
 		this.myDistance = us;
 		this.sampleUS = usdata;

@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This class stores and provides thread safe access to the odometer data.
+ * This class stores and provides thread safe access to the all odometer data.
  * 
  * @author Rodrigo Silva
  * @author Dirk Dubois

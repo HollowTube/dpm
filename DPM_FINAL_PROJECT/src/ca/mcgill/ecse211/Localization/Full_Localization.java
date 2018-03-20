@@ -5,7 +5,13 @@ import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.main_package.LightPoller;
 import ca.mcgill.ecse211.main_package.MotorControl;
 
-
+/**
+ * This class is in charge of performing the full localization using the Ultrasonic sensor first
+ * and then the lightsensor afterwards.
+ * 
+ * @author Alexandre
+ *
+ */
 public class Full_Localization {
 	private Odometer odo;
 	private SampleProvider us;

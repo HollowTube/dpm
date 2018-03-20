@@ -17,6 +17,12 @@ import lejos.robotics.SampleProvider;
 import lejos.robotics.navigation.Navigator;
 import ca.mcgill.ecse211.Localization.*;
 
+/**
+ * Main class, meant to conduct the entire run and manage all the different threads. 
+ * 
+ * @author 
+ *
+ */
 public class Main {
 
 	// Motor Objects, and Robot related parameters
@@ -63,6 +69,12 @@ public class Main {
 
 	static List_of_states state;
 
+	/**
+	 * Main method to run the program.
+	 * 
+	 * @param args
+	 * @throws OdometerExceptions
+	 */
 	public static void main(String[] args) throws OdometerExceptions {
 
 		int buttonChoice;
@@ -242,7 +254,11 @@ public class Main {
 	}
 	
 	
-
+	/**
+	 * This method sets a time for the thread sleep.
+	 * 
+	 * @param time
+	 */
 	public static void sleeptime(int time) {
 		try {
 			Thread.sleep(time);

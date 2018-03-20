@@ -7,7 +7,10 @@ import lejos.hardware.lcd.TextLCD;
 
 /**
  * This class is used to display the content of the odometer variables (x, y,
- * Theta)
+ * Theta).
+ * 
+ * @author Tritin
+ * 
  */
 public class Display implements Runnable {
 
@@ -20,7 +23,7 @@ public class Display implements Runnable {
 	private double dist;
 
 	/**
-	 * This is the class constructor
+	 * This is the class constructor.
 	 * 
 	 * @param odoData
 	 * @throws OdometerExceptions
@@ -31,7 +34,7 @@ public class Display implements Runnable {
 	}
 
 	/**
-	 * This is the overloaded class constructor
+	 * This is the overloaded class constructor.
 	 * 
 	 * @param odoData
 	 * @throws OdometerExceptions
@@ -42,6 +45,9 @@ public class Display implements Runnable {
 		this.lcd = lcd;
 	}
 
+	/**
+	 * Method to run the display thread.
+	 */
 	public void run() {
 
 		lcd.clear();

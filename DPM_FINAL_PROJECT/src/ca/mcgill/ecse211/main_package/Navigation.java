@@ -7,6 +7,13 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 //import lejos.hardware.motor.Motor;
 import lejos.robotics.RegulatedMotor;
 
+/**
+ * This class is used for the robot's navigation in a grid.
+ * It obtains the correct heading, rotates the robot towards it and moves the robot to the next point.
+ * 
+ * @author Tritin
+ *
+ */
 public class Navigation {
 	private static Odometer odometer;
 	private static MotorControl motorcontrol;
@@ -34,7 +41,12 @@ public class Navigation {
 		return odometer.getXYT();
 	}
 
-	// travels straight
+	/**
+	 * This method allows the robot to travel to a destination (point on the field).
+	 * 
+	 * @param xf
+	 * @param yf
+	 */
 	public void travelTo(double xf, double yf) {
 		position = get_position();
 		motorcontrol.setLeftSpeed(left_speed);
@@ -50,7 +62,7 @@ public class Navigation {
 	}
 
 	/**
-	 * This method returns the euclidian distance
+	 * This method returns the euclidian distance.
 	 * 
 	 * @param dx
 	 * @param dy
@@ -159,7 +171,13 @@ public class Navigation {
 		motorcontrol.dime_turn(turning_angle);
 	}
 
-	
+	/**
+	 * This boolean method indicates to the robot id a destination is reached yet. (within some error.)
+	 * 
+	 * @param xf
+	 * @param yf
+	 * @return
+	 */
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
 		if (euclidian_error(xf - position[0], yf - position[1]) < 0.75) {

@@ -2,7 +2,16 @@ package ca.mcgill.ecse211.main_package;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
+/**
+ * This class is used to store the values for each colored block sample normal distributions,
+ * mean and standard deviation.
+ * 
+ * @author tritin
+ * 
+ */
+
 public class Color {
+	
 	public float getRed_mean() {
 		return red_mean;
 	}
@@ -88,6 +97,17 @@ public class Color {
 	String name;
 	public NormalDistribution red, green, blue;
 
+	/**
+	 * This is the Color class constructor.
+	 * 
+	 * @param red_mean
+	 * @param green_mean
+	 * @param blue_mean
+	 * @param red_sigma
+	 * @param blue_sigma
+	 * @param green_sigma
+	 * @param name
+	 */
 	public Color(float red_mean, float green_mean, float blue_mean, float red_sigma, float blue_sigma,
 			float green_sigma, String name) {
 

@@ -11,6 +11,13 @@ import lejos.robotics.SampleProvider;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.lcd.TextLCD;
 
+/**
+ * This class uses a probabilistic model to detect the right colored blocks.
+ * It allows identification of the correct block by choosing the highest probable one.
+ * 
+ * @author tritin
+ *
+ */
 public class LightPollerColor {
 
 	private SampleProvider lt;
@@ -29,11 +36,20 @@ public class LightPollerColor {
 			0.1739245f, "white");
 	ArrayList<Color> colors = new ArrayList<Color>();
 
+	/**
+	 * LightPollerColor class constructor.
+	 * 
+	 * @param lt
+	 * @param ltdata
+	 */
 	public LightPollerColor(SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
 		this.ltdata = ltdata;
 	}
 
+	/**
+	 * Method to calibrate the light sensor.
+	 */
 	public void calibrate() {
 		lt.fetchSample(ltdata, 0);
 
@@ -93,7 +109,7 @@ public class LightPollerColor {
 	}
 
 	/**
-	 * displays the color detected, either red, blue, yellow or white.
+	 * This method displays the color detected, either red, blue, yellow or white.
 	 */
 	public void detectColor() {
 		double prob_red = 0, prob_green = 0, prob_blue = 0, prob_orange = 10, prob_table = 0, prob_yellow = 0,
@@ -126,7 +142,7 @@ public class LightPollerColor {
 	}
 
 	/**
-	 * if the color scanned is the target color, will beep twice and return true
+	 * If the color scanned is the target color, the robot will beep twice and return true
 	 * else will beep once and return false
 	 * 
 	 * @param name
@@ -174,6 +190,12 @@ public class LightPollerColor {
 
 	}
 
+	/**
+	 * This method makes sure that that the colored block chosen is the one with highest probability.
+	 * 
+	 * @param list
+	 * @return
+	 */
 	public Color max_color(ArrayList<Color> list) {
 		Color max_color = list.get(0);
 		for (int i = 0; i < 4; i++) {

@@ -4,6 +4,12 @@ import ca.mcgill.ecse211.main_package.LightPoller;
 import ca.mcgill.ecse211.main_package.MotorControl;
 import ca.mcgill.ecse211.odometer.*;
 
+/**
+ * This class is in charge to make the robot's orientation exactly pointing in the right direction.
+ * 
+ * @author Tritin and Alexandre
+ *
+ */
 public class Angle_Localization {
 
 	private static Odometer odometer;
