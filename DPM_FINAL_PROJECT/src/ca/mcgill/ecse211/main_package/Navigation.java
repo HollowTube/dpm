@@ -40,20 +40,18 @@ public class Navigation {
 	 */
 	public void travelTo(double xf, double yf) {
 		position = get_position();
-		motorcontrol.forward();
 		
-//		double heading_error = min_angle(position[2], getHeading(xf - position[0], yf - position[1]));
-//		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
-//			angle_correction(heading_error);
-//			motorcontrol.forward();
-//		}
-//		else {
-//			left_speed = FORWARD_SPEED;
-//			right_speed = FORWARD_SPEED;
-//			motorcontrol.setLeftSpeed(left_speed);
-//			motorcontrol.setRightSpeed(right_speed);
-//			motorcontrol.forward();
-//		}
+		double heading_error = min_angle(position[2], getHeading(xf - position[0], yf - position[1]));
+		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
+			angle_correction(heading_error);
+		}
+		else {
+			left_speed = FORWARD_SPEED;
+			right_speed = FORWARD_SPEED;
+			motorcontrol.setLeftSpeed(left_speed);
+			motorcontrol.setRightSpeed(right_speed);
+			motorcontrol.forward();
+		}
 	}
 
 	/**
@@ -94,7 +92,7 @@ public class Navigation {
 	 * @param turning_angle
 	 */
 	private void angle_correction(double turning_angle) {
-		int correction = 10;
+		int correction = 5;
 		if (turning_angle < 0) {
 			left_speed = FORWARD_SPEED - correction;
 			right_speed = FORWARD_SPEED + correction;
@@ -106,6 +104,7 @@ public class Navigation {
 		}
 		motorcontrol.setLeftSpeed(left_speed);
 		motorcontrol.setRightSpeed(right_speed);
+		motorcontrol.forward();
 	}
 
 	/**
