@@ -29,8 +29,8 @@ public class Main {
 	private static final Port leftPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 
-	public static final double WHEEL_RAD = 2.2;
-	public static final double TRACK = 15.64;
+	public static final double WHEEL_RAD = 2.06;
+	public static final double TRACK = 14.46;
 	public static final double TILE_SIZE = 30.48;
 
 	// ultrasonic sensor initialization
@@ -139,12 +139,12 @@ public class Main {
 			switch (state) {
 
 			case INITIALIZE:
-				// try {
-				// Localize.Corner_Localize(1,1);
-				// } catch (OdometerExceptions e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// }
+//				 try {
+//				 Localize.Corner_Localize(1,1);
+//				 } catch (OdometerExceptions e) {
+//				 // TODO Auto-generated catch block
+//				 e.printStackTrace();
+//				 }
 				odometer.setXYT(0.01, 0.01, 0.01);
 				state = List_of_states.IDLE;
 				break;
@@ -170,7 +170,7 @@ public class Main {
 
 				navigator.travelTo(xf, yf);
 
-				//A_loc.fix_angle_on_path();
+				A_loc.fix_angle_on_path();
 
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
@@ -214,15 +214,15 @@ public class Main {
 
 			case TEST:
 				motorControl.forward();
-				//// motorControl.dime_turn(720);
+				//motorControl.dime_turn(90);
 				A_loc.fix_angle_on_path();
 				// motorControl.stop();
-				// if(lightPollerleft.falling(15)) {
-				// Sound.beep();
-				// }
-				// if(lightPollerright.rising(12)) {
-				// Sound.buzz();
-				// }
+//				 if(lightPollerleft.lessThan(20)) {
+//				 Sound.beep();
+//				 }
+//				 if(lightPollerright.lessThan(20)) {
+//				 Sound.buzz();
+//				 }
 				// state = List_of_states.IDLE;
 				break;
 			default:
