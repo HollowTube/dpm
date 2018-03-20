@@ -125,7 +125,7 @@ public class Main {
 
 		// simply input waypoints here, will only update after it reaches the
 		// destination
-		double[][] waypoints = { { 60, 0 }, { 60, 60 }, { 0, 60 }, { 0, 0 } };
+		double[][] waypoints = { { TILE_SIZE*2, 0 }, { TILE_SIZE*2, TILE_SIZE*2 }, { 0, TILE_SIZE*2 }, { 0, 0 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
@@ -170,7 +170,7 @@ public class Main {
 
 				navigator.travelTo(xf, yf);
 
-				A_loc.fix_angle_on_path();
+				//A_loc.fix_angle_on_path();
 
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
