@@ -168,8 +168,8 @@ public class Main {
 			// travels to waypoints while scanning for objects
 			case TRAVELLING:
 
-				navigator.travelTo(xf, yf);
-
+				//navigator.travelTo(xf, yf);
+				motorControl.forward();
 				A_loc.fix_angle_on_path();
 
 				// triggers when the destination is reached
@@ -214,8 +214,11 @@ public class Main {
 
 			case TEST:
 				motorControl.forward();
+				while(!lightPollerleft.lessThan(30));
+				motorControl.stop();
+				
 				//motorControl.dime_turn(90);
-				A_loc.fix_angle_on_path();
+//				A_loc.fix_angle_on_path();
 				// motorControl.stop();
 //				 if(lightPollerleft.lessThan(20)) {
 //				 Sound.beep();
@@ -223,7 +226,7 @@ public class Main {
 //				 if(lightPollerright.lessThan(20)) {
 //				 Sound.buzz();
 //				 }
-				// state = List_of_states.IDLE;
+				 state = List_of_states.IDLE;
 				break;
 			default:
 				break;

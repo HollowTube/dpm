@@ -92,7 +92,7 @@ public class Navigation {
 	 * @param turning_angle
 	 */
 	private void angle_correction(double turning_angle) {
-		int correction = 5;
+		int correction = 10;
 		if (turning_angle < 0) {
 			left_speed = FORWARD_SPEED - correction;
 			right_speed = FORWARD_SPEED + correction;
@@ -175,7 +175,7 @@ public class Navigation {
 	 */
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (Math.abs(xf - position[0]) < 0.5 && Math.abs(yf - position[1]) < 0.5) {
+		if (Math.abs(xf - position[0]) < 1 && Math.abs(yf - position[1]) < 1) {
 			return true;
 		}
 		return false;
