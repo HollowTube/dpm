@@ -19,8 +19,6 @@ public class Display implements Runnable {
 	private double[] position;
 	private final long DISPLAY_PERIOD = 25;
 	private long timeout = Long.MAX_VALUE;
-	// private myUSPoller uspoller = Lab4.usPoller;
-	private double dist;
 
 	/**
 	 * This is the class constructor.
