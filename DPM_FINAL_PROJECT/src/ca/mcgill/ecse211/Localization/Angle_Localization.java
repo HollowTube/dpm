@@ -3,9 +3,12 @@ package ca.mcgill.ecse211.Localization;
 import ca.mcgill.ecse211.main_package.LightPoller;
 import ca.mcgill.ecse211.main_package.MotorControl;
 import ca.mcgill.ecse211.odometer.*;
+import lejos.hardware.Sound;
+
 
 /**
- * This class is in charge to make the robot's orientation exactly pointing in the right direction.
+ * This class is in charge to make the robot's orientation exactly pointing in
+ * the right direction.
  * 
  * @author Tritin and Alexandre
  *
@@ -20,6 +23,13 @@ public class Angle_Localization {
 	public int x_line_count;
 	public int y_line_count;
 	public double LIGHT_OFFSET = 0.5;
+	
+	private static final double SQUARE_LENGTH = 30.48;
+	private static final double LIGHTSENS_OFFSET = 3.5;
+
+	double initial_position[];
+	double current_position[];
+	private boolean recovery = false;
 
 	/**
 	 * Class constructor
@@ -71,6 +81,7 @@ public class Angle_Localization {
 		}
 		angle_correction();
 	}
+
 	/**
 	 * 
 	 * 
@@ -85,31 +96,34 @@ public class Angle_Localization {
 	 * @author Tri-tin Truong
 	 */
 	public void fix_angle_on_path() {
-		
-		
-		if (right_sensor.lessThan(threshold)) {
+
+		if (right_sensor.lessThan(threshold) && !recovery) {
 			motorcontrol.rightStop();
-			do {
-				if (left_sensor.lessThan(threshold)) {
-					motorcontrol.leftStop();
-					motorcontrol.moveSetDistance(1);
-					angle_correction();
-					break;
-				}
-			} while (true);
-		} else if (left_sensor.lessThan(threshold)) {
+			while (!left_sensor.lessThan(threshold))
+				;
 			motorcontrol.leftStop();
-			do {
-				if (right_sensor.lessThan(threshold)) {
-					motorcontrol.rightStop();
-					motorcontrol.moveSetDistance(1);
-					angle_correction();
-					break;
-				}
-			} while (true);
+			angle_correction();
+			initial_position = odometer.getXYT();
+			recovery = true;
+
+		} else if (left_sensor.lessThan(threshold) && !recovery) {
+			motorcontrol.leftStop();
+			while (!right_sensor.lessThan(threshold))
+				;
+			motorcontrol.rightStop();
+			angle_correction();
+			initial_position = odometer.getXYT();
+			recovery = true;
+
+		} else if (recovery) {
+			current_position = odometer.getXYT();
+			if (euclidian_error(current_position[0] - initial_position[0],
+					current_position[1] - initial_position[1]) > 3) {
+				recovery = false;
+			}
 		}
 	}
- 
+
 	/**
 	 * Method to correct the odometer angle. Takes the previous heading to know in
 	 * which direction the robot is facing. Sets the angle to the heading it is
@@ -117,7 +131,14 @@ public class Angle_Localization {
 	 * 
 	 * @author Alexandre Coulombe
 	 */
-	public void angle_correction() {
+	private void angle_correction() {
+		long correctionStart, correctionEnd;
+		double position[];
+		double head = 0;
+		int currentYQuad, currentXQuad;
+		double newy, newx = 0;
+		
+		
 		double heading = odometer.getXYT()[2];
 		if (heading > 315 || heading < 45) {
 			odometer.setTheta(0);
@@ -128,5 +149,11 @@ public class Angle_Localization {
 		} else if (heading > 225 && heading < 315) {
 			odometer.setTheta(270);
 		}
+	}
+
+	private static double euclidian_error(double dx, double dy) {
+		double error = Math.sqrt(dx * dx + dy * dy);
+		// System.out.println(error);
+		return error;
 	}
 }
