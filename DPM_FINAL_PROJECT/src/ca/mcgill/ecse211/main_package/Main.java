@@ -206,10 +206,11 @@ public class Main {
 				break;
 
 			case BRIDGE_CROSSING:
-
-				navigator.turn_to_angle(270);
+				
+				
+				navigator.turn_to_angle(90);
 				motorControl.moveSetDistance(15);
-				navigator.turn_to_angle(0);
+				navigator.turn_to_destination(xf,yf);
 				double bridge_length = 0;
 				motorControl.moveSetDistance(bridge_length);
 				try {
@@ -225,17 +226,8 @@ public class Main {
 				motorControl.forward();
 				while(!lightPollerleft.lessThan(30));
 				motorControl.stop();
-				
-				//motorControl.dime_turn(90);
-//				A_loc.fix_angle_on_path();
-				// motorControl.stop();
-//				 if(lightPollerleft.lessThan(20)) {
-//				 Sound.beep();
-//				 }
-//				 if(lightPollerright.lessThan(20)) {
-//				 Sound.buzz();
-//				 }
-				 state = List_of_states.IDLE;
+			
+				state = List_of_states.IDLE;
 				break;
 			default:
 				break;

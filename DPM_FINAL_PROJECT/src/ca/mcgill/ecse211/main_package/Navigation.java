@@ -106,6 +106,15 @@ public class Navigation {
 		motorcontrol.setRightSpeed(right_speed);
 		motorcontrol.forward();
 	}
+	
+	
+	public void offset90(double xf, double yf) {
+		double newAngle;
+		position = odometer.getXYT();
+		newAngle = (getHeading(xf - position[0], yf-position[1])+270) % 360;
+		
+		
+	}
 
 	/**
 	 * This method returns the smallest angle between 2 headings it will return a
