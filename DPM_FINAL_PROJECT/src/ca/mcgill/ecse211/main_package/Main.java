@@ -63,7 +63,7 @@ public class Main {
 	// TODO heading correction to be done before every turn
 	// TODO convert parameters of course into workable coordinates
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION
 	}
 
 	static List_of_states state;
@@ -139,13 +139,13 @@ public class Main {
 			switch (state) {
 
 			case INITIALIZE:
-//				 try {
-//				 Localize.Corner_Localize(1,1);
-//				 } catch (OdometerExceptions e) {
-//				 // TODO Auto-generated catch block
-//				 e.printStackTrace();
-//				 }
-				odometer.setXYT(0.01, 0.01, 0.01);
+				 try {
+				 Localize.Corner_Localize(1,1);
+				 } catch (OdometerExceptions e) {
+				 // TODO Auto-generated catch block
+				 e.printStackTrace();
+				 }
+				//odometer.setXYT(0.01, 0.01, 0.01);
 				state = List_of_states.IDLE;
 				break;
 
@@ -153,7 +153,7 @@ public class Main {
 			case IDLE:
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
-				state = List_of_states.TURNING;
+				state = List_of_states.TILE_LOCALIZATION;
 				break;
 			// dime turn towards necessary destination
 			case TURNING:
@@ -190,9 +190,18 @@ public class Main {
 					break;
 				}
 				break;
-
+			
+			case TILE_LOCALIZATION:
+				try {
+					 Localize.Tile_Localize(1,1);
+					} catch (OdometerExceptions e) {
+					 e.printStackTrace();
+					}
+				state =List_of_states.IDLE;
+				break;
+				
 			case IDENTIFYING:
-
+				
 				state = List_of_states.IDLE;
 				break;
 
