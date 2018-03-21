@@ -83,7 +83,7 @@ public class OdometryCorrection implements Runnable {
 					
 					odometer.setY(newy);
 					odometer.setX(newx);
-//					Sound.buzz();
+
 
 					// going down , same as above but in other direction
 				} else if (Math.abs(head - 180) < ANGLE_THRESHOLD) {
@@ -95,7 +95,7 @@ public class OdometryCorrection implements Runnable {
 					
 					odometer.setY(newy);
 					odometer.setX(newx);
-//					Sound.buzz();
+					
 				}
 				// going right
 				else if ((Math.abs(head - 90) < ANGLE_THRESHOLD)) {
@@ -112,7 +112,7 @@ public class OdometryCorrection implements Runnable {
 					
 					odometer.setY(newy);
 					odometer.setX(newx);
-//					Sound.beep();
+
 				} // going left
 				else if ((Math.abs(head - 270) < ANGLE_THRESHOLD)) {
 					
@@ -124,7 +124,7 @@ public class OdometryCorrection implements Runnable {
 					
 					odometer.setY(newy);
 					odometer.setX(newx);
-//					Sound.beep();
+
 				}
 			}
 

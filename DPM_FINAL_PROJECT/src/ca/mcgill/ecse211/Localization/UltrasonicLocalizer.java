@@ -57,7 +57,7 @@ public class UltrasonicLocalizer {
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){}
-			motorcontrol.turnto(-odo.getXYT()[2]);
+			motorcontrol.turnTo(-odo.getXYT()[2]);
 		}
 		else{
 			double correctionAngle = 45-((edgeDetect[0]+edgeDetect[1])%360)/2;
@@ -65,11 +65,11 @@ public class UltrasonicLocalizer {
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){}
-			motorcontrol.turnto(-odo.getXYT()[2]);
+			motorcontrol.turnTo(-odo.getXYT()[2]);
 		}
 		if(getDistance() < 40) {//if angles were passing over 360, use wall to correct theta and orientation
 			odo.setTheta(180);
-			motorcontrol.turnto(180);
+			motorcontrol.turnTo(180);
 		}
 	}
 	
@@ -87,14 +87,14 @@ public class UltrasonicLocalizer {
 	public void fallingEdge(){
 		motorcontrol.setLeftSpeed(175);
 		motorcontrol.setRightSpeed(175);
-		motorcontrol.leftforward();
-		motorcontrol.rightbackward();
+		motorcontrol.leftForwards();
+		motorcontrol.rightBackwards();
 		while(getDistance() < 150){} //spin until pointing away
 
 		motorcontrol.setLeftSpeed(150); //begin slowly turning left to find a wall
 		motorcontrol.setRightSpeed(150);
-		motorcontrol.leftbackward();
-		motorcontrol.rightforward();
+		motorcontrol.leftBackwards();
+		motorcontrol.rightForwards();
 		
 		while(getDistance() >= (wall_distance + noise_margin)){} //let spin until distance enters margin
 		
@@ -102,8 +102,8 @@ public class UltrasonicLocalizer {
 		
 		edgeDetect[0] = odo.getXYT()[2]; //entry point angle
 		
-		motorcontrol.leftforward(); //reverse to find next falling edge
-		motorcontrol.rightbackward();
+		motorcontrol.leftForwards(); //reverse to find next falling edge
+		motorcontrol.rightBackwards();
 		
 		try{
 			Thread.sleep(1000);
@@ -128,20 +128,20 @@ public class UltrasonicLocalizer {
 	public void risingEdge(){
 		motorcontrol.setLeftSpeed(175);
 		motorcontrol.setRightSpeed(175);
-		motorcontrol.leftforward();
-		motorcontrol.rightbackward();
+		motorcontrol.leftForwards();
+		motorcontrol.rightBackwards();
 		
 		while(getDistance() < 150){} //spin until pointing towards
 		motorcontrol.setLeftSpeed(150);
 		motorcontrol.setRightSpeed(150);
-		motorcontrol.leftbackward();
-		motorcontrol.rightforward();
+		motorcontrol.leftBackwards();
+		motorcontrol.rightForwards();
 		
 		while(getDistance() >= (wall_distance - noise_margin)){} //let spin until distance enters margin
 		motorcontrol.stop();
 		edgeDetect[0] = odo.getXYT()[2]; //exit point angle
-		motorcontrol.leftbackward(); //reverse to find next falling edge
-		motorcontrol.rightforward();
+		motorcontrol.leftBackwards(); //reverse to find next falling edge
+		motorcontrol.rightForwards();
 		try{
 			Thread.sleep(1000);
 		}catch(Exception e){}
