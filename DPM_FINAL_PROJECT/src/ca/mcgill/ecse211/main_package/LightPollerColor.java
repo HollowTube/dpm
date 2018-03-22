@@ -43,7 +43,9 @@ public class LightPollerColor {
 	}
 
 	/**
-	 * Method to calibrate the light sensor.
+	 * Method to calibrate the light sensor for each different colored block. 
+	 * Each time it is called, it collects data on the RGB values for a specific block.
+	 * This will not be used once calibration in the right light condition is finished.
 	 * 
 	 */
 	public void calibrate() {

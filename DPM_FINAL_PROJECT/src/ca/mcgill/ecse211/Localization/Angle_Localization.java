@@ -8,7 +8,8 @@ import lejos.hardware.Sound;
 
 /**
  * This class is in charge to make the robot's orientation exactly pointing in
- * the right direction.
+ * the right direction. It uses two light sensors to keep the orientation of
+ * the robot always straight which is necessary since the robot will always move in 90 degree angles.
  * 
  * @author Tritin and Alexandre
  *
@@ -32,11 +33,11 @@ public class Angle_Localization {
 	private boolean recovery = false;
 
 	/**
-	 * Class constructor
+	 * Class constructor.
 	 * 
-	 * @author Tri-tin Truong
-	 * @param L_sens
-	 * @param R_sens
+	 * @author Tritin
+	 * @param L_sens Left Light Sensor
+	 * @param R_sens Right Light Sensor
 	 * @throws OdometerExceptions
 	 */
 	public Angle_Localization(LightPoller L_sens, LightPoller R_sens) throws OdometerExceptions {
@@ -47,15 +48,16 @@ public class Angle_Localization {
 	}
 
 	/**
-	 * Method to stop with wheel track parallel to grid line The robot must be put
-	 * in forward motion before calling the method. The light sensor will stop its
-	 * motor when it detects the line. The other motor will continue to approach the
-	 * line until it detects it and stops. It will then correct the odometer angle
-	 * heading.
+	 * Method to stop the robot so that the wheel track is parallel to grid line.
+	 * The robot must be put in forward motion before calling the method.
+	 * <p>
+	 * The light sensor will stop its motor when it detects the line. The other motor will
+	 * continue to approach the line until it detects it and stops.
+	 * It will then correct the odometer angle heading.
 	 * 
 	 * This method will block
 	 * 
-	 * @author Tri-tin Truong
+	 * @author Tritin Truong
 	 */
 	public void fix_angle() {
 		while (true) {
@@ -83,15 +85,14 @@ public class Angle_Localization {
 	}
 
 	/**
-	 * 
-	 * 
-	 * Method to stop with wheel track parallel to grid line The robot must be put
-	 * in forward motion before calling the method. The light sensor will stop its
-	 * motor when it detects the line. The other motor will continue to approach the
-	 * line until it detects it and stops. It will then correct the odometer angle
-	 * heading.
-	 * 
-	 * This method will not block
+	 * Method to stop the robot while on path with a wheel track parallel to the grid line.
+	 * The robot must be put in forward motion before calling the method.
+	 * <p>
+	 * The light sensor will stop its motor when it detects the line. The other motor
+	 * will continue to approach the line until it detects it and stops.
+	 * It will then correct the odometer angle heading.
+	 * <p>
+	 * This method will not block.
 	 * 
 	 * @author Tri-tin Truong
 	 */
@@ -150,7 +151,13 @@ public class Angle_Localization {
 			odometer.setTheta(270);
 		}
 	}
-
+	/**
+	 * Method to calculate the distance error between two points using the change in x and in y directions.
+	 * 
+	 * @param dx Change in x direction
+	 * @param dy Change in y direction
+	 * @return Distance error
+	 */
 	private static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
 		// System.out.println(error);

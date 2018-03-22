@@ -59,9 +59,9 @@ public class Navigation {
 	/**
 	 * This method returns the Euclidean distance.
 	 * 
-	 * @param dx Delta x
-	 * @param dy Delta y
-	 * @return Euclidean error in cm
+	 * @param dx Change in x
+	 * @param dy Change in y
+	 * @return Euclidean error, distance
 	 */
 	public static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
@@ -73,9 +73,9 @@ public class Navigation {
 	 * This method gives the heading of the next way point, that is, what angle
 	 * should the robot turn to in order to arrive at the location quickly
 	 * 
-	 * @param dx
-	 * @param dy
-	 * @return heading in degrees
+	 * @param dx Change in x
+	 * @param dy Change in y
+	 * @return heading
 	 */
 	private double getHeading(double dx, double dy) {
 		double angle;

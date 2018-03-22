@@ -42,8 +42,8 @@ public class myUSPoller {
 	 * this method returns true if an object is detected within the threshold
 	 * distance. 
 	 * 
-	 * @param threshold
-	 * @return boolean
+	 * @param threshold Distance threshold for object detection 
+	 * @return boolean True if object detected, false otherwise
 	 */
 	public boolean obstacleDetected(double threshold) {
 		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer

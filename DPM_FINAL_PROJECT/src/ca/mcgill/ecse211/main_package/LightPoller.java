@@ -45,7 +45,7 @@ public class LightPoller {
 	 * Boolean method to determine if a light value is lower than the threshold set.
 	 * The threshold is a value where a black object would return a sample with lower value all the time.
 	 * 
-	 * @param threshold
+	 * @param threshold Threshold value for black line
 	 * @return True is lower, False otherwise
 	 */
 	public boolean lessThan(int threshold) {

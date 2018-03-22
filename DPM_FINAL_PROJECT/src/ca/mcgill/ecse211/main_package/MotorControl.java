@@ -24,8 +24,8 @@ public class MotorControl {
 	/**
 	 * This is the class constructor.
 	 * 
-	 * @param leftmotor
-	 * @param rightmotor
+	 * @param leftmotor Left motor
+	 * @param rightmotor Right motor
 	 * @param radius Wheel radius
 	 * @param track Robot track
 	 */
@@ -65,8 +65,8 @@ public class MotorControl {
 	 * moves some distance "dist" again. You can also set the speed at which it
 	 * accomplishes this
 	 * 
-	 * @param ROTATE_SPEED
-	 * @param dist
+	 * @param ROTATE_SPEED Speed at which the wheels rotate
+	 * @param dist Distance travel
 	 */
 	public void go_around(int rotate_speed, int dist) {
 		leftMotor.setSpeed(rotate_speed);
@@ -87,8 +87,8 @@ public class MotorControl {
 	/**
 	 * This method moves the robot forward and sets the left and right motor speeds independently.
 	 * 
-	 * @param leftSpeed
-	 * @param rightSpeed
+	 * @param leftSpeed Speed left motor
+	 * @param rightSpeed Speed right motor
 	 */
 	public void moveSetDistance(double path_distance) {
 		leftMotor.rotate(convertDistance(radius, path_distance), true); // travel straight
@@ -193,7 +193,7 @@ public class MotorControl {
 	/**
 	 * Boolean method to detect if the robot is moving or not.
 	 * 
-	 * @return True is robot is moving, fals otherwise
+	 * @return True is robot is moving, false otherwise
 	 */
 	public boolean isMoving() {
 		if (leftMotor.isMoving() || rightMotor.isMoving())
@@ -204,7 +204,7 @@ public class MotorControl {
 	/**
 	 * Method to set the speed for the left motor and moves forward (or backwards if negative)
 	 * 
-	 * @param speed
+	 * @param speed Rotation Speed
 	 */
 	public void leftMotor(int speed) {
 		leftMotor.setSpeed(speed);
@@ -217,7 +217,7 @@ public class MotorControl {
 	/**
 	 * Method to set the speed for the right motor and moves forward (or backwards if negative)
 	 * 
-	 * @param speed
+	 * @param speed Rotation Speed
 	 */
 	public void rightMotor(int speed) {
 		rightMotor.setSpeed(speed);
@@ -230,7 +230,7 @@ public class MotorControl {
 	/**
 	 * Method to set the speed for the left motor
 	 * 
-	 * @param speed
+	 * @param speed Rotation Speed
 	 */
 	public void setLeftSpeed(int speed) {
 		leftMotor.setSpeed(speed);
@@ -239,7 +239,7 @@ public class MotorControl {
 	/**
 	 * Method to set the speed for the right motor
 	 * 
-	 * @param speed
+	 * @param speed Rotation Speed
 	 */
 
 	public void setRightSpeed(int speed) {
@@ -278,8 +278,8 @@ public class MotorControl {
 	 * This method works exactly like the default rotate function for the right motor except only
 	 * the distance is needed as input.
 	 * 
-	 * @param distance
-	 * @param block
+	 * @param distance Distance travel
+	 * @param block True or false value
 	 */
 	public void rightRot(double distance, boolean block) {
 		if (distance > 0) {
@@ -290,25 +290,25 @@ public class MotorControl {
 	}
 
 	/**
-	 * Method to convert from an angle to a distance
-	 * using the radius, rotation angle and track of the robot.
+	 * This method takes in the rotation you want the robot to do and
+	 * converts it into a distance for the wheels to rotate in opposite direction.
 	 * 
 	 * @param radius Wheel radius
 	 * @param width track
 	 * @param angle Rotation angle
-	 * @return
+	 * @return Value for wheel rotation
 	 */
 	private int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
 	/**
-	 * Method to convert from a distance to a value that used in controlling the robot rotation
-	 * using the radius of the wheel and the distance it travels.
+	 * This method takes how far the robot is traveling
+	 * and converts it to the necessary wheel rotation.
 	 * 
 	 * @param radius Wheel radius
 	 * @param distance Travel distance
-	 * @return
+	 * @return Value for wheel rotation
 	 */
 	private int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
@@ -357,7 +357,7 @@ public class MotorControl {
 	/**
 	 * Method to change the radius of the wheels.
 	 * 
-	 * @param new_radius
+	 * @param new_radius New Radius for different wheels
 	 */
 	public void setRadius(double new_radius) {
 		this.radius = new_radius;
@@ -366,7 +366,7 @@ public class MotorControl {
 	/**
 	 * Method to change the track of the robot.
 	 * 
-	 * @param new_track
+	 * @param new_track New robot track is it changes configuration
 	 */
 	public void setTrack(double new_track) {
 		this.track = new_track;

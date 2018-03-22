@@ -12,6 +12,8 @@ import lejos.hardware.lcd.TextLCD;
  * when testing for hardware and software tasks.
  * The display could also be programmed to display other values for testing purposes.
  * The display will run as a separate thread. 
+ * <p>
+ * It will not be used during the beta demonstration or the final presentation.
  * 
  * @author Tritin
  * 
