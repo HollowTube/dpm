@@ -5,9 +5,10 @@ import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
 
 /**
- *This class is used for the robot's navigation in a grid. It
+ * This class is used for the robot's navigation in a grid. It
  * obtains the correct heading, rotates the robot towards it and moves the robot
  * to the next point.
+ * This class provides the methods necessary for all movements in the field after each localization.
  * 
  * @author Tritin 
  */
@@ -35,8 +36,9 @@ public class Navigation {
 	/**
 	 * This method allows the robot to travel to a destination (point on the field).
 	 * 
-	 * @param xf
-	 * @param yf
+	 * 
+	 * @param xf x coordinate of destination
+	 * @param yf y coordinate of destination
 	 */
 	public void travelTo(double xf, double yf) {
 		position = get_position();
@@ -57,11 +59,11 @@ public class Navigation {
 	}
 
 	/**
-	 * This method returns the euclidian distance.
+	 * This method returns the Euclidean distance.
 	 * 
-	 * @param dx
-	 * @param dy
-	 * @return euclidean error in cm
+	 * @param dx Delta x
+	 * @param dy Delta y
+	 * @return Euclidean error in cm
 	 */
 	public static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
@@ -112,11 +114,9 @@ public class Navigation {
 	 * This method returns the smallest angle between 2 headings it will return a
 	 * negative to turn counterclockwise and return positive for clockwise
 	 * 
-	 * @param ihead
-	 *            intial heading of robot
-	 * @param fhead
-	 *            desired heading of robot
-	 * @return Angle in degrees
+	 * @param ihead initial heading of robot
+	 * @param fhead desired heading of robot
+	 * @return Angle Minimum angle between the two headings
 	 */
 	private static double min_angle(double ihead, double fhead) {
 		double theta;
@@ -128,10 +128,10 @@ public class Navigation {
 	}
 
 	/**
-	 * calculates the smallest angle to rotate to desired heading and turns on a
-	 * dime to it
+	 * This method calculates the smallest angle to rotate for a desired heading and turns on a
+	 * dime to it.
 	 * 
-	 * @param angle
+	 * @param angle Angle position of destination point
 	 */
 	public void turn_to_angle(double angle) {
 		double initial_heading, turning_angle;
@@ -146,8 +146,8 @@ public class Navigation {
 	 * and then turns on a dime to reach it, inputs are the desired x and y
 	 * positions
 	 * 
-	 * @param xf
-	 * @param yf
+	 * @param xf x coordinate of destination point
+	 * @param yf y coordinate of destination point
 	 */
 	public void turn_to_destination(double xf, double yf) {
 		double position[];
@@ -167,12 +167,12 @@ public class Navigation {
 	}
 	
 	/**
-	 * This boolean method indicates to the robot id a destination is reached yet.
+	 * This boolean method indicates to the robot if a destination is reached yet.
 	 * (within some error.)
 	 * 
-	 * @param xf
-	 * @param yf
-	 * @return
+	 * @param xf x coordinate of destination
+	 * @param yf y coordinate of destination
+	 * @return True if reached, false otherwise
 	 */
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();

@@ -5,9 +5,11 @@ import lejos.robotics.SampleProvider;
 
 /**
  * This class handles the data collected by the light sensor used for localization and
- * odometry correction. 
+ * odometry correction. It is meant to be used when the robot has to detect black lines on a grid.
+ * It has methods detecting rising and falling changes in the data from the light sensor which
+ * in turn, mean that a line has been found.
  * 
- * @author tritin
+ * @author Tritin
  *
  */
 public class LightPoller {
@@ -22,10 +24,10 @@ public class LightPoller {
 	private boolean first_time = true;
 
 	/**
-	 * Class constructor
+	 * This is the class constructor which is comprised of the sample from the light sensor and its value.
 	 * 
-	 * @param lt
-	 * @param ltdata
+	 * @param lt Sample from the light sensor
+	 * @param ltdata Value of sample
 	 */
 	public LightPoller(SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
@@ -41,9 +43,10 @@ public class LightPoller {
 	}
 	/**
 	 * Boolean method to determine if a light value is lower than the threshold set.
+	 * The threshold is a value where a black object would return a sample with lower value all the time.
 	 * 
 	 * @param threshold
-	 * @return
+	 * @return True is lower, False otherwise
 	 */
 	public boolean lessThan(int threshold) {
 		getValue();
@@ -55,9 +58,13 @@ public class LightPoller {
 
 	/**
 	 * Boolean method to determine if the data value is reducing. (between tile and line)
+	 * This method takes the first sample as the previous one and takes the second sample as the current one.
+	 * Then, it takes the difference between the previous and current sample and finds
+	 * if there is a falling edge there.
+	 * The Current value then becomes the previous one for next time.
 	 * 
-	 * @param threshold
-	 * @return
+	 * @param threshold Delta value accepted
+	 * @return True if falling edge is found, false otherwise
 	 */
 	public boolean falling(int threshold) {
 		boolean edge;
@@ -84,10 +91,14 @@ public class LightPoller {
 	}
 
 	/**
-	 * Boolean method to determine if the data value is rising. (between end of line and next tile) 
+	 * Boolean method to determine if the data value is rising. (between end of line and next tile)
+	 * This method takes the first sample as the previous one and takes the second sample as the current one.
+	 * Then, it takes the difference between the previous and current sample and finds
+	 * if there is a rising edge there.
+	 * The Current value then becomes the previous one for next time.  
 	 * 
-	 * @param threshold
-	 * @return
+	 * @param threshold Delta value accepted
+	 * @return True if rising edge is found, false otherwise
 	 */
 	public boolean rising(int threshold) {
 		boolean edge;

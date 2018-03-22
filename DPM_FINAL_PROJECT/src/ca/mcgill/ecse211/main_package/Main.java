@@ -14,9 +14,13 @@ import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 
 /**
- * Main class, meant to conduct the entire run and manage all the different threads. 
+ * Main class of the project. It is meant to conduct the entire run and manage
+ * all the different threads. All the required tasks will be called upon here
+ * for the robot to conduct.
+ * This includes the initial localization, navigation, obstacle crossing, field localization and 
+ * search and identification of flag (eventually).
  * 
- * @author 
+ * @author Tritin, Alexandre, Matthew
  *
  */
 public class Main {
@@ -243,9 +247,9 @@ public class Main {
 		System.exit(0);
 	}	
 	/**
-	 * This method sets a time for the thread sleep.
+	 * This method sets a time for thread sleep.
 	 * 
-	 * @param time
+	 * @param time sleep time
 	 */
 	public static void sleeptime(int time) {
 		try {

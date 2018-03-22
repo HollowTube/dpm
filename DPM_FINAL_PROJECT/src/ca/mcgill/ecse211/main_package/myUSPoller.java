@@ -4,9 +4,9 @@ import lejos.robotics.SampleProvider;
 
 
 /**
- * This class handles the data received by the Ultrasonic Sensor for localization.
+ * This class handles the data received by the Ultrasonic Sensor for detecting objects or obstacles.
  * 
- * @author tritin
+ * @author Tritin
  *
  */
 public class myUSPoller {
@@ -18,10 +18,10 @@ public class myUSPoller {
 	// MedianFilter myfilter = new MedianFilter(myDistance, BUFFER_SIZE);
 
 	/**
-	 * myUSPoller Class constructor.
+	 * Class Constructor.
 	 * 
-	 * @param us
-	 * @param usdata
+	 * @param us Sample from Ultrasonic Sensor
+	 * @param usdata Value of sample
 	 */
 	public myUSPoller(SampleProvider us, float[] usdata) {
 		this.myDistance = us;
@@ -39,8 +39,8 @@ public class myUSPoller {
 	}
 
 	/**
-	 * this method returns true if the on object is detected within the threshold
-	 * distance
+	 * this method returns true if an object is detected within the threshold
+	 * distance. 
 	 * 
 	 * @param threshold
 	 * @return boolean

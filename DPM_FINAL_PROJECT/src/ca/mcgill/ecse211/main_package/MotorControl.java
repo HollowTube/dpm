@@ -3,10 +3,11 @@ package ca.mcgill.ecse211.main_package;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 /**
- * This class handles all of the motor control. If a method wants to access the
- * motors, it should do so through this class.
+ * This class handles all of the motor control. If a any method wants to access the
+ * motors, it should do so through this class. 
+ * This class handles all the movements for the robot; moving forward,moving backwards and rotating.
  * 
- * @author tritin
+ * @author Tritin
  *
  */
 public class MotorControl {
@@ -20,7 +21,14 @@ public class MotorControl {
 	private static MotorControl motorcontrol = null;
 
 	
-	
+	/**
+	 * This is the class constructor.
+	 * 
+	 * @param leftmotor
+	 * @param rightmotor
+	 * @param radius Wheel radius
+	 * @param track Robot track
+	 */
 	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double radius, double track) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
@@ -77,8 +85,7 @@ public class MotorControl {
 		rightMotor.rotate(convertDistance(radius, dist), false);
 	}
 	/**
-	 * This method moves the bot forward and sets the left and right motor speeds
-	 * independently
+	 * This method moves the robot forward and sets the left and right motor speeds independently.
 	 * 
 	 * @param leftSpeed
 	 * @param rightSpeed
@@ -89,13 +96,13 @@ public class MotorControl {
 	}
 
 	/**
-	 * moves left motor forwards
+	 * Moves left motor forwards
 	 */
 	public void leftforward() {
 		leftMotor.forward();
 	}
 	/**
-	 * moves left motor backwards
+	 * Moves left motor backwards
 	 */
 	public void leftbackward(){
 		leftMotor.backward();
@@ -113,7 +120,7 @@ public class MotorControl {
 		rightMotor.backward();
 	}
 	/**
-	 * gives the forward command to both motors
+	 * This method gives the forward command to both motors
 	 */
 	public void forward() {
 		leftMotor.forward();
@@ -125,14 +132,14 @@ public class MotorControl {
 	}
 
 	/**
-	 * left motor stops
+	 * Stops left motor
 	 */
 	public void leftStop() {
 		leftMotor.stop(true);
 	}
 
 	/**
-	 * right motor stops
+	 * Stops right motor
 	 */
 	public void rightStop() {
 		rightMotor.stop(true);
@@ -145,14 +152,14 @@ public class MotorControl {
 		leftMotor.stop(true);
 		rightMotor.stop(false);
 	}
-	/*
+	/**
 	 * This method makes the robot turn clockwise 
 	 */
 	public void turnCW(){
 		leftMotor.forward();
 		rightMotor.backward();
 	}
-	/*
+	/**
 	 * This method makes the robot turn counter-clockwise 
 	 */
 	public void turnCCW(){
@@ -160,7 +167,7 @@ public class MotorControl {
 		rightMotor.forward();
 	}
 	/**
-	 * Set accelearation of the motors
+	 * This method sets acceleration of the motors
 	 */
 	public void setAcceleration(int acceleration){
 		leftMotor.setAcceleration(acceleration);
@@ -168,9 +175,9 @@ public class MotorControl {
 	}
 	/**
 	 * This method makes the robot turn on a dime for a certain amount of degrees,
-	 * positive rotation means clockwise ,negative rotation means counter-clockwise
+	 * positive rotation means clockwise, negative rotation means counter-clockwise.
 	 * 
-	 * @param rotation
+	 * @param rotation Angle of rotation
 	 */
 	public void dime_turn(double rotation) {
 
@@ -186,7 +193,7 @@ public class MotorControl {
 	/**
 	 * Boolean method to detect if the robot is moving or not.
 	 * 
-	 * @return true or false following condition
+	 * @return True is robot is moving, fals otherwise
 	 */
 	public boolean isMoving() {
 		if (leftMotor.isMoving() || rightMotor.isMoving())
@@ -195,7 +202,7 @@ public class MotorControl {
 	}
 
 	/**
-	 * Method to set the speed for the left motor.
+	 * Method to set the speed for the left motor and moves forward (or backwards if negative)
 	 * 
 	 * @param speed
 	 */
@@ -208,7 +215,7 @@ public class MotorControl {
 	}
 	
 	/**
-	 * Method to set the speed for the right motor.
+	 * Method to set the speed for the right motor and moves forward (or backwards if negative)
 	 * 
 	 * @param speed
 	 */
@@ -220,9 +227,20 @@ public class MotorControl {
 			rightMotor.backward();
 	}
 
+	/**
+	 * Method to set the speed for the left motor
+	 * 
+	 * @param speed
+	 */
 	public void setLeftSpeed(int speed) {
 		leftMotor.setSpeed(speed);
 	}
+	
+	/**
+	 * Method to set the speed for the right motor
+	 * 
+	 * @param speed
+	 */
 
 	public void setRightSpeed(int speed) {
 		rightMotor.setSpeed(speed);
@@ -242,11 +260,11 @@ public class MotorControl {
 	// }
 
 	/**
-	 * Works exactly like the default rotate function for the left motor except you
-	 * only need to input the distance you want
+	 * This method works exactly like the default rotation function for the left motor, except only
+	 * the distance is needed as input.
 	 * 
-	 * @param rotation
-	 * @param block
+	 * @param distance Its value
+	 * @param block True or false value
 	 */
 	public void leftRot(double distance, boolean block) {
 		if (distance > 0) {
@@ -257,8 +275,8 @@ public class MotorControl {
 	}
 
 	/**
-	 * Works exactly like the default rotate function for the right motor except you
-	 * only need to input the distance you want.
+	 * This method works exactly like the default rotate function for the right motor except only
+	 * the distance is needed as input.
 	 * 
 	 * @param distance
 	 * @param block
@@ -271,10 +289,27 @@ public class MotorControl {
 		}
 	}
 
+	/**
+	 * Method to convert from an angle to a distance
+	 * using the radius, rotation angle and track of the robot.
+	 * 
+	 * @param radius Wheel radius
+	 * @param width track
+	 * @param angle Rotation angle
+	 * @return
+	 */
 	private int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
+	/**
+	 * Method to convert from a distance to a value that used in controlling the robot rotation
+	 * using the radius of the wheel and the distance it travels.
+	 * 
+	 * @param radius Wheel radius
+	 * @param distance Travel distance
+	 * @return
+	 */
 	private int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
@@ -283,7 +318,7 @@ public class MotorControl {
 	 * Method to change the heading of the robot towards the proper destination.
 	 * This is done using the angle received as a parameter.
 	 * 
-	 * @param theta
+	 * @param theta 
 	 * @author Alexandre
 	 */
 	public void turnto(double theta) {
@@ -319,10 +354,20 @@ public class MotorControl {
 				}
 			}
 	}
+	/**
+	 * Method to change the radius of the wheels.
+	 * 
+	 * @param new_radius
+	 */
 	public void setRadius(double new_radius) {
 		this.radius = new_radius;
 	}
 	
+	/**
+	 * Method to change the track of the robot.
+	 * 
+	 * @param new_track
+	 */
 	public void setTrack(double new_track) {
 		this.track = new_track;
 	}

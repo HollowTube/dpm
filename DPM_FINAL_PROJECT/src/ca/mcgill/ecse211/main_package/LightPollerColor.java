@@ -34,8 +34,8 @@ public class LightPollerColor {
 	 * LightPollerColor class constructor.
 	 * It is comprised of the SampleProvider sample of the sensor and its value.
 	 * 
-	 * @param lt
-	 * @param ltdata
+	 * @param lt Light sensor sample
+	 * @param ltdata Value of sample  
 	 */
 	public LightPollerColor(SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
@@ -94,13 +94,13 @@ public class LightPollerColor {
 
 	/**
 	 * This method uses the mean and standard deviation found for each color during calibration
-	 * to obtain the probability for each color. It uses a normal distribution model of each sample.
+	 * to obtain the probability for each color. It uses a normal distribution model for each RGB value.
+	 * Then, it compares the reading with each distribution and finds an average probability.
 	 * 
-	 * It firsts gets the distance between the reading and the mean for each color.
 	 * 
-	 * @param color
-	 * @param reading
-	 * @return
+	 * @param color Block Color
+	 * @param reading Reading obtained by the light sensor
+	 * @return Average probability of Block Color from RGB values
 	 */
 	private double getProbability(Color color, float[] reading) {
 		float red_dist = 0, green_dist = 0, blue_dist = 0;
@@ -161,8 +161,8 @@ public class LightPollerColor {
 	 * If the color scanned is the target color, the robot will beep twice and return true
 	 * else will beep once and return false.
 	 * 
-	 * @param name
-	 * @return
+	 * @param name Target block color
+	 * @return True if TB is found, false otherwise
 	 */
 	public boolean target_found(String name) {
 		double prob_red = 0, prob_blue = 0, prob_yellow = 0,
@@ -209,8 +209,8 @@ public class LightPollerColor {
 	/**
 	 * This method makes sure that that the colored block chosen is the one with highest probability.
 	 * 
-	 * @param list
-	 * @return
+	 * @param list Array with each probability
+	 * @return Color having maximum probability
 	 */
 	public Color max_color(ArrayList<Color> list) {
 		Color max_color = list.get(0);

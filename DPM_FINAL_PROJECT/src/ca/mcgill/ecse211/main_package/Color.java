@@ -4,9 +4,10 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
  * This class is used to store the values for each colored block sample normal distributions,
- * mean and standard deviation.
+ * mean and standard deviation. It will then bring easier access to the data
+ * when performing the identification of the block.
  * 
- * @author tritin
+ * @author Tritin
  * 
  */
 
