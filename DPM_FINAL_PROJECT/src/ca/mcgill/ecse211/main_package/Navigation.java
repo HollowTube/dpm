@@ -77,7 +77,7 @@ public class Navigation {
 	 * @param dy Change in y
 	 * @return heading
 	 */
-	private double getHeading(double dx, double dy) {
+	public double getHeading(double dx, double dy) {
 		double angle;
 		if (dy > 0) {
 			angle = (Math.atan(dx / dy) + Math.PI * 2) % (Math.PI * 2);
@@ -107,6 +107,18 @@ public class Navigation {
 		motorcontrol.setLeftSpeed(left_speed);
 		motorcontrol.setRightSpeed(right_speed);
 		motorcontrol.forward();
+	}
+	
+	
+	
+	
+	public void offset90(double xf, double yf) {
+		double newAngle;
+		position = odometer.getXYT();
+		newAngle = (getHeading(xf - position[0], yf-position[1])+270) % 360;
+		turn_to_angle(newAngle);
+		
+		
 	}
 
 	/**
@@ -175,7 +187,7 @@ public class Navigation {
 	 */
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (Math.abs(xf - position[0]) < 1 && Math.abs(yf - position[1]) < 1) {
+		if (Math.abs(xf - position[0]) < 0.6 && Math.abs(yf - position[1]) < 0.6) {
 			return true;
 		}
 		return false;
