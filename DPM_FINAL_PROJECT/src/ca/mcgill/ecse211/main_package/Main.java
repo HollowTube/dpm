@@ -134,29 +134,32 @@ public class Main {
 		// not get stuck in a loop
 
 		// set initial state
-		state = List_of_states.INITIALIZE;
+		state = List_of_states.IDLE;
 		while (true) {
 			switch (state) {
 
 			case INITIALIZE:
-				 try {
-				 Localize.Corner_Localize(1,1);
-				 } catch (OdometerExceptions e) {
-				 // TODO Auto-generated catch block
-				 e.printStackTrace();
-				 }
+//				 try {
+//				 Localize.Corner_Localize(1,1);
+//				 } catch (OdometerExceptions e) {
+//				 // TODO Auto-generated catch block
+//				 e.printStackTrace();
+//				 }
 				//odometer.setXYT(0.01, 0.01, 0.01);
 				state = List_of_states.IDLE;
 				break;
 
 			// do nothing until button is pressed up
 			case IDLE:
+				odometer.setXYT(0.01, 0.01, 0.01);
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
-				state = List_of_states.TILE_LOCALIZATION;
+				state = List_of_states.BRIDGE_CROSSING;
 				break;
 			// dime turn towards necessary destination
 			case TURNING:
+				
+				
 
 				Sound.beep();
 				xf = waypoints[current_waypoint][0];
@@ -207,27 +210,27 @@ public class Main {
 
 			case BRIDGE_CROSSING:
 				
-				
-				navigator.turn_to_angle(90);
-				motorControl.moveSetDistance(15);
-				navigator.turn_to_destination(xf,yf);
-				double bridge_length = 0;
-				motorControl.moveSetDistance(bridge_length);
+				navigator.offset90(0,30);
+				motorControl.moveSetDistance(18);
+				motorControl.dimeTurn(90);
+//				double bridge_length = 90;
+				motorControl.moveSetDistance(100);
 				try {
-					Localize.Tile_Localize(1, 1);
+					Localize.Tile_Localize(0, 3);
 				} catch (OdometerExceptions e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					
 				}
-				state = List_of_states.TURNING;
+				state = List_of_states.IDLE;
 				break;
 
 			case TEST:
 				motorControl.forward();
-				while(!lightPollerleft.lessThan(30));
-				motorControl.stop();
+//				while(!lightPollerleft.lessThan(30));
+//				motorControl.stop();
 			
-				state = List_of_states.IDLE;
+//				state = List_of_states.IDLE;
 				break;
 			default:
 				break;
