@@ -8,7 +8,7 @@ import lejos.robotics.SampleProvider;
 
 /**
  * This class is in charge of the odometry correction to
- * keep a good sense of its position during the entire run. 
+ * keep a good sense of its position during the entire run.
  * 
  * @author Tritin
  *
@@ -48,7 +48,11 @@ public class OdometryCorrection implements Runnable {
 	}
 
 	/**
-	 * Here is where the odometer correction code should be run.
+	 * Here is where the odometer correction code should be run as a thread.
+	 * Once the robot crosses a black line, the fist light sensor will stop the motor on the side
+	 * it is positioned at, until the other light sensor also detects the black line.
+	 * Then, the robot will move forward with perfect straight orientation and continue
+	 * its 90 degree only navigation.
 	 * 
 	 * @throws OdometerExceptions
 	 */

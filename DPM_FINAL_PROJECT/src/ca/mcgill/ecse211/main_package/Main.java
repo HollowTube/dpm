@@ -14,11 +14,18 @@ import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 
 /**
+ * Main class of the project. It is meant to conduct the entire run and manage
+ * all the different threads. All the required tasks will be called upon here
+ * for the robot to conduct.
+ * This includes the initial localization, navigation, obstacle crossing, field localization and 
+ * search and identification of flag (eventually).
+ *<p>
  * Main class, meant to conduct the entire run and manage all the different
  * threads.
+ * <p>
+>>>>>>> branch 'master' of https://github.com/HollowTube/dpm.git
  * 
- * @author
- *
+ * @author Tritin, Alexandre, Matthew
  */
 public class Main {
 
@@ -246,9 +253,9 @@ public class Main {
 	}
 
 	/**
-	 * This method sets a time for the thread sleep.
+	 * This method sets a time for thread sleep.
 	 * 
-	 * @param time
+	 * @param time sleep time
 	 */
 	public static void sleeptime(int time) {
 		try {
