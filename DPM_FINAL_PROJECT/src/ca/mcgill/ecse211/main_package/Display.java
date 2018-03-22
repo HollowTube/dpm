@@ -7,7 +7,13 @@ import lejos.hardware.lcd.TextLCD;
 
 /**
  * This class is used to display the content of the odometer variables (x, y,
- * Theta).
+ * Theta) and also show what task the robot is performing at all times.
+ * This allows for easier understanding of the problems encountered
+ * when testing for hardware and software tasks.
+ * The display could also be programmed to display other values for testing purposes.
+ * The display will run as a separate thread. 
+ * <p>
+ * It will not be used during the beta demonstration or the final presentation.
  * 
  * @author Tritin
  * 
@@ -21,9 +27,9 @@ public class Display implements Runnable {
 	private long timeout = Long.MAX_VALUE;
 
 	/**
-	 * This is the class constructor.
+	 * This is the class constructor which is comprised of any text that is to be displayed.
 	 * 
-	 * @param odoData
+	 * @param lcd text to display
 	 * @throws OdometerExceptions
 	 */
 	public Display(TextLCD lcd) throws OdometerExceptions {
@@ -32,9 +38,11 @@ public class Display implements Runnable {
 	}
 
 	/**
-	 * This is the overloaded class constructor.
+	 * This is the overloaded class constructor which is comprised of any text that is to be displayed
+	 * and a timeout pause of the thread.
 	 * 
-	 * @param odoData
+	 * @param lcd text to display
+	 * @param timeout Pause time
 	 * @throws OdometerExceptions
 	 */
 	public Display(TextLCD lcd, long timeout) throws OdometerExceptions {

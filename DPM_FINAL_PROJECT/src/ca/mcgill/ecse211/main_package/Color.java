@@ -4,9 +4,10 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
  * This class is used to store the values for each colored block sample normal distributions,
- * mean and standard deviation.
+ * mean and standard deviation. It will then bring easier access to the data
+ * when performing the identification of the block.
  * 
- * @author tritin
+ * @author Tritin
  * 
  */
 
@@ -100,13 +101,13 @@ public class Color {
 	/**
 	 * This is the Color class constructor.
 	 * 
-	 * @param red_mean
-	 * @param green_mean
-	 * @param blue_mean
-	 * @param red_sigma
-	 * @param blue_sigma
-	 * @param green_sigma
-	 * @param name
+	 * @param red_mean Red Mean
+	 * @param green_mean Green Mean
+	 * @param blue_mean Blue Mean
+	 * @param red_sigma Red Standard deviation
+	 * @param blue_sigma Blue Standard deviation
+	 * @param green_sigma Green Standard deviation
+	 * @param name Color
 	 */
 	public Color(float red_mean, float green_mean, float blue_mean, float red_sigma, float blue_sigma,
 			float green_sigma, String name) {

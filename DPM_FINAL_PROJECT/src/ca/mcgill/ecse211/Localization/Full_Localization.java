@@ -7,7 +7,7 @@ import ca.mcgill.ecse211.main_package.MotorControl;
 
 /**
  * This class is in charge of performing the full localization using the Ultrasonic sensor first
- * and then the lightsensor afterwards.
+ * to get an initial orientation idea and then the lightsensor afterwards to perfectly correct the values.
  * 
  * @author Alexandre
  *
@@ -23,12 +23,13 @@ public class Full_Localization {
 	
 	/**
 	 * Class constructor
-	 * @author Alexandre Coulombe
-	 * @param us
-	 * @param motorcontrol
-	 * @param left_LS
-	 * @param right_LS
+	 * @param us Sample from Ultrasonic Sensor
+	 * @param motorcontrol Control motors
+	 * @param left_LS Left Light sensor
+	 * @param right_LS Right Light sensor
 	 * @throws OdometerExceptions
+	 * 
+	 * @author Alexandre Coulombe
 	 */
 	public Full_Localization(SampleProvider us, MotorControl motorcontrol, LightPoller left_LS, LightPoller right_LS) throws OdometerExceptions{
 		this.odo = Odometer.getOdometer();
@@ -38,10 +39,12 @@ public class Full_Localization {
 		this.right_LS=right_LS;
 	}
 	/**
-	 * Method calls methods that do the parts of the full localization
-	 * in the order in which they must be performed.
+	 * This method calls the useful methods from other classes in the package 
+	 * that do the parts of the full localization in the order in which they must be performed.
+	 * 
 	 * The method first does the ultrasonic localization, followed by a light localization
-	 * on the tile on which it is on and goes to the front right coordinate point of the grid lines
+	 * on the tile on which it is on and goes to the front right coordinate point of the grid lines.
+	 * 
 	 * @author Alexandre Coulombe
 	 * @param  exp_x	expected x coordinate at the end of localization
 	 * @param  exp_y	expected y coordinate at the end of localization
@@ -58,14 +61,18 @@ public class Full_Localization {
 	
 	/**
 	 * 	Method to make the robot localize to go on the corner of a tile. 
-	 *  The robot move forward until it arrives to a black line where it corrects the odometer
+	 *  The robot moves forward until it arrives to a black line where it corrects the odometer
 	 * 	to the corresponding distance on the field from the origin for one coordinate parameter (x or y).
-	 *  It will repeat with the other parameter. The robot will backup with the light sensor correcting its heading
+	 *  It will repeat this process with the other parameter.
+	 *  <p>
+	 *  The robot will backup with the light sensor correcting its heading
 	 *  and finish on the coordinate point with the offset of the light sensors.
-	 *  @author Alexandre Coulombe
+	 *  
 	 *  @param  exp_x	expected x coordinate at the end of localization
 	 *  @param  exp_y	expected y coordinate at the end of localization
 	 *  @throws OdometerExceptions
+	 *  
+	 *  @author Alexandre Coulombe
 	 */
 	public void Tile_Localize(int exp_x, int exp_y) throws OdometerExceptions{
 		final Angle_Localization LSL = new Angle_Localization(left_LS, right_LS);
@@ -94,13 +101,14 @@ public class Full_Localization {
 	}
 	
 	/**
-	 *  Method to the odometer value for x or y.
-	 * 	corrects the odometer by taking the coordinate distance from the origin
-	 * 	added or subtracted depending on the heading
-	 *  @author Alexandre Coulombe
+	 *  Method to change the odometer value for x or y.
+	 * 	It corrects the odometer by taking the coordinate distance from the origin
+	 * 	added or subtracted depending on the heading.
+	 * 
 	 *  @param  exp_x	expected x coordinate at the end of localization
 	 *  @param  exp_y	expected y coordinate at the end of localization
 	 *  @throws OdometerExceptions
+	 *  @author Alexandre Coulombe
 	 */
 	public void parameter_correction(int exp_x, int exp_y){
 		double heading = odo.getXYT()[2];

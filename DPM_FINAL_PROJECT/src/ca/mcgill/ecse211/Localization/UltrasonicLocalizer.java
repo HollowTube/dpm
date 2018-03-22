@@ -6,7 +6,8 @@ import ca.mcgill.ecse211.main_package.*;
 
 /**
  * This class is meant to perform the Ultrasonic sensor localization no matter
- * the initial orientation of the robot.
+ * the initial orientation of the robot. It is only performed at the start of the run where
+ * the robot will be very close to the field walls.
  * 
  * @author Matthew and Alexandre
  *
@@ -26,10 +27,10 @@ public class UltrasonicLocalizer {
 	/**
 	 * Class contructor
 	 * @author Matthew Caminiti and Alexandre Coulombe
-	 * @param odo
-	 * @param us
-	 * @param type
-	 * @param motorcontrol
+	 * @param odo Odometer value
+	 * @param us Sample from the Ultrasonic sensor
+	 * @param type Perform rising or falling edge
+	 * @param motorcontrol Control motors
 	 */
 	public UltrasonicLocalizer(Odometer odo, SampleProvider us, int type, MotorControl motorcontrol){
 		this.odo=odo;
@@ -38,11 +39,12 @@ public class UltrasonicLocalizer {
 		this.motorcontrol = motorcontrol;
 	}
 	/**
-	 * @author Matthew Caminiti and Alexandre Coulombe
 	 * Method to use the ultrasonic sensor to make the robot face 0 degrees.
 	 * Method calls either fallingEdge or risingEdge to get two values for the array of doubles edgeDetect.
 	 * The values are then used to correct the odometer angle to its actual angle and turn the robot to face 0 degrees.
 	 * Back up conditional to turn 180 degrees if the robot corrects itself in the wrong direction and faces the wall.
+	 * 
+ 	 *@author Matthew Caminiti and Alexandre Coulombe
 	 */
 	public void Localize(){
 		if(this.type==1){
@@ -74,15 +76,23 @@ public class UltrasonicLocalizer {
 	}
 	
 	/**
-	 * @author Matthew Caminiti
 	 * Method to get values that go into a margin of wall distances.
+	 * 
 	 *  FALLING EDGE LOGIC:
+	 *  <p>
 	 *   - do 360 spin clockwise to find the closest distance reading to set the wall_distance
+	 *   <p>
 	 *   - continue spinning clockwise until sensor reads over threshold of 255 (not facing a wall)
+	 *   <p>
 	 *   - slow down and begin spinning counter-clockwise to find first falling edge
+	 *   <p>
 	 *   - read and beep at what point the sensor reads a value entering the wall_distance + noise
+	 *   <p>
 	 *   - reverse and beep at what point the sensor reads a value entering the wall_distance + noise
+	 *   <p>
 	 *   - exit fallingEdge method and determine correction angle
+	 *   
+	 *   @author Matthew Caminiti
 	 */
 	public void fallingEdge(){
 		motorcontrol.setLeftSpeed(175);
@@ -118,11 +128,17 @@ public class UltrasonicLocalizer {
 	 * @author Matthew Caminiti
 	 * Method to get values that go into a margin of wall distances.
 	 * RISING EDGE LOGIC:
-	 * - do 360 spin clockwise to find the closest distance reading to set the wall_distance
+	 * <p>
+	 * - do 360 spin clockwise to find the closest distance reading to set the wall_distance.
+	 * <p>
 	 * - continue spinning clockwise until sensor reads over threshold of 255 (not facing a wall)
-	 * - slow down and begin spinning counter-clockwise to find rising falling edge
-	 * - read and beep at what point the sensor reads a value exiting the wall_distance - noise
-	 * - continue same spin and beep at what point the sensor reads a value entering the wall_distance - noise
+	 * <p>
+	 * - slow down and begin spinning counter-clockwise to find rising falling edge.
+	 * <p>
+	 * - read and beep at what point the sensor reads a value exiting the wall_distance - noise.
+	 * <p>
+	 * - continue same spin and beep at what point the sensor reads a value entering the wall_distance - noise.
+	 * <p>
 	 * - exit fallingEdge method and determine correction angle
 	 */
 	public void risingEdge(){

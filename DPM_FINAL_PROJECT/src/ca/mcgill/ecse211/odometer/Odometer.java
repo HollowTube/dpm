@@ -15,6 +15,15 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
  * This class handles the odometer working as a thread during the run.
+ * The Odometer is used by the robot to know its position on the field at all times.
+ * It uses its wheel radius and converts it to a distance by the number of rotation it does.
+ * It uses the TachoCount already in place inside the motors to know how far the it has
+ * traveled in the field.
+ * <p>
+ * It also calculates change in orientation with calculations from the wheel radius
+ * as well as the robot track.
+ * This class handles all positioning and orientation that is useful for navigation,
+ * localization and search algorithm.
  * 
  * @author Tritin
  *
@@ -39,10 +48,10 @@ public class Odometer extends OdometerData implements Runnable {
 
 	/**
 	 * This is the default constructor of this class. It initiates all motors and
-	 * variables once.It cannot be accessed externally.
+	 * variables once. It cannot be accessed externally.
 	 * 
-	 * @param leftMotor
-	 * @param rightMotor
+	 * @param leftMotor Left Motor
+	 * @param rightMotor Right Motor
 	 * @throws OdometerExceptions
 	 */
 	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, final double TRACK,
@@ -67,8 +76,8 @@ public class Odometer extends OdometerData implements Runnable {
 	 * This method is meant to ensure only one instance of the odometer is used
 	 * throughout the code.
 	 * 
-	 * @param leftMotor
-	 * @param rightMotor
+	 * @param leftMotor Left Motor
+	 * @param rightMotor Right Motor
 	 * @return new or existing Odometer Object
 	 * @throws OdometerExceptions
 	 */
@@ -86,7 +95,7 @@ public class Odometer extends OdometerData implements Runnable {
 	 * This class is meant to return the existing Odometer Object. It is meant to be
 	 * used only if an odometer object has been created
 	 * 
-	 * @return error if no previous odometer exists
+	 * @return Error if no previous odometer exists
 	 */
 	public synchronized static Odometer getOdometer() throws OdometerExceptions {
 
@@ -98,7 +107,7 @@ public class Odometer extends OdometerData implements Runnable {
 	}
 
 	/**
-	 * This method is where the logic for the odometer will run. Use the methods
+	 * This method is where the logic for the odometer will run as a thread. It uses the methods
 	 * provided from the OdometerData class to implement the odometer.
 	 */
 	// run method (required for Thread)

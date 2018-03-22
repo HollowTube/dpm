@@ -7,6 +7,12 @@ import lejos.hardware.lcd.TextLCD;
 
 /**
  * This class is useful for the robot to calibrate its wheel radius and its track.
+ * It uses binary search to find the correct values for wheel radius and wheel track.
+ * Each time, the robot is told if it went over or under and uses that to continue its search.
+ * 
+ * This class was made to quickly find the radius and track
+ * during the development process of different hardware configurations.
+ * Once the final design is decided upon, this class is not used anymore.
  * 
  * @author Tritin
  *
@@ -14,6 +20,14 @@ import lejos.hardware.lcd.TextLCD;
 public class Calibration {
 	static MotorControl motorcontrol = MotorControl.getMotor();
 
+	/**
+	 * Method to calibrate the radius of the wheels.
+	 * It finds the radius with binary search. The first middle value is 2 and then it is either
+	 * the top value or lower value depending if the robot goes over or under when it stops turning.
+	 * 
+	 * This method is repeated until the person calibrating decides it is fit to do so.
+	 * 
+	 */
 	public static void radius_calibration() {
 		double bottom_bound = 1;
 		double top_bound = 3;
@@ -44,6 +58,15 @@ public class Calibration {
 		
 	}	
 	
+	/**
+	 * Method to calibrate the track of the robot. 
+	 * It finds the track of the robot with binary search. The first middle value is 15
+	 * and then it is either the top value or lower value depending if the robot goes over
+	 * or under when it stops turning.
+	 * 
+	 * This is repeated until the person calibrating decides it is fit to do so.
+	 * 
+	 */
 	public static void track_calibration() {
 		double bottom_bound = 14;
 		double top_bound = 17;
