@@ -17,7 +17,8 @@ public class Testing {
 	public static void straightLine() {
 		while(true) {
 			Button.waitForAnyPress();
-			motorcontrol.moveSetDistance(120);
+			motorcontrol.moveSetDistance(60);
+			motorcontrol.stop();
 		}
 	}
 }

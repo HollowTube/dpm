@@ -91,20 +91,20 @@ public class Full_Localization {
 		motorcontrol.forward(); 	//set the robot in motion towards x = 0 line
 		LSL.fix_angle(); 			//stop at x = 0 line
 		parameter_correction(exp_x,exp_y);
-		try{
-			Thread.sleep(200);
-		}catch (Exception e){}
-		motorcontrol.moveSetDistance(LS_offset);
-		try{
-			Thread.sleep(200);
-		}catch (Exception e){}
-		motorcontrol.turnto(-90);  			//turn towards x = 0 line
-		try{
-			Thread.sleep(200);
-		}catch (Exception e){}
-		motorcontrol.backward();
-		LSL.fix_angle(); 			//stops when at 0 degrees
-		parameter_correction(exp_x,exp_y);
+//		try{
+//			Thread.sleep(200);
+//		}catch (Exception e){}
+//		motorcontrol.moveSetDistance(LS_offset);
+//		try{
+//			Thread.sleep(200);
+//		}catch (Exception e){}
+//		motorcontrol.turnto(-90);  			//turn towards x = 0 line
+//		try{
+//			Thread.sleep(200);
+//		}catch (Exception e){}
+//		motorcontrol.backward();
+//		LSL.fix_angle(); 			//stops when at 0 degrees
+//		parameter_correction(exp_x,exp_y);
 	}
 	
 	/**

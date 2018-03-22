@@ -68,8 +68,8 @@ public class Calibration {
 	 * 
 	 */
 	public static void track_calibration() {
-		double bottom_bound = 10;
-		double top_bound = 20;
+		double bottom_bound = 14;
+		double top_bound = 17;
 		double mid;
 		int button_choice;
 		LCD.clear();

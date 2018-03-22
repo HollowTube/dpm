@@ -42,20 +42,18 @@ public class Navigation {
 	 */
 	public void travelTo(double xf, double yf) {
 		position = get_position();
-		motorcontrol.forward();
 		
-//		double heading_error = min_angle(position[2], getHeading(xf - position[0], yf - position[1]));
-//		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
-//			angle_correction(heading_error);
-//			motorcontrol.forward();
-//		}
-//		else {
-//			left_speed = FORWARD_SPEED;
-//			right_speed = FORWARD_SPEED;
-//			motorcontrol.setLeftSpeed(left_speed);
-//			motorcontrol.setRightSpeed(right_speed);
-//			motorcontrol.forward();
-//		}
+		double heading_error = min_angle(position[2], getHeading(xf - position[0], yf - position[1]));
+		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
+			angle_correction(heading_error);
+		}
+		else {
+			left_speed = FORWARD_SPEED;
+			right_speed = FORWARD_SPEED;
+			motorcontrol.setLeftSpeed(left_speed);
+			motorcontrol.setRightSpeed(right_speed);
+			motorcontrol.forward();
+		}
 	}
 
 	/**
@@ -108,6 +106,7 @@ public class Navigation {
 		}
 		motorcontrol.setLeftSpeed(left_speed);
 		motorcontrol.setRightSpeed(right_speed);
+		motorcontrol.forward();
 	}
 
 	/**
@@ -176,7 +175,7 @@ public class Navigation {
 	 */
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (Math.abs(xf - position[0]) < 0.5 && Math.abs(yf - position[1]) < 0.5) {
+		if (Math.abs(xf - position[0]) < 1 && Math.abs(yf - position[1]) < 1) {
 			return true;
 		}
 		return false;
