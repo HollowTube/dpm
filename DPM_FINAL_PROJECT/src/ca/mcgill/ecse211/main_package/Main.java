@@ -74,8 +74,7 @@ public class Main {
 	}
 
 	static List_of_states state;
-	
-	double xf,yf;
+
 
 	/**
 	 * Main method to run the program.
@@ -100,7 +99,7 @@ public class Main {
 		
 		// simply input waypoints here, will only update after it reaches the
 		// destination
-		double[][] waypoints = { { TILE_SIZE*1, 0 }, { TILE_SIZE*2, TILE_SIZE*2 }, { 0, TILE_SIZE*2 }, { 0, 0 } };
+		int[][] waypoints = { { 1, 0 }, { 2, 2 }, { 0,2 }, { 0, 0 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
@@ -132,17 +131,11 @@ public class Main {
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
-		// TODO make sure odometry correction works properly, adjust values as necessary
 		// Start correction if right button was pressed
 		if (buttonChoice == Button.ID_RIGHT) {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
 			odoCorrectionThread.start();
 		}
-
-
-
-		// state machine implementation, if you add any states makes sure that it does
-		// not get stuck in a loop
 
 		// set initial state
 		state = List_of_states.IDLE;
@@ -172,8 +165,8 @@ public class Main {
 			case TURNING:
 				
 				Sound.beep();
-				xf = waypoints[current_waypoint][0];
-				yf = waypoints[current_waypoint][1];
+				xf = waypoints[current_waypoint][0]* TILE_SIZE;
+				yf = waypoints[current_waypoint][1] * TILE_SIZE;
 				navigator.turn_to_destination(xf, yf);
 				state = List_of_states.TRAVELLING;
 				break;
@@ -191,7 +184,9 @@ public class Main {
 					current_waypoint++;
 					Sound.beep();
 					
-					if(current_waypoint == 2)
+					if(current_waypoint == 2) {
+						state = List_of_states.BRIDGE_CROSSING;
+					}
 
 					// resets the machine to its initial state
 					if (current_waypoint == waypoints.length) {
@@ -222,12 +217,15 @@ public class Main {
 
 			case BRIDGE_CROSSING:
 				
-				navigator.offset90(0,30);
-				motorControl.moveSetDistance(15.);
-				motorControl.dimeTurn(87);
+				xf = waypoints[current_waypoint][0]*TILE_SIZE;
+				yf = waypoints[current_waypoint][1]* TILE_SIZE;
+				
+				navigator.offset90(xf,yf);
+				motorControl.moveSetDistance(15.5);
+				motorControl.dimeTurn(85);
 				motorControl.moveSetDistance(100);
 				try {
-					Localize.Tile_Localize(0, 4);
+					Localize.Tile_Localize(waypoints[current_waypoint][0], waypoints[current_waypoint][1]);
 				} catch (OdometerExceptions e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
