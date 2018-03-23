@@ -99,7 +99,7 @@ public class Main {
 		
 		// simply input waypoints here, will only update after it reaches the
 		// destination
-		int[][] waypoints = { { 1, 0 }, { 2, 2 }, { 0,2 }, { 0, 0 } };
+		int[][] waypoints = { { 0, 4 }, { 0, 5 }, { 1,5 }, { 0, 0 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
@@ -221,8 +221,8 @@ public class Main {
 				yf = waypoints[current_waypoint][1]* TILE_SIZE;
 				
 				navigator.offset90(xf,yf);
-				motorControl.moveSetDistance(15.5);
-				motorControl.dimeTurn(85);
+				motorControl.moveSetDistance(14.3);
+				motorControl.dimeTurn(87);
 				motorControl.moveSetDistance(100);
 				try {
 					Localize.Tile_Localize(waypoints[current_waypoint][0], waypoints[current_waypoint][1]);
@@ -238,7 +238,7 @@ public class Main {
 				double bridge_length = 60;
 				navigator.offset90(0,30);
 				motorControl.moveSetDistance(15);
-				motorControl.dimeTurn(87);
+				motorControl.dimeTurn(90);
 				motorControl.moveSetDistance(bridge_length + 40);
 				try {
 					Localize.Tile_Localize(0, 4);
