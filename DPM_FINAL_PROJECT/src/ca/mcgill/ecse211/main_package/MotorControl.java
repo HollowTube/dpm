@@ -38,8 +38,8 @@ public class MotorControl {
 
 	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor,
 			EV3LargeRegulatedMotor rightMotor, double radius, double track) {
-		leftMotor.setSpeed(120);
-		rightMotor.setSpeed(120);
+		leftMotor.setSpeed(200);
+		rightMotor.setSpeed(200);
 		leftMotor.setAcceleration(1000);
 		rightMotor.setAcceleration(1000);
 		if (motorcontrol != null) { // Return existing object

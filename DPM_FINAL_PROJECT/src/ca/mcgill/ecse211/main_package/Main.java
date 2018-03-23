@@ -70,7 +70,7 @@ public class Main {
 	// TODO heading correction to be done before every turn
 	// TODO convert parameters of course into workable coordinates
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING
 	}
 
 	static List_of_states state;
@@ -158,9 +158,10 @@ public class Main {
 
 			// do nothing until button is pressed up
 			case IDLE:
-				odometer.setXYT(0.01, 0.01, 0.01);
+				
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
+				odometer.setXYT(0.01, 0.01, 0.01);
 				state = List_of_states.BRIDGE_CROSSING;
 				break;
 			// dime turn towards necessary destination
@@ -218,12 +219,11 @@ public class Main {
 			case BRIDGE_CROSSING:
 				
 				navigator.offset90(0,30);
-				motorControl.moveSetDistance(18);
-				motorControl.dimeTurn(90);
-//				double bridge_length = 90;
+				motorControl.moveSetDistance(15.8);
+				motorControl.dimeTurn(87);
 				motorControl.moveSetDistance(100);
 				try {
-					Localize.Tile_Localize(0, 3);
+					Localize.Tile_Localize(0, 4);
 				} catch (OdometerExceptions e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -231,6 +231,22 @@ public class Main {
 				}
 				state = List_of_states.IDLE;
 				break;
+			case TUNNEL_CROSSING:
+				navigator.offset90(0,30);
+				motorControl.moveSetDistance(15);
+				motorControl.dimeTurn(87);
+//				double bridge_length = 90;
+				motorControl.moveSetDistance(100);
+				try {
+					Localize.Tile_Localize(0, 4);
+				} catch (OdometerExceptions e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					
+				}
+				state = List_of_states.IDLE;
+				break;
+				
 
 			case TEST:
 				motorControl.forward();
