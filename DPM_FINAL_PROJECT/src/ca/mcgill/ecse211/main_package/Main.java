@@ -74,6 +74,8 @@ public class Main {
 	}
 
 	static List_of_states state;
+	
+	double xf,yf;
 
 	/**
 	 * Main method to run the program.
@@ -95,6 +97,13 @@ public class Main {
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
 				lightPollerright);
+		
+		// simply input waypoints here, will only update after it reaches the
+		// destination
+		double[][] waypoints = { { TILE_SIZE*1, 0 }, { TILE_SIZE*2, TILE_SIZE*2 }, { 0, TILE_SIZE*2 }, { 0, 0 } };
+		int current_waypoint = 0;
+		double xf = 0;
+		double yf = 0;
 
 		// clear the display
 		lcd.clear();
@@ -130,12 +139,7 @@ public class Main {
 			odoCorrectionThread.start();
 		}
 
-		// simply input waypoints here, will only update after it reaches the
-		// destination
-		double[][] waypoints = { { TILE_SIZE*2, 0 }, { TILE_SIZE*2, TILE_SIZE*2 }, { 0, TILE_SIZE*2 }, { 0, 0 } };
-		int current_waypoint = 0;
-		double xf = 0;
-		double yf = 0;
+
 
 		// state machine implementation, if you add any states makes sure that it does
 		// not get stuck in a loop
@@ -167,8 +171,6 @@ public class Main {
 			// dime turn towards necessary destination
 			case TURNING:
 				
-				
-
 				Sound.beep();
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
@@ -188,6 +190,8 @@ public class Main {
 					motorControl.stop();
 					current_waypoint++;
 					Sound.beep();
+					
+					if(current_waypoint == 2)
 
 					// resets the machine to its initial state
 					if (current_waypoint == waypoints.length) {
@@ -219,7 +223,7 @@ public class Main {
 			case BRIDGE_CROSSING:
 				
 				navigator.offset90(0,30);
-				motorControl.moveSetDistance(15.8);
+				motorControl.moveSetDistance(15.);
 				motorControl.dimeTurn(87);
 				motorControl.moveSetDistance(100);
 				try {
@@ -231,12 +235,13 @@ public class Main {
 				}
 				state = List_of_states.IDLE;
 				break;
+				
 			case TUNNEL_CROSSING:
+				double bridge_length = 60;
 				navigator.offset90(0,30);
 				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(87);
-//				double bridge_length = 90;
-				motorControl.moveSetDistance(100);
+				motorControl.moveSetDistance(bridge_length + 40);
 				try {
 					Localize.Tile_Localize(0, 4);
 				} catch (OdometerExceptions e) {
