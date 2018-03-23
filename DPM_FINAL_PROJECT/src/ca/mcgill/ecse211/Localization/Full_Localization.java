@@ -97,7 +97,13 @@ public class Full_Localization {
 		motorcontrol.setRightSpeed(200);
 		motorcontrol.forward(); 	//set the robot in motion towards x = 0 line
 		LSL.fix_angle(); 			//stop at x = 0 line
+		motorcontrol.moveSetDistance(LS_offset);
+		try{
+			Thread.sleep(200);
+		}catch (Exception e){}
 		parameter_correction(exp_x,exp_y);
+		odo.setX(exp_x*TILE_SIZE);
+		odo.setY(exp_y*TILE_SIZE);
 	}
 	
 	/**
