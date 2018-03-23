@@ -74,7 +74,8 @@ public class Main {
 	}
 
 	static List_of_states state;
-
+	
+	double xf,yf;
 
 	/**
 	 * Main method to run the program.
@@ -99,7 +100,9 @@ public class Main {
 		
 		// simply input waypoints here, will only update after it reaches the
 		// destination
+
 		int[][] waypoints = { { 0, 4 }, { 0, 5 }, { 1,5 }, { 0, 0 } };
+
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
@@ -131,11 +134,17 @@ public class Main {
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
+		// TODO make sure odometry correction works properly, adjust values as necessary
 		// Start correction if right button was pressed
 		if (buttonChoice == Button.ID_RIGHT) {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
 			odoCorrectionThread.start();
 		}
+
+
+
+		// state machine implementation, if you add any states makes sure that it does
+		// not get stuck in a loop
 
 		// set initial state
 		state = List_of_states.IDLE;
@@ -165,8 +174,8 @@ public class Main {
 			case TURNING:
 				
 				Sound.beep();
-				xf = waypoints[current_waypoint][0]* TILE_SIZE;
-				yf = waypoints[current_waypoint][1] * TILE_SIZE;
+				xf = waypoints[current_waypoint][0];
+				yf = waypoints[current_waypoint][1];
 				navigator.turn_to_destination(xf, yf);
 				state = List_of_states.TRAVELLING;
 				break;
@@ -184,9 +193,7 @@ public class Main {
 					current_waypoint++;
 					Sound.beep();
 					
-					if(current_waypoint == 2) {
-						state = List_of_states.BRIDGE_CROSSING;
-					}
+					if(current_waypoint == 2)
 
 					// resets the machine to its initial state
 					if (current_waypoint == waypoints.length) {
@@ -225,7 +232,7 @@ public class Main {
 				motorControl.dimeTurn(87);
 				motorControl.moveSetDistance(100);
 				try {
-					Localize.Tile_Localize(waypoints[current_waypoint][0], waypoints[current_waypoint][1]);
+					Localize.Tile_Localize(0, 4);
 				} catch (OdometerExceptions e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
