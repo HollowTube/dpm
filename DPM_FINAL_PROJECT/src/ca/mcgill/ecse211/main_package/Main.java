@@ -97,12 +97,15 @@ public class Main {
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
 				lightPollerright);
-		
+		final Parameter_intake parameters = Parameter_intake.getParameter();
 		// simply input waypoints here, will only update after it reaches the
 		// destination
 
-		int[][] waypoints = { { 0, 4 }, { 0, 5 }, { 1,5 }, { 0, 0 } };
-
+		int[][] waypoints = { {parameters.Green_start_coord_x(), parameters.TN_coord_y()},
+				 			  {parameters.TN_coord_x(), parameters.TN_coord_y()}, 
+				 			  {parameters.BR_coord_x(), parameters.BR_coord_y()}, 
+				 			  {parameters.Green_start_coord_x(), parameters.TN_coord_y()}, 
+				 			  {parameters.Green_start_coord_x(), parameters.Green_start_coord_y()} };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
@@ -152,14 +155,14 @@ public class Main {
 			switch (state) {
 
 			case INITIALIZE:
-//				 try {
-//				 Localize.Corner_Localize(1,1);
-//				 } catch (OdometerExceptions e) {
-//				 // TODO Auto-generated catch block
-//				 e.printStackTrace();
-//				 }
+				 try {
+				 Localize.Corner_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y());
+				 } catch (OdometerExceptions e) {
+				 // TODO Auto-generated catch block
+				 e.printStackTrace();
+				 }
 				//odometer.setXYT(0.01, 0.01, 0.01);
-				state = List_of_states.IDLE;
+				state = List_of_states.TURNING;
 				break;
 
 			// do nothing until button is pressed up
@@ -192,14 +195,17 @@ public class Main {
 					motorControl.stop();
 					current_waypoint++;
 					Sound.beep();
-					
-					if(current_waypoint == 2)
-
 					// resets the machine to its initial state
 					if (current_waypoint == waypoints.length) {
 						current_waypoint = 0;
 						state = List_of_states.IDLE;
 
+					}
+					else if(current_waypoint == 2){
+						state = List_of_states.TUNNEL_CROSSING;
+					}
+					else if(current_waypoint == 3){
+						state = List_of_states.BRIDGE_CROSSING;
 					}
 					else {
 						state = List_of_states.TURNING;
@@ -232,13 +238,13 @@ public class Main {
 				motorControl.dimeTurn(87);
 				motorControl.moveSetDistance(100);
 				try {
-					Localize.Tile_Localize(0, 4);
+					Localize.Tile_Localize(parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()));
 				} catch (OdometerExceptions e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					
 				}
-				state = List_of_states.IDLE;
+				state = List_of_states.TURNING;
 				break;
 				
 			case TUNNEL_CROSSING:
@@ -248,13 +254,13 @@ public class Main {
 				motorControl.dimeTurn(90);
 				motorControl.moveSetDistance(bridge_length + 40);
 				try {
-					Localize.Tile_Localize(0, 4);
+					Localize.Tile_Localize(parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()));
 				} catch (OdometerExceptions e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					
 				}
-				state = List_of_states.IDLE;
+				state = List_of_states.TURNING;
 				break;
 				
 
