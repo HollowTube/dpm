@@ -184,7 +184,7 @@ public class Main {
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
 				//odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
-				odometer.setXYT(waypoints[current_waypoint][0]*TILE_SIZE + 0.01, waypoints[current_waypoint][1]*TILE_SIZE + 0.01, 0.01);
+				odometer.setXYT(parameters.Green_start_coord_x()*TILE_SIZE + 0.01, parameters.Green_start_coord_y()*TILE_SIZE + 0.01, 0.01);
 				state = List_of_states.TURNING;
 				break;
 			// dime turn towards necessary destination
