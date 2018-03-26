@@ -99,11 +99,11 @@ public class Main {
 				lightPollerright);
 		
 		lcd.drawString("< Left | Right >", 0, 0);
-		lcd.drawString("  No   | with   ", 0, 1);
+		lcd.drawString("  No   |       ", 0, 1);
 		lcd.drawString(" wifi  | wifi   ", 0, 2);
 		lcd.drawString("       |         ", 0, 3);
 		lcd.drawString("       |        ", 0, 4);
-		final Parameter_intake parameters = Parameter_intake.getParameter();
+		Parameter_intake parameters = Parameter_intake.getParameter();
 		buttonChoice = Button.waitForAnyPress();
 		if(buttonChoice == Button.ID_RIGHT){
 			parameters.wifiIntake();
@@ -183,7 +183,8 @@ public class Main {
 
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
-				odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
+				//odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
+				odometer.setXYT(waypoints[current_waypoint][0]*TILE_SIZE + 0.01, waypoints[current_waypoint][1]*TILE_SIZE + 0.01, 0.01);
 				state = List_of_states.TURNING;
 				break;
 			// dime turn towards necessary destination
