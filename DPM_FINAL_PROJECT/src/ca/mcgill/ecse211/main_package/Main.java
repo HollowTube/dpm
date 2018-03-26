@@ -97,7 +97,17 @@ public class Main {
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
 				lightPollerright);
-		final Parameter_intake parameters = Parameter_intake.getParameter();
+		
+		lcd.drawString("< Left | Right >", 0, 0);
+		lcd.drawString("  No   |       ", 0, 1);
+		lcd.drawString(" wifi  | wifi   ", 0, 2);
+		lcd.drawString("       |         ", 0, 3);
+		lcd.drawString("       |        ", 0, 4);
+		Parameter_intake parameters = Parameter_intake.getParameter();
+		buttonChoice = Button.waitForAnyPress();
+		if(buttonChoice == Button.ID_RIGHT){
+			parameters.wifiIntake();
+		}
 		// simply input waypoints here, will only update after it reaches the
 		// destination
 
@@ -173,7 +183,8 @@ public class Main {
 
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
-				odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
+				//odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
+				odometer.setXYT(parameters.Green_start_coord_x()*TILE_SIZE + 0.01, parameters.Green_start_coord_y()*TILE_SIZE + 0.01, 0.01);
 				state = List_of_states.TURNING;
 				break;
 			// dime turn towards necessary destination
