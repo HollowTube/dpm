@@ -97,7 +97,17 @@ public class Main {
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
 				lightPollerright);
+		
+		lcd.drawString("< Left | Right >", 0, 0);
+		lcd.drawString("  No   | with   ", 0, 1);
+		lcd.drawString(" wifi  | wifi   ", 0, 2);
+		lcd.drawString("       |         ", 0, 3);
+		lcd.drawString("       |        ", 0, 4);
 		final Parameter_intake parameters = Parameter_intake.getParameter();
+		buttonChoice = Button.waitForAnyPress();
+		if(buttonChoice == Button.ID_RIGHT){
+			parameters.wifiIntake();
+		}
 		// simply input waypoints here, will only update after it reaches the
 		// destination
 

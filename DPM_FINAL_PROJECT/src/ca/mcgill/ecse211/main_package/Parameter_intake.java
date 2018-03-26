@@ -56,49 +56,11 @@ public class Parameter_intake {
 	 * @author Alexandre Coulombe
 	 */
 	public Parameter_intake(){
-		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
-
-		try{
-			Map data = conn.getData();
-
-			RedTeam = ((Long) data.get("RedTeam")).intValue();
-			GreenTeam = ((Long) data.get("GreenTeam")).intValue();
-			RedCorner = ((Long) data.get("RedCorner")).intValue();
-			GreenCorner = ((Long) data.get("GreenCorner")).intValue();
-			OG = ((Long) data.get("OG")).intValue();
-			OR = ((Long) data.get("OR")).intValue();
-			Red_LL_x = ((Long) data.get("Red_LL_x")).intValue();
-			Red_LL_y = ((Long) data.get("Red_LL_y")).intValue();
-			Red_UR_x = ((Long) data.get("Red_UR_x")).intValue();
-			Red_UR_y = ((Long) data.get("Red_UR_y")).intValue();
-			Green_LL_x = ((Long) data.get("Green_LL_x")).intValue();
-			Green_LL_y = ((Long) data.get("Green_LL_y")).intValue();
-			Green_UR_x = ((Long) data.get("Green_UR_x")).intValue();
-			Green_UR_y = ((Long) data.get("Green_UR_y")).intValue();
-			TN_LL_x = ((Long) data.get("TN_LL_x")).intValue();
-			TN_LL_y = ((Long) data.get("TN_LL_y")).intValue();
-			TN_UR_x = ((Long) data.get("TN_UR_x")).intValue();
-			TN_UR_y = ((Long) data.get("TN_UR_y")).intValue();
-			BR_LL_x = ((Long) data.get("BR_LL_x")).intValue();
-			BR_LL_y = ((Long) data.get("BR_LL_y")).intValue();
-			BR_UR_x = ((Long) data.get("BR_UR_x")).intValue();
-			BR_UR_y = ((Long) data.get("BR_UR_y")).intValue();
-			SR_LL_x = ((Long) data.get("SR_LL_x")).intValue();
-			SR_LL_y = ((Long) data.get("SR_LL_y")).intValue();			
-			SR_UR_x = ((Long) data.get("SR_UR_y")).intValue();			
-			SR_UR_y = ((Long) data.get("SR_UR_x")).intValue();			
-			SG_LL_x = ((Long) data.get("SG_LL_x")).intValue();			
-			SG_LL_y = ((Long) data.get("SG_LL_y")).intValue();			
-			SG_UR_x = ((Long) data.get("SG_UR_x")).intValue();			
-			SG_UR_y = ((Long) data.get("SG_UR_y")).intValue();
-		}catch (Exception e){
-
-		}
+		
 	}
 
 
 	public Parameter_intake wifiIntake(){
-		
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
 		try{
