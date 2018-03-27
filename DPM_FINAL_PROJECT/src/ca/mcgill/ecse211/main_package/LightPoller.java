@@ -67,7 +67,7 @@ public class LightPoller {
 	 * @param threshold Delta value accepted
 	 * @return True if falling edge is found, false otherwise
 	 */
-	public boolean falling(int threshold) {
+	public synchronized boolean falling(int threshold) {
 		boolean edge;
 		double change_in_light;
 		getValue();

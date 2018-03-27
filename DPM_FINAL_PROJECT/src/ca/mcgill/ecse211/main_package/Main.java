@@ -66,6 +66,7 @@ public class Main {
 	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
 	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
+	final static LightPoller odoPoller = new LightPoller(colorRGBSensorReflected,sampleReflected);
 
 	// TODO heading correction to be done before every turn
 	// TODO convert parameters of course into workable coordinates
@@ -88,7 +89,7 @@ public class Main {
 		int buttonChoice;
 		// Odometer related objects
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(lightPollerleft);
+		OdometryCorrection odometryCorrection = new OdometryCorrection(odoPoller);
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
