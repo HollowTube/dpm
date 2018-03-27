@@ -234,8 +234,11 @@ public class Main {
 				yf = waypoints[current_waypoint][1];
 
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
-				motorControl.moveSetDistance(13.5);
-				motorControl.dimeTurn(88);
+				motorControl.moveSetDistance(16.5);
+				motorControl.dimeTurn(90);
+				motorControl.backward();
+				A_loc.fix_angle();
+				motorControl.dimeTurn(-5);
 				motorControl.moveSetDistance(110);
 				try {
 					Localize.Tile_Localize((int) xf, (int) yf);
@@ -253,8 +256,10 @@ public class Main {
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
-				motorControl.moveSetDistance(14);
+				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
+				motorControl.backward();
+				A_loc.fix_angle();
 				motorControl.moveSetDistance(110);
 				try {
 					Localize.Tile_Localize((int) xf, (int) yf);
