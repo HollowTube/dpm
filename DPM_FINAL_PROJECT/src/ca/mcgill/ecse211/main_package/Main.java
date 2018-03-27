@@ -88,7 +88,7 @@ public class Main {
 		int buttonChoice;
 		// Odometer related objects
 		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
+		OdometryCorrection odometryCorrection = new OdometryCorrection(lightPollerleft);
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
@@ -184,7 +184,7 @@ public class Main {
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
 				odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
-				state = List_of_states.TURNING;
+				state = List_of_states.TEST;
 				break;
 			// dime turn towards necessary destination
 			case TURNING:

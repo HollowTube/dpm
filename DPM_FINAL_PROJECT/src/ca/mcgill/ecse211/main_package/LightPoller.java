@@ -17,6 +17,7 @@ public class LightPoller {
 	private SampleProvider lt;
 	private float[] ltdata;
 	private int lightVal;
+	private final int  THRESHOLD = 5;
 
 	private int prev_light;
 	private int current_light;
@@ -71,15 +72,13 @@ public class LightPoller {
 		double change_in_light;
 		getValue();
 
-		
 		if (first_time) {
 			prev_light = current_light;
 			first_time = false;
 		}
 		
-		
 		change_in_light = current_light-prev_light;
-		if (change_in_light < -threshold) {
+		if (change_in_light < -THRESHOLD) {
 			edge = true;
 		}
 		else {

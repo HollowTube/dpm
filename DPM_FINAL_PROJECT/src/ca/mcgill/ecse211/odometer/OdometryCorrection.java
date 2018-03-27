@@ -3,6 +3,7 @@
  */
 package ca.mcgill.ecse211.odometer;
 
+import ca.mcgill.ecse211.main_package.LightPoller;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
@@ -18,11 +19,10 @@ public class OdometryCorrection implements Runnable {
 	private static final double SQUARE_LENGTH = 30.48;
 	private static final double ANGLE_THRESHOLD = 20;
 	private static final double LIGHTSENS_OFFSET = 2.8;
-	private static final double LIGHTSENS_THRESHOLD = 25;
+	private static final int LIGHTSENS_THRESHOLD = 25;
+	private LightPoller left_sensor;
 	private Odometer odometer;
-	private SampleProvider lt;
-	private float[] ltdata;
-	private int lightVal;
+	
 
 	/**
 	 * This is the default class constructor. An existing instance of the odometer
@@ -30,21 +30,14 @@ public class OdometryCorrection implements Runnable {
 	 * 
 	 * @throws OdometerExceptions
 	 */
-	public OdometryCorrection(SampleProvider lt, float[] ltdata) throws OdometerExceptions {
-		this.lt = lt;
-		this.ltdata = ltdata;
+	public OdometryCorrection(LightPoller L_sens) throws OdometerExceptions {
+		this.left_sensor = L_sens;
 		this.odometer = Odometer.getOdometer();
 
 	}
 
 	public boolean correctionTrigger() {
-		lt.fetchSample(ltdata, 0);
-		lightVal = (int) (ltdata[0] * 100);
-		if (lightVal < LIGHTSENS_THRESHOLD) { // triggers when a low amount of light is reflected (i.e. it detects
-												// black)
-			return true;
-		}
-		return false;
+		return left_sensor.falling(25);
 	}
 
 	/**
@@ -70,7 +63,7 @@ public class OdometryCorrection implements Runnable {
 			if (correctionTrigger()) {
 				position = odometer.getXYT(); // get current position and heading from odometer
 				head = position[2]; // get current heading
-
+				Sound.buzz();
 				// going up
 				if (head > 350 || head < 10) {
 
