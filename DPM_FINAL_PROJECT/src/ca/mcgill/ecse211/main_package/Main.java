@@ -199,7 +199,7 @@ public class Main {
 			case TURNING:
 				motorControl.setLeftSpeed(200);
 				motorControl.setRightSpeed(200);
-				Sound.beep();
+				
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
 				navigator.turn_to_destination(xf, yf);
@@ -217,7 +217,7 @@ public class Main {
 				if (navigator.destination_reached(xf, yf)) {
 					motorControl.stop();
 					current_waypoint++;
-					Sound.beep();
+					
 					// resets the machine to its initial state
 					if (current_waypoint == waypoints.length) {
 						current_waypoint = 0;
@@ -228,7 +228,7 @@ public class Main {
 					} else if (current_waypoint == 4) {
 						state = List_of_states.BRIDGE_CROSSING;
 					} else {
-						state = List_of_states.IDLE;
+						state = List_of_states.TURNING;
 					}
 					break;
 				}

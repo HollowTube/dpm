@@ -63,7 +63,6 @@ public class OdometryCorrection implements Runnable {
 			if (correctionTrigger()) {
 				position = odometer.getXYT(); // get current position and heading from odometer
 				head = position[2]; // get current heading
-				Sound.buzz();
 				// going up
 				if (head > 350 || head < 10) {
 
