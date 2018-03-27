@@ -97,7 +97,17 @@ public class Main {
 		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
 		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
 				lightPollerright);
-		final Parameter_intake parameters = Parameter_intake.getParameter();
+//		
+//		lcd.drawString("< Left | Right >", 0, 0);
+//		lcd.drawString("  No   |       ", 0, 1);
+//		lcd.drawString(" wifi  | wifi   ", 0, 2);
+//		lcd.drawString("       |         ", 0, 3);
+//		lcd.drawString("       |        ", 0, 4);
+		Parameter_intake parameters = Parameter_intake.getParameter();
+//		buttonChoice = Button.waitForAnyPress();
+//		if(buttonChoice == Button.ID_RIGHT){
+			parameters.wifiIntake();
+//		}
 		// simply input waypoints here, will only update after it reaches the
 		// destination
 
@@ -116,24 +126,24 @@ public class Main {
 		// clear the display
 		lcd.clear();
 		// ask the user whether odometery correction should be run or not
-		lcd.drawString("< Left | Right >", 0, 0);
-		lcd.drawString("  No   | with   ", 0, 1);
-		lcd.drawString(" corr- | corr-  ", 0, 2);
-		lcd.drawString(" ection| ection ", 0, 3);
-		lcd.drawString("       |        ", 0, 4);
+//		lcd.drawString("< Left | Right >", 0, 0);
+//		lcd.drawString("  No   | with   ", 0, 1);
+//		lcd.drawString(" corr- | corr-  ", 0, 2);
+//		lcd.drawString(" ection| ection ", 0, 3);
+//		lcd.drawString("       |        ", 0, 4);
 
-		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
+		//buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 		lcd.clear();
 
-		if (buttonChoice == Button.ID_DOWN) {
-			Calibration.radius_calibration();
-		} else if (buttonChoice == Button.ID_UP) {
-			Calibration.track_calibration();
-		}
+//		if (buttonChoice == Button.ID_DOWN) {
+//			Calibration.radius_calibration();
+//		} else if (buttonChoice == Button.ID_UP) {
+//			Calibration.track_calibration();
+//		}
 
-		else if (buttonChoice == Button.ID_ENTER) {
-			Testing.straightLine();
-		}
+//		else if (buttonChoice == Button.ID_ENTER) {
+//			Testing.straightLine();
+//		}
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
@@ -142,10 +152,10 @@ public class Main {
 
 		// TODO make sure odometry correction works properly, adjust values as necessary
 		// Start correction if right button was pressed
-		if (buttonChoice == Button.ID_RIGHT) {
+		//if (buttonChoice == Button.ID_RIGHT) {
 			Thread odoCorrectionThread = new Thread(odometryCorrection);
 			odoCorrectionThread.start();
-		}
+		//}
 
 		// state machine implementation, if you add any states makes sure that it does
 		// not get stuck in a loop
