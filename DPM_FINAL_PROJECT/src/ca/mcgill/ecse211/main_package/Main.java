@@ -3,6 +3,8 @@ package ca.mcgill.ecse211.main_package;
 
 import ca.mcgill.ecse211.odometer.*;
 
+import java.lang.reflect.Parameter;
+
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
@@ -162,18 +164,24 @@ public class Main {
 		// not get stuck in a loop
 
 		// set initial state
-		state = List_of_states.IDLE;
+		state = List_of_states.INITIALIZE;
 		while (true) {
 			switch (state) {
 
 			case INITIALIZE:
 				try {
-					// Localize.Corner_Localize(parameters.Green_start_coord_x(),
-					// parameters.Green_start_coord_y());
-					Localize.Corner_Localize(1, 1);
+					 Localize.Corner_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y());
+					 
+					//Localize.Corner_Localize(1, 1);
 				} catch (OdometerExceptions e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				if(parameters.GreenTeam==13){
+					 odometer.setTheta(parameters.Green_start_theta()); 
+				 }
+				 else if(parameters.RedTeam==13){
+					 odometer.setTheta(parameters.Red_start_theta()); 
 				}
 				// odometer.setXYT(0.01, 0.01, 0.01);
 				state = List_of_states.TURNING;
@@ -189,7 +197,8 @@ public class Main {
 				break;
 			// dime turn towards necessary destination
 			case TURNING:
-
+				motorControl.setLeftSpeed(200);
+				motorControl.setRightSpeed(200);
 				Sound.beep();
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
@@ -269,6 +278,7 @@ public class Main {
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
 				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
+				motorControl.moveSetDistance(5);
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.moveSetDistance(110);

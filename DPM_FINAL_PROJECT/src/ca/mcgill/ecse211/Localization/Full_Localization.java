@@ -76,9 +76,9 @@ public class Full_Localization {
 	 */
 	public void Tile_Localize(int exp_x, int exp_y) throws OdometerExceptions{
 		final Angle_Localization LSL = new Angle_Localization(left_LS, right_LS);
-		motorcontrol.setLeftSpeed(200);	//performs light sensor localization
+		motorcontrol.setLeftSpeed(150);	//performs light sensor localization
 
-		motorcontrol.setRightSpeed(200);
+		motorcontrol.setRightSpeed(150);
 		motorcontrol.forward(); 	// set the robot in motion towards y = 0 line
 		LSL.fix_angle(); 			// stop at y = 0 line
 		parameter_correction(exp_x,exp_y);
@@ -89,12 +89,12 @@ public class Full_Localization {
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}
-		motorcontrol.turnTo(90);  			//turn towards x = 0 line
+		motorcontrol.dimeTurn(90);  			//turn towards x = 0 line
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}
-		motorcontrol.setLeftSpeed(200);
-		motorcontrol.setRightSpeed(200);
+		motorcontrol.setLeftSpeed(150);
+		motorcontrol.setRightSpeed(150);
 		motorcontrol.forward(); 	//set the robot in motion towards x = 0 line
 		LSL.fix_angle(); 			//stop at x = 0 line
 		motorcontrol.moveSetDistance(LS_offset);

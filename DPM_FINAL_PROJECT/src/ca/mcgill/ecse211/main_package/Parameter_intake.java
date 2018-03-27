@@ -301,6 +301,40 @@ public class Parameter_intake {
 		}
 		return -1;
 	}
+	/**Method returns the heading at the end of the corner localization for green
+	 * @author Alexandre Coulombe
+	 * @return start angle after localization
+	 */
+	public double Green_start_theta(){
+		switch (GreenCorner){
+		case 1:
+			return 90.01;
+		case 2:
+			return 0.01;
+		case 3:
+			return 270.01;
+		case 4:
+			return 180.01;
+		}
+		return -1;
+	}
+	/**Method returns the heading at the end of the corner localization for red
+	 * @author Alexandre Coulombe
+	 * @return start angle after localization
+	 */
+	public double Red_start_theta(){
+		switch (RedCorner){
+		case 1:
+			return 90.01;
+		case 2:
+			return 0.01;
+		case 3:
+			return 270.01;
+		case 4:
+			return 180.01;
+		}
+		return -1;
+	}
 	/**
 	 * Method to get the x coordinate needed to place the robot before starting the tunnel crossing
 	 * The robot will be placed to the right of the tunnel entrance before it traverses the tunnel.
