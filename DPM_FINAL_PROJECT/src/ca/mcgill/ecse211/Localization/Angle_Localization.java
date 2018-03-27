@@ -61,19 +61,19 @@ public class Angle_Localization {
 	 */
 	public void fix_angle() {
 		while (true) {
-			if (right_sensor.lessThan(threshold)) {
+			if (right_sensor.falling(threshold)) {
 				motorcontrol.rightStop();
 				do {
-					if (left_sensor.lessThan(threshold)) {
+					if (left_sensor.falling(threshold)) {
 						motorcontrol.leftStop();
 						break;
 					}
 				} while (true);
 				break;
-			} else if (left_sensor.lessThan(threshold)) {
+			} else if (left_sensor.falling(threshold)) {
 				motorcontrol.leftStop();
 				do {
-					if (right_sensor.lessThan(threshold)) {
+					if (right_sensor.falling(threshold)) {
 						motorcontrol.rightStop();
 						break;
 					}
@@ -98,18 +98,18 @@ public class Angle_Localization {
 	 */
 	public void fix_angle_on_path() {
 
-		if (right_sensor.lessThan(threshold) && !recovery) {
+		if (right_sensor.falling(threshold) && !recovery) {
 			motorcontrol.rightStop();
-			while (!left_sensor.lessThan(threshold))
+			while (!left_sensor.falling(threshold))
 				;
 			motorcontrol.leftStop();
 			angle_correction();
 			initial_position = odometer.getXYT();
 			recovery = true;
 
-		} else if (left_sensor.lessThan(threshold) && !recovery) {
+		} else if (left_sensor.falling(threshold) && !recovery) {
 			motorcontrol.leftStop();
-			while (!right_sensor.lessThan(threshold))
+			while (!right_sensor.falling(threshold))
 				;
 			motorcontrol.rightStop();
 			angle_correction();

@@ -51,7 +51,7 @@ public class Full_Localization {
 	 * @throws OdometerExceptions
 	 */
 	public void Corner_Localize(int exp_x, int exp_y) throws OdometerExceptions{
-		final UltrasonicLocalizer USL = new UltrasonicLocalizer(odo, us, 1, motorcontrol);
+		final UltrasonicLocalizer USL = new UltrasonicLocalizer(odo, us, 2, motorcontrol);
 		try{
 			Thread.sleep(1000); //sleep thread to give ultrasonic localizer time to instantiate
 		} catch (Exception e){}

@@ -37,7 +37,7 @@ public class OdometryCorrection implements Runnable {
 	}
 
 	public boolean correctionTrigger() {
-		return left_sensor.falling(25);
+		return left_sensor.lessThan(20);
 	}
 
 	/**

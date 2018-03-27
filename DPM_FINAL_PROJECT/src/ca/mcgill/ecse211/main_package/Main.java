@@ -228,7 +228,7 @@ public class Main {
 					} else if (current_waypoint == 4) {
 						state = List_of_states.BRIDGE_CROSSING;
 					} else {
-						state = List_of_states.TURNING;
+						state = List_of_states.IDLE;
 					}
 					break;
 				}
