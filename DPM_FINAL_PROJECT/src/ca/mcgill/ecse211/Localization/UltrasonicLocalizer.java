@@ -55,22 +55,24 @@ public class UltrasonicLocalizer {
 		//if back wall angle < left wall angle
 		if(edgeDetect[1] < edgeDetect[0]){
 			double correctionAngle = 45-((edgeDetect[0]+edgeDetect[1])%360)/2;
-			odo.setTheta(edgeDetect[1]+correctionAngle);
+			//odo.setTheta(edgeDetect[1]+correctionAngle);
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){}
-			motorcontrol.turnTo(-odo.getXYT()[2]);
+			//motorcontrol.turnTo(-odo.getXYT()[2]);
+			motorcontrol.turnTo(-(edgeDetect[1]+correctionAngle));
 		}
 		else{
 			double correctionAngle = 45-((edgeDetect[0]+edgeDetect[1])%360)/2;
-			odo.setTheta(edgeDetect[1]+correctionAngle);
+			//odo.setTheta(edgeDetect[1]+correctionAngle);
 			try{
 				Thread.sleep(500);
 			} catch (Exception e){}
-			motorcontrol.turnTo(-odo.getXYT()[2]);
+			//motorcontrol.turnTo(-odo.getXYT()[2]);
+			motorcontrol.turnTo(-(edgeDetect[1]+correctionAngle));
 		}
 		if(getDistance() < 40) {//if angles were passing over 360, use wall to correct theta and orientation
-			odo.setTheta(180);
+			//odo.setTheta(180);
 			motorcontrol.turnTo(180);
 		}
 	}
