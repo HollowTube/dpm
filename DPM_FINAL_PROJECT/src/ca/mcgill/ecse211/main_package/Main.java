@@ -89,7 +89,7 @@ public class Main {
 		int buttonChoice;
 		// Odometer related objects
 		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(odoPoller);
+		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected,sampleReflected );
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
