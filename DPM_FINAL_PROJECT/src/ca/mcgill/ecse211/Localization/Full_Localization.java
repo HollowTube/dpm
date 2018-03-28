@@ -19,7 +19,9 @@ public class Full_Localization {
 	private LightPoller left_LS;
 	private LightPoller right_LS;
 	private float LS_offset=3;
-	private double TILE_SIZE = 30.48;
+	private double TILE_SIZE = 30.48; 
+	private UltrasonicLocalizer USL;
+	private Angle_Localization LSL;
 	
 	/**
 	 * Class constructor
@@ -37,6 +39,8 @@ public class Full_Localization {
 		this.motorcontrol = motorcontrol;
 		this.left_LS=left_LS;
 		this.right_LS=right_LS;
+		this.USL = new UltrasonicLocalizer(odo, us, 2, motorcontrol);
+		this.LSL = new Angle_Localization(left_LS, right_LS);
 	}
 	/**
 	 * This method calls the useful methods from other classes in the package 
@@ -51,7 +55,6 @@ public class Full_Localization {
 	 * @throws OdometerExceptions
 	 */
 	public void Corner_Localize(int exp_x, int exp_y) throws OdometerExceptions{
-		final UltrasonicLocalizer USL = new UltrasonicLocalizer(odo, us, 1, motorcontrol);
 		try{
 			Thread.sleep(1000); //sleep thread to give ultrasonic localizer time to instantiate
 		} catch (Exception e){}
@@ -75,35 +78,48 @@ public class Full_Localization {
 	 *  @author Alexandre Coulombe
 	 */
 	public void Tile_Localize(int exp_x, int exp_y) throws OdometerExceptions{
-		final Angle_Localization LSL = new Angle_Localization(left_LS, right_LS);
+		
 		motorcontrol.setLeftSpeed(200);	//performs light sensor localization
-
 		motorcontrol.setRightSpeed(200);
 		motorcontrol.forward(); 	// set the robot in motion towards y = 0 line
 		LSL.fix_angle(); 			// stop at y = 0 line
-		parameter_correction(exp_x,exp_y);
+		//parameter_correction(exp_x,exp_y);
+		
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}
+		
 		motorcontrol.moveSetDistance(LS_offset);
+		
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}
-		motorcontrol.turnTo(90);  			//turn towards x = 0 line
+		
+		motorcontrol.dimeTurn(90);  			//turn towards x = 0 line
+		
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}
+		
 		motorcontrol.setLeftSpeed(200);
 		motorcontrol.setRightSpeed(200);
 		motorcontrol.forward(); 	//set the robot in motion towards x = 0 line
 		LSL.fix_angle(); 			//stop at x = 0 line
 		motorcontrol.moveSetDistance(LS_offset);
+		
 		try{
 			Thread.sleep(200);
 		}catch (Exception e){}
-		parameter_correction(exp_x,exp_y);
-		odo.setX(exp_x*TILE_SIZE);
-		odo.setY(exp_y*TILE_SIZE);
+		
+		motorcontrol.dimeTurn(-90);
+		motorcontrol.stop();
+		motorcontrol.backward();
+		LSL.fix_angle();
+		motorcontrol.stop();
+		motorcontrol.moveSetDistance(LS_offset);
+//		parameter_correction(exp_x,exp_y);
+		//odo.setX(exp_x*TILE_SIZE);
+		//odo.setY(exp_y*TILE_SIZE);
 	}
 	
 	/**
