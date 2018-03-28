@@ -109,7 +109,7 @@ public class Angle_Localization {
 
 		} else if (left_sensor.lessThan(threshold) && !recovery) {
 			motorcontrol.leftStop();
-			while (!right_sensor.lessThan(threshold))
+			while(!right_sensor.lessThan(threshold))
 				;
 			motorcontrol.rightStop();
 			angle_correction();
