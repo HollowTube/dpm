@@ -3,6 +3,8 @@ package ca.mcgill.ecse211.main_package;
 
 import ca.mcgill.ecse211.odometer.*;
 
+import java.lang.reflect.Parameter;
+
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
@@ -37,7 +39,7 @@ public class Main {
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 
 	public static final double WHEEL_RAD = 2.06;
-	public static final double TRACK = 14.76;
+	public static final double TRACK = 15.2;
 	public static final double TILE_SIZE = 30.48;
 
 	// ultrasonic sensor initialization
@@ -63,12 +65,11 @@ public class Main {
 	// LightPollerColor(colorRGBSensor, sample);
 
 	// initialization of poller classes
-	final static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	final static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
-	final static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
+	static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
+	static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
+	static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
+	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflected,sampleReflected);
 
-	// TODO heading correction to be done before every turn
-	// TODO convert parameters of course into workable coordinates
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING
 	}
@@ -87,27 +88,28 @@ public class Main {
 
 		int buttonChoice;
 		// Odometer related objects
-		final Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
+		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
+		OdometryCorrection odometryCorrection = new OdometryCorrection(odoPoller);
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
-		final MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD, TRACK);
-		final Navigation navigator = new Navigation();
-		final Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-		final Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
+		MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD, TRACK);
+		Navigation navigator = new Navigation();
+		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
+		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
 				lightPollerright);
-		
-		lcd.drawString("< Left | Right >", 0, 0);
-		lcd.drawString("  No   |       ", 0, 1);
-		lcd.drawString(" wifi  | wifi   ", 0, 2);
-		lcd.drawString("       |         ", 0, 3);
-		lcd.drawString("       |        ", 0, 4);
+		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
+		//		
+		//		lcd.drawString("< Left | Right >", 0, 0);
+		//		lcd.drawString("  No   |       ", 0, 1);
+		//		lcd.drawString(" wifi  | wifi   ", 0, 2);
+		//		lcd.drawString("       |         ", 0, 3);
+		//		lcd.drawString("       |        ", 0, 4);
 		Parameter_intake parameters = Parameter_intake.getParameter();
-		buttonChoice = Button.waitForAnyPress();
-		if(buttonChoice == Button.ID_RIGHT){
-			parameters.wifiIntake();
-		}
+		
+		//buttonChoice = Button.waitForAnyPress();
+		parameters.wifiIntake();
+
 		// simply input waypoints here, will only update after it reaches the
 		// destination
 
@@ -118,7 +120,7 @@ public class Main {
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() } };
-		// int[][] waypoints = {{1,2},{3,2},{3,6},{5,6},{5,2}};
+//		 int[][] waypoints = {{1,2},{1,2},{3,6},{5,6},{5,2}};
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
@@ -126,78 +128,97 @@ public class Main {
 		// clear the display
 		lcd.clear();
 		// ask the user whether odometery correction should be run or not
-		lcd.drawString("< Left | Right >", 0, 0);
-		lcd.drawString("  No   | with   ", 0, 1);
-		lcd.drawString(" corr- | corr-  ", 0, 2);
-		lcd.drawString(" ection| ection ", 0, 3);
-		lcd.drawString("       |        ", 0, 4);
+		//		lcd.drawString("< Left | Right >", 0, 0);
+		//		lcd.drawString("  No   | with   ", 0, 1);
+		//		lcd.drawString(" corr- | corr-  ", 0, 2);
+		//		lcd.drawString(" ection| ection ", 0, 3);
+		//		lcd.drawString("       |        ", 0, 4);
 
-		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-		lcd.clear();
-
-		if (buttonChoice == Button.ID_DOWN) {
-			Calibration.radius_calibration();
-		} else if (buttonChoice == Button.ID_UP) {
-			Calibration.track_calibration();
-		}
-
-		else if (buttonChoice == Button.ID_ENTER) {
-			Testing.straightLine();
-		}
+		//lcd.clear();
+		
+//		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
+//		if (buttonChoice == Button.ID_DOWN) {
+//			Calibration.radius_calibration();
+//		} else if (buttonChoice == Button.ID_UP) {
+//			Calibration.track_calibration();
+//		}else if (buttonChoice == Button.ID_ENTER) {
+//			Testing.straightLine();
+//		}
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
-		// TODO make sure odometry correction works properly, adjust values as necessary
 		// Start correction if right button was pressed
-		if (buttonChoice == Button.ID_RIGHT) {
-			Thread odoCorrectionThread = new Thread(odometryCorrection);
-			odoCorrectionThread.start();
-		}
+		//if (buttonChoice == Button.ID_RIGHT) {
+		Thread odoCorrectionThread = new Thread(odometryCorrection);
+		odoCorrectionThread.start();
+		//}
 
 		// state machine implementation, if you add any states makes sure that it does
 		// not get stuck in a loop
 
 		// set initial state
-		state = List_of_states.IDLE;
+		state = List_of_states.INITIALIZE;
 		while (true) {
 			switch (state) {
 
 			case INITIALIZE:
 				try {
-					// Localize.Corner_Localize(parameters.Green_start_coord_x(),
-					// parameters.Green_start_coord_y());
-					Localize.Corner_Localize(1, 1);
+					//Localize.Corner_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y());
+					ulLoc.Localize();
+					Localize.Tile_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y());
+					//Localize.Corner_Localize(1, 1);
 				} catch (OdometerExceptions e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				// odometer.setXYT(0.01, 0.01, 0.01);
+				//				if(parameters.GreenTeam==13){
+				//					odometer.setTheta(parameters.Green_start_theta()); 
+				//				}
+				//				else if(parameters.RedTeam==13){
+				//					odometer.setTheta(parameters.Red_start_theta()); 
+				//				}
+				//odometer.setX(TILE_SIZE*parameters.Green_start_coord_x() + 0.01);
+				//odometer.setY(TILE_SIZE*parameters.Green_start_coord_y() + 0.01);
+				//odometer.setXYT(TILE_SIZE*parameters.Green_start_coord_x()+0.01, TILE_SIZE*parameters.Green_start_coord_y() + 0.01, 0.01);
+
+				try{
+					Thread.sleep(1000);
+				}catch(Exception e){}
+				rightMotor.resetTachoCount();
+				leftMotor.resetTachoCount();
+				try{
+					Thread.sleep(1000);
+				}catch(Exception e){}
+				
+				odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
 				state = List_of_states.TURNING;
 				break;
 
-			// do nothing until button is pressed up
+				// do nothing until button is pressed up
 			case IDLE:
 
-				while (Button.waitForAnyPress() != Button.ID_UP)
-					sleeptime(50); // waits until the up button is pressed
-				//odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
-				odometer.setXYT(parameters.Green_start_coord_x()*TILE_SIZE + 0.01, parameters.Green_start_coord_y()*TILE_SIZE + 0.01, 0.01);
+				//while (Button.waitForAnyPress() != Button.ID_UP)
+				//	sleeptime(50); // waits until the up button is pressed
+
+				odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
 				state = List_of_states.TURNING;
 				break;
-			// dime turn towards necessary destination
+				// dime turn towards necessary destination
 			case TURNING:
-
-				Sound.beep();
+				motorControl.setLeftSpeed(200);
+				motorControl.setRightSpeed(200);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
 				navigator.turn_to_destination(xf, yf);
+				motorControl.backward();
+				A_loc.fix_angle();
+				motorControl.stop();
 				state = List_of_states.TRAVELLING;
 				break;
 
-			// travels to waypoints while scanning for objects
+				// travels to waypoints while scanning for objects
 			case TRAVELLING:
 
 				// navigator.travelTo(xf, yf);
@@ -207,8 +228,9 @@ public class Main {
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
 					motorControl.stop();
+					motorControl.moveSetDistance(2);
 					current_waypoint++;
-					Sound.beep();
+
 					// resets the machine to its initial state
 					if (current_waypoint == waypoints.length) {
 						current_waypoint = 0;
@@ -240,21 +262,21 @@ public class Main {
 				break;
 
 			case BRIDGE_CROSSING:
-
+				motorControl.stop();
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
 
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
-				motorControl.moveSetDistance(13.5);
-				motorControl.dimeTurn(88);
+				motorControl.moveSetDistance(16.5);
+				motorControl.dimeTurn(90);
+								motorControl.backward();
+								A_loc.fix_angle();
+								motorControl.stop();
+				//motorControl.dimeTurn(-5);
 				motorControl.moveSetDistance(110);
 				try {
 					Localize.Tile_Localize((int) xf, (int) yf);
-				} catch (OdometerExceptions e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-
-				}
+				} catch (OdometerExceptions e) {}
 				current_waypoint++;
 				state = List_of_states.TURNING;
 				break;
@@ -264,17 +286,17 @@ public class Main {
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
-				motorControl.moveSetDistance(14);
+				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
+				motorControl.moveSetDistance(5);
+				motorControl.backward();
+				A_loc.fix_angle();
+				motorControl.stop();
 				motorControl.moveSetDistance(110);
 				try {
 					Localize.Tile_Localize((int) xf, (int) yf);
 
-				} catch (OdometerExceptions e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-
-				}
+				} catch (OdometerExceptions e) {}
 				current_waypoint++;
 				state = List_of_states.TURNING;
 				break;
@@ -291,7 +313,6 @@ public class Main {
 			}
 			sleeptime(10);
 		}
-
 	}
 
 	/**
