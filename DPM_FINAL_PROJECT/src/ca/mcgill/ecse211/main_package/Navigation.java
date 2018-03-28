@@ -187,7 +187,17 @@ public class Navigation {
 	 */
 	public boolean destination_reached(double xf, double yf) {
 		double[] position = get_position();
-		if (Math.abs(xf - position[0]) < 0.6 && Math.abs(yf - position[1]) < 0.6) {
+//		if((position[2]<45 || position[2]>300) || (position[2]<300 && position[2]>120)){
+//			if(Math.abs(xf - position[0]) < 1.5) return true;
+//			else return false;
+//		}
+//		else if(Math.abs(yf - position[1]) < 1.5) {
+//			return true;
+//		}
+//		else return false;
+//	
+		
+		if (Math.abs(xf - position[0]) < 1.5 && Math.abs(yf - position[1]) < 1.5) {
 			return true;
 		}
 		return false;
