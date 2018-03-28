@@ -17,6 +17,7 @@ public class LightPoller {
 	private SampleProvider lt;
 	private float[] ltdata;
 	private int lightVal;
+	private final int  THRESHOLD = 5;
 
 	private int prev_light;
 	private int current_light;
@@ -66,20 +67,18 @@ public class LightPoller {
 	 * @param threshold Delta value accepted
 	 * @return True if falling edge is found, false otherwise
 	 */
-	public boolean falling(int threshold) {
+	public synchronized boolean falling(int threshold) {
 		boolean edge;
 		double change_in_light;
 		getValue();
 
-		
 		if (first_time) {
 			prev_light = current_light;
 			first_time = false;
 		}
 		
-		
 		change_in_light = current_light-prev_light;
-		if (change_in_light < -threshold) {
+		if (change_in_light < -THRESHOLD) {
 			edge = true;
 		}
 		else {
