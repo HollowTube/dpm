@@ -44,7 +44,7 @@ public class Angle_Localization {
 		Angle_Localization.odometer = Odometer.getOdometer();
 		Angle_Localization.motorcontrol = MotorControl.getMotor();
 		this.left_sensor = L_sens;
-		this.right_sensor = R_sens;
+		this.right_sensor = R_sens; 
 	}
 
 	/**
