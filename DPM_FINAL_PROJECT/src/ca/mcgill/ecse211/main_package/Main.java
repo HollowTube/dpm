@@ -89,15 +89,14 @@ public class Main {
 		int buttonChoice;
 		// Odometer related objects
 		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(odoPoller);
+		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
 		MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD, TRACK);
 		Navigation navigator = new Navigation();
 		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright);
-		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,
-				lightPollerright);
+		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,lightPollerright);
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
 		//		
 		//		lcd.drawString("< Left | Right >", 0, 0);
@@ -113,18 +112,44 @@ public class Main {
 		// simply input waypoints here, will only update after it reaches the
 		// destination
 
-		int[][] waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
-				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
-				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
-				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
-				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
-				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
-				{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() } };
+		int[][] waypoints = null; 
+		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
+									{ parameters.TN_coord_x(), parameters.TN_coord_y() },
+									{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
+									{ parameters.SR_UR_x, parameters.TN_end_y(parameters.TN_coord_y())},
+									{ parameters.SR_UR_x, parameters.SR_LL_y},
+									{ parameters.SR_LL_x, parameters.SR_UR_y},
+									{ parameters.Red_start_coord_x(), parameters.SR_UR_y},
+									{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y()},
+									{ parameters.Red_start_coord_x(), parameters.BR_coord_y()},
+									{ parameters.BR_coord_x(), parameters.BR_coord_y() },
+									{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
+									{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
+									{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() } };
+		
+		int[][] Red_waypoints =   { { parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+									{ parameters.BR_coord_x(), parameters.BR_coord_y() },
+									{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
+									{ parameters.SG_UR_x, parameters.BR_end_y(parameters.BR_coord_y())},
+									{ parameters.SG_UR_x, parameters.SG_LL_y},
+									{ parameters.SG_LL_x, parameters.SG_UR_y},
+									{ parameters.Green_start_coord_x(), parameters.SG_UR_y},
+									{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y()},
+									{ parameters.Green_start_coord_x(), parameters.TN_coord_y()},
+									{ parameters.TN_coord_x(), parameters.TN_coord_y() },
+									{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
+									{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+									{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
 //		 int[][] waypoints = {{1,2},{1,2},{3,6},{5,6},{5,2}};
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
-
+		if(parameters.GreenTeam==13){
+			waypoints = Green_waypoints;
+		}
+		else if(parameters.RedTeam==13){
+			waypoints = Red_waypoints;
+		}
 		// clear the display
 		lcd.clear();
 		// ask the user whether odometery correction should be run or not
@@ -166,9 +191,17 @@ public class Main {
 
 			case INITIALIZE:
 				try {
-					//Localize.Corner_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y());
-					ulLoc.Localize();
-					Localize.Tile_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y());
+					if(parameters.GreenTeam==13){
+						Localize.Corner_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y(),parameters.Green_start_heading());
+						odometer.setXYT(TILE_SIZE*parameters.Green_start_coord_x()+0.01, TILE_SIZE*parameters.Green_start_coord_y() + 0.01, parameters.Green_start_heading()+0.01);
+					}
+					else if(parameters.RedTeam==13){
+						Localize.Corner_Localize(parameters.Red_start_coord_x(), parameters.Red_start_coord_y(), parameters.Red_start_heading());
+						odometer.setXYT(TILE_SIZE*parameters.Red_start_coord_x()+0.01, TILE_SIZE*parameters.Red_start_coord_y() + 0.01, parameters.Red_start_heading()+0.01);
+					}
+					//Localize.Corner_Localize(parameters.Start_coord_x(), parameters.Start_coord_y());
+					//ulLoc.Localize();
+					//Localize.Tile_Localize(parameters.Start_coord_x(), parameters.Start_coord_y());
 					//Localize.Corner_Localize(1, 1);
 				} catch (OdometerExceptions e) {
 					e.printStackTrace();
@@ -181,7 +214,7 @@ public class Main {
 				//				}
 				//odometer.setX(TILE_SIZE*parameters.Green_start_coord_x() + 0.01);
 				//odometer.setY(TILE_SIZE*parameters.Green_start_coord_y() + 0.01);
-				//odometer.setXYT(TILE_SIZE*parameters.Green_start_coord_x()+0.01, TILE_SIZE*parameters.Green_start_coord_y() + 0.01, 0.01);
+				//odometer.setXYT(TILE_SIZE*parameters.Green_start_coord_x()+0.01, TILE_SIZE*parameters.Green_start_coord_y() + 0.01, parameters.Green_start_heading()+0.01);
 
 				try{
 					Thread.sleep(1000);
@@ -192,7 +225,7 @@ public class Main {
 					Thread.sleep(1000);
 				}catch(Exception e){}
 				
-				odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
+				//odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
 				state = List_of_states.TURNING;
 				break;
 
@@ -236,10 +269,12 @@ public class Main {
 						current_waypoint = 0;
 						state = List_of_states.IDLE;
 
-					} else if (current_waypoint == 2) {
+					} else if ((current_waypoint == 2 && parameters.GreenTeam==13)||(current_waypoint == 10 && parameters.RedTeam==13)) {
 						state = List_of_states.TUNNEL_CROSSING;
-					} else if (current_waypoint == 4) {
+					} else if ((current_waypoint == 10 && parameters.GreenTeam==13)||(current_waypoint == 2 && parameters.RedTeam==13)) {
 						state = List_of_states.BRIDGE_CROSSING;
+					}else if(current_waypoint == 6){
+						state = List_of_states.SEARCHING;
 					} else {
 						state = List_of_states.TURNING;
 					}
@@ -249,7 +284,7 @@ public class Main {
 
 			case TILE_LOCALIZATION:
 				try {
-					Localize.Tile_Localize(1, 1);
+					Localize.Tile_Localize();
 				} catch (OdometerExceptions e) {
 					e.printStackTrace();
 				}
@@ -275,7 +310,9 @@ public class Main {
 				//motorControl.dimeTurn(-5);
 				motorControl.moveSetDistance(110);
 				try {
-					Localize.Tile_Localize((int) xf, (int) yf);
+					Localize.Tile_Localize();
+					odometer.setX(xf);
+					odometer.setY(yf);
 				} catch (OdometerExceptions e) {}
 				current_waypoint++;
 				state = List_of_states.TURNING;
@@ -294,13 +331,17 @@ public class Main {
 				motorControl.stop();
 				motorControl.moveSetDistance(110);
 				try {
-					Localize.Tile_Localize((int) xf, (int) yf);
-
+					Localize.Tile_Localize();
+					odometer.setX(xf);
+					odometer.setY(yf);
 				} catch (OdometerExceptions e) {}
 				current_waypoint++;
 				state = List_of_states.TURNING;
 				break;
 
+			case SEARCHING:
+				//put search methods here
+				break;
 			case TEST:
 				motorControl.forward();
 				// while(!lightPollerleft.lessThan(30));

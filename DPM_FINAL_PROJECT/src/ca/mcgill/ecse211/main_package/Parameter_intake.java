@@ -1,4 +1,5 @@
 package ca.mcgill.ecse211.main_package;
+
 /**
  * This Class takes in the parameters for the game with wifi.
  * It allows the robot to know the layout of the playing field for the run.
@@ -9,24 +10,23 @@ package ca.mcgill.ecse211.main_package;
 //TODO the wifi inputs should be handled in this class
 
 import java.util.Map;
-
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 
 public class Parameter_intake {
 	public int RedTeam; 		//Team starting from red zone
 	public int GreenTeam = 13;   	//Team starting from green zone
 	public int RedCorner;		//Starting corner for red team
-	public int GreenCorner = 1;		//Starting corner for green team
+	public int GreenCorner = 3;		//Starting corner for green team
 	public int OG;				//color of green opponent flag
 	public int OR;				//color of red opponent flag
 	public int Red_LL_x = 0;		//x coordinate of lower left hand corner of Red Zone
-	public int Red_LL_y = 5;		//y coordinate of lower left hand corner of Red Zone
+	public int Red_LL_y = 0;		//y coordinate of lower left hand corner of Red Zone
 	public int Red_UR_x = 8;		//x coordinate of upper right hand corner of Red Zone
-	public int Red_UR_y = 8;		//y coordinate of upper right hand corner of Red Zone
+	public int Red_UR_y = 3;		//y coordinate of upper right hand corner of Red Zone
 	public int Green_LL_x = 0;		//x coordinate of lower left hand corner of Green Zone
-	public int Green_LL_y = 0;		//y coordinate of lower left hand corner of Green Zone
+	public int Green_LL_y = 5;		//y coordinate of lower left hand corner of Green Zone
 	public int Green_UR_x = 8;		//x coordinate of upper right hand corner of Green Zone
-	public int Green_UR_y = 3;		//y coordinate of upper right hand corner of Green Zone
+	public int Green_UR_y = 8;		//y coordinate of upper right hand corner of Green Zone
 	public int TN_LL_x = 2;			//x coordinate of lower left corner of the tunnel footprint
 	public int TN_LL_y = 3;			//y coordinate of lower left corner of the tunnel footprint
 	public int TN_UR_x = 3;			//x coordinate of upper right corner of the tunnel footprint
@@ -45,7 +45,7 @@ public class Parameter_intake {
 	public int SG_UR_y;			//y coordinate of upper right corner of the search region in green player zone
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.22"; 
+	private static final String SERVER_IP = "192.168.2.3"; 
 	private static final int TEAM_NUMBER = 13;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false; // Enable/disable printing of debug info from the WiFi class
 	
@@ -224,51 +224,50 @@ public class Parameter_intake {
 		return "";
 	}
 	/**
-	 * Method to return the x coordinate of the starting corner of Green team
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for green team
 	 * @author Alexandre Coulombe
 	 * @return x coordinate of starting corner
 	 */
 	public int Green_start_coord_x(){
-		switch (GreenCorner){
-		case 1:
-			return 1;
-		case 2:
-			return 7;
-		case 3:
-			return 7;
-		case 4:
-			return 1;
+			switch (GreenCorner){
+			case 1:
+				return 1;
+			case 2:
+				return 7;
+			case 3:
+				return 7;
+			case 4:
+				return 1;
+			}
+			return -1;
 		}
-		return -1;
-	}
 	/**
-	 * Method to return the x coordinate of the starting corner of Red team 
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for red team
 	 * @author Alexandre Coulombe
 	 * @return x coordinate of starting corner
 	 */
 	public int Red_start_coord_x(){
-		switch (RedCorner){
-		case 1:
-			return 1;
-		case 2:
-			return 7;
-		case 3:
-			return 7;
-		case 4:
-			return 1;
-		}
+			switch (RedCorner){
+			case 1:
+				return 1;
+			case 2:
+				return 7;
+			case 3:
+				return 7;
+			case 4:
+				return 1;
+			}
 		return -1;
 	}
 	/**
-	 * Method to return the x coordinate of the starting corner of Green team 
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for green team
 	 * @author Alexandre Coulombe
 	 * @return y coordinate of starting corner
 	 */
 	public int Green_start_coord_y(){
-		if(GreenTeam==13){
 			switch (GreenCorner){
 			case 1:
 				return 1;
@@ -279,25 +278,64 @@ public class Parameter_intake {
 			case 4:
 				return 7;
 			}
+			return -1;
 		}
-		return -1;
-	}
 	/**
-	 * Method to return the y coordinate of the starting corner of Red team 
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for red team
 	 * @author Alexandre Coulombe
 	 * @return y coordinate of starting corner
 	 */
 	public int Red_start_coord_y(){
-		switch (RedCorner){
+			switch (RedCorner){
+			case 1:
+				return 1;
+			case 2:
+				return 1;
+			case 3:
+				return 7;
+			case 4:
+				return 7;
+			}
+		return -1;
+	}
+	/**
+	 * Method to return the heading of the robot after it localizes based
+	 * on the information of the starting corner for Green team
+	 * returns -1 is a fault occurs
+	 * @author Alexandre Coulombe
+	 * @return heading after localization
+	 */
+	public int Green_start_heading(){
+		switch (GreenCorner){
 		case 1:
-			return 1;
+			return 90;
 		case 2:
-			return 1;
+			return 0;
 		case 3:
-			return 7;
+			return 270;
 		case 4:
-			return 7;
+			return 180;
+		}
+		return -1;
+	}
+	/**
+	 * Method to return the heading of the robot after it localizes based
+	 * on the information of the starting corner for Red team
+	 * returns -1 is a fault occurs
+	 * @author Alexandre Coulombe
+	 * @return heading after localization
+	 */
+	public int Red_start_heading(){
+		switch (RedCorner){
+			case 1:
+				return 90;
+			case 2:
+				return 0;
+			case 3:
+				return 270;
+			case 4:
+				return 180;
 		}
 		return -1;
 	}
@@ -527,6 +565,5 @@ public class Parameter_intake {
 		}
 		return BR_length;
 	}
-
 }
 
