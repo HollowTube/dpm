@@ -65,14 +65,7 @@ public class Angle_Localization {
 	public void fix_angle() {
 		while (true) {
 			if (USL.getDistance()<20){
-				motorcontrol.stop();
-				motorcontrol.dimeTurn(90);
-				motorcontrol.moveSetDistance(15);
-				motorcontrol.dimeTurn(-90);
-				motorcontrol.moveSetDistance(20);
-				motorcontrol.dimeTurn(-90);
-				motorcontrol.moveSetDistance(15);
-				motorcontrol.dimeTurn(90);
+				avoid_obstacle();
 			}
 			else if(right_sensor.lessThan(threshold)) {
 				motorcontrol.rightStop();
@@ -95,6 +88,20 @@ public class Angle_Localization {
 			}
 		}
 		angle_correction();
+	}
+
+	/**
+	 * 
+	 */
+	private void avoid_obstacle() {
+		motorcontrol.stop();
+		motorcontrol.dimeTurn(90);
+		motorcontrol.moveSetDistance(15);
+		motorcontrol.dimeTurn(-90);
+		motorcontrol.moveSetDistance(20);
+		motorcontrol.dimeTurn(-90);
+		motorcontrol.moveSetDistance(15);
+		motorcontrol.dimeTurn(90);
 	}
 
 	/**
