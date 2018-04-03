@@ -4,6 +4,7 @@ import ca.mcgill.ecse211.main_package.LightPoller;
 import ca.mcgill.ecse211.main_package.MotorControl;
 import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.Sound;
+import lejos.robotics.SampleProvider;
 
 
 /**
@@ -20,6 +21,7 @@ public class Angle_Localization {
 	private static MotorControl motorcontrol;
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
+	private UltrasonicLocalizer USL;
 	private int threshold = 25;
 	public int x_line_count;
 	public int y_line_count;
@@ -40,11 +42,12 @@ public class Angle_Localization {
 	 * @param R_sens Right Light Sensor
 	 * @throws OdometerExceptions
 	 */
-	public Angle_Localization(LightPoller L_sens, LightPoller R_sens) throws OdometerExceptions {
+	public Angle_Localization(LightPoller L_sens, LightPoller R_sens, UltrasonicLocalizer USL) throws OdometerExceptions {
 		Angle_Localization.odometer = Odometer.getOdometer();
 		Angle_Localization.motorcontrol = MotorControl.getMotor();
 		this.left_sensor = L_sens;
-		this.right_sensor = R_sens; 
+		this.right_sensor = R_sens;
+		this.USL = USL;
 	}
 
 	/**
@@ -61,7 +64,17 @@ public class Angle_Localization {
 	 */
 	public void fix_angle() {
 		while (true) {
-			if (right_sensor.lessThan(threshold)) {
+			if (USL.getDistance()<20){
+				motorcontrol.stop();
+				motorcontrol.dimeTurn(90);
+				motorcontrol.moveSetDistance(15);
+				motorcontrol.dimeTurn(-90);
+				motorcontrol.moveSetDistance(20);
+				motorcontrol.dimeTurn(-90);
+				motorcontrol.moveSetDistance(15);
+				motorcontrol.dimeTurn(90);
+			}
+			else if(right_sensor.lessThan(threshold)) {
 				motorcontrol.rightStop();
 				do {
 					if (left_sensor.lessThan(threshold)) {
