@@ -29,7 +29,7 @@ import lejos.robotics.SampleProvider;
  * 
  * @author Tritin, Alexandre, Matthew
  */
-public class Main {
+public class Main extends Thread{
 
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
@@ -85,28 +85,33 @@ public class Main {
 	 * @throws OdometerExceptions
 	 */
 	public static void main(String[] args) throws OdometerExceptions {
-
 		int buttonChoice;
 		// Odometer related objects
 		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
 		Display odometryDisplay = new Display(lcd); // No need to change
-
+		// Start odometer and display threads
+		Thread odoDisplayThread = new Thread(odometryDisplay);
+		odoDisplayThread.start();
+		Thread odoThread = new Thread(odometer);
+		odoThread.start();
+		// Start correction if right button was pressed
+		//if (buttonChoice == Button.ID_RIGHT) {
+		Thread odoCorrectionThread = new Thread(odometryCorrection);
+		odoCorrectionThread.start();
+		//}
+		(new Main()).start();
+	}
+	public void run(){
+		try{
+		Odometer odometer = Odometer.getOdometer();
 		// Various class initialization
 		MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD, TRACK);
 		Navigation navigator = new Navigation();
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
 		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright, ulLoc);
 		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft,lightPollerright);
-		//		
-		//		lcd.drawString("< Left | Right >", 0, 0);
-		//		lcd.drawString("  No   |       ", 0, 1);
-		//		lcd.drawString(" wifi  | wifi   ", 0, 2);
-		//		lcd.drawString("       |         ", 0, 3);
-		//		lcd.drawString("       |        ", 0, 4);
 		Parameter_intake parameters = Parameter_intake.getParameter();
-		
-		//buttonChoice = Button.waitForAnyPress();
 		//parameters.wifiIntake();
 
 		// simply input waypoints here, will only update after it reaches the
@@ -154,15 +159,6 @@ public class Main {
 //		}
 		// clear the display
 		lcd.clear();
-		// ask the user whether odometery correction should be run or not
-		//		lcd.drawString("< Left | Right >", 0, 0);
-		//		lcd.drawString("  No   | with   ", 0, 1);
-		//		lcd.drawString(" corr- | corr-  ", 0, 2);
-		//		lcd.drawString(" ection| ection ", 0, 3);
-		//		lcd.drawString("       |        ", 0, 4);
-
-		//lcd.clear();
-		
 //		buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
 //		if (buttonChoice == Button.ID_DOWN) {
 //			Calibration.radius_calibration();
@@ -171,17 +167,6 @@ public class Main {
 //		}else if (buttonChoice == Button.ID_ENTER) {
 //			Testing.straightLine();
 //		}
-		// Start odometer and display threads
-		Thread odoDisplayThread = new Thread(odometryDisplay);
-		odoDisplayThread.start();
-		Thread odoThread = new Thread(odometer);
-		odoThread.start();
-
-		// Start correction if right button was pressed
-		//if (buttonChoice == Button.ID_RIGHT) {
-		Thread odoCorrectionThread = new Thread(odometryCorrection);
-		odoCorrectionThread.start();
-		//}
 
 		// state machine implementation, if you add any states makes sure that it does
 		// not get stuck in a loop
@@ -345,6 +330,7 @@ public class Main {
 			}
 			sleeptime(10);
 		}
+		}catch(OdometerExceptions e){}
 	}
 
 	/**
