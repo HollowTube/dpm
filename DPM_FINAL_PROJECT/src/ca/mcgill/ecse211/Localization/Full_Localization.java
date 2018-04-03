@@ -40,7 +40,7 @@ public class Full_Localization {
 		this.left_LS=left_LS;
 		this.right_LS=right_LS;
 		this.USL = new UltrasonicLocalizer(odo, us, 2, motorcontrol);
-		this.LSL = new Angle_Localization(left_LS, right_LS);
+		this.LSL = new Angle_Localization(left_LS, right_LS, USL);
 	}
 	/**
 	 * This method calls the useful methods from other classes in the package 
