@@ -40,8 +40,8 @@ public class MotorControl {
 			EV3LargeRegulatedMotor rightMotor, double radius, double track) {
 		leftMotor.setSpeed(200);
 		rightMotor.setSpeed(200);
-		leftMotor.setAcceleration(1000);
-		rightMotor.setAcceleration(1000);
+		leftMotor.setAcceleration(1750);
+		rightMotor.setAcceleration(1750);
 		if (motorcontrol != null) { // Return existing object
 			return motorcontrol;
 		} else { // create object and return it
