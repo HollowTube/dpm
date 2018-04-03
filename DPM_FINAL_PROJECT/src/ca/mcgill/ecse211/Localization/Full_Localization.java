@@ -40,7 +40,7 @@ public class Full_Localization {
 		this.left_LS=left_LS;
 		this.right_LS=right_LS;
 		this.USL = new UltrasonicLocalizer(odo, us, 2, motorcontrol);
-		this.LSL = new Angle_Localization(left_LS, right_LS);
+		this.LSL = new Angle_Localization(left_LS, right_LS, USL);
 	}
 	/**
 	 * This method calls the useful methods from other classes in the package 
@@ -54,12 +54,12 @@ public class Full_Localization {
 	 * @param  exp_y	expected y coordinate at the end of localization
 	 * @throws OdometerExceptions
 	 */
-	public void Corner_Localize(int exp_x, int exp_y) throws OdometerExceptions{
+	public void Corner_Localize(int exp_x, int exp_y, int exp_theta) throws OdometerExceptions{
 		try{
 			Thread.sleep(1000); //sleep thread to give ultrasonic localizer time to instantiate
 		} catch (Exception e){}
 		USL.Localize(); //performs Ultrasonic localization
-		Tile_Localize(exp_x, exp_y);
+		Tile_Localize();
 	}
 	
 	/**
@@ -77,10 +77,10 @@ public class Full_Localization {
 	 *  
 	 *  @author Alexandre Coulombe
 	 */
-	public void Tile_Localize(int exp_x, int exp_y) throws OdometerExceptions{
+	public void Tile_Localize() throws OdometerExceptions{
 		
-		motorcontrol.setLeftSpeed(200);	//performs light sensor localization
-		motorcontrol.setRightSpeed(200);
+		motorcontrol.setLeftSpeed(150);	//performs light sensor localization
+		motorcontrol.setRightSpeed(150);
 		motorcontrol.forward(); 	// set the robot in motion towards y = 0 line
 		LSL.fix_angle(); 			// stop at y = 0 line
 		//parameter_correction(exp_x,exp_y);
@@ -101,8 +101,8 @@ public class Full_Localization {
 			Thread.sleep(200);
 		}catch (Exception e){}
 		
-		motorcontrol.setLeftSpeed(200);
-		motorcontrol.setRightSpeed(200);
+		motorcontrol.setLeftSpeed(150);
+		motorcontrol.setRightSpeed(150);
 		motorcontrol.forward(); 	//set the robot in motion towards x = 0 line
 		LSL.fix_angle(); 			//stop at x = 0 line
 		motorcontrol.moveSetDistance(LS_offset);
@@ -111,15 +111,13 @@ public class Full_Localization {
 			Thread.sleep(200);
 		}catch (Exception e){}
 		
-		motorcontrol.dimeTurn(-90);
-		motorcontrol.stop();
-		motorcontrol.backward();
-		LSL.fix_angle();
-		motorcontrol.stop();
-		motorcontrol.moveSetDistance(LS_offset);
+//		motorcontrol.dimeTurn(-90);
+//		motorcontrol.stop();
+//		motorcontrol.backward();
+//		LSL.fix_angle();
+//		motorcontrol.stop();
+//		motorcontrol.moveSetDistance(LS_offset);
 //		parameter_correction(exp_x,exp_y);
-		//odo.setX(exp_x*TILE_SIZE);
-		//odo.setY(exp_y*TILE_SIZE);
 	}
 	
 	/**

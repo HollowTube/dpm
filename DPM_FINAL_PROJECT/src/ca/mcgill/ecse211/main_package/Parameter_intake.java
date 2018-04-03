@@ -1,4 +1,5 @@
 package ca.mcgill.ecse211.main_package;
+
 /**
  * This Class takes in the parameters for the game with wifi.
  * It allows the robot to know the layout of the playing field for the run.
@@ -8,9 +9,8 @@ package ca.mcgill.ecse211.main_package;
  */
 //TODO the wifi inputs should be handled in this class
 
-import java.util.Map;
-
-import ca.mcgill.ecse211.WiFiClient.WifiConnection;
+//import java.util.Map;
+//import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 
 public class Parameter_intake {
 	public int RedTeam; 		//Team starting from red zone
@@ -45,10 +45,10 @@ public class Parameter_intake {
 	public int SG_UR_y;			//y coordinate of upper right corner of the search region in green player zone
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.22"; 
-	private static final int TEAM_NUMBER = 13;
-	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false; // Enable/disable printing of debug info from the WiFi class
-	
+//	private static final String SERVER_IP = "192.168.2.3"; 
+//	private static final int TEAM_NUMBER = 13;
+//	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false; // Enable/disable printing of debug info from the WiFi class
+//	
 	private static Parameter_intake parameters=null;
 
 	/**
@@ -59,48 +59,81 @@ public class Parameter_intake {
 		
 	}
 
-
-	public Parameter_intake wifiIntake(){
-		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
-
-		try{
-			Map data = conn.getData();
-
-			this.RedTeam = ((Long) data.get("RedTeam")).intValue();
-			this.GreenTeam = ((Long) data.get("GreenTeam")).intValue();
-			this.RedCorner = ((Long) data.get("RedCorner")).intValue();
-			this.GreenCorner = ((Long) data.get("GreenCorner")).intValue();
-			this.OG = ((Long) data.get("OG")).intValue();
-			this.OR = ((Long) data.get("OR")).intValue();
-			this.Red_LL_x = ((Long) data.get("Red_LL_x")).intValue();
-			this.Red_LL_y = ((Long) data.get("Red_LL_y")).intValue();
-			this.Red_UR_x = ((Long) data.get("Red_UR_x")).intValue();
-			this.Red_UR_y = ((Long) data.get("Red_UR_y")).intValue();
-			this.Green_LL_x = ((Long) data.get("Green_LL_x")).intValue();
-			this.Green_LL_y = ((Long) data.get("Green_LL_y")).intValue();
-			this.Green_UR_x = ((Long) data.get("Green_UR_x")).intValue();
-			this.Green_UR_y = ((Long) data.get("Green_UR_y")).intValue();
-			this.TN_LL_x = ((Long) data.get("TN_LL_x")).intValue();
-			this.TN_LL_y = ((Long) data.get("TN_LL_y")).intValue();
-			this.TN_UR_x = ((Long) data.get("TN_UR_x")).intValue();
-			this.TN_UR_y = ((Long) data.get("TN_UR_y")).intValue();
-			this.BR_LL_x = ((Long) data.get("BR_LL_x")).intValue();
-			this.BR_LL_y = ((Long) data.get("BR_LL_y")).intValue();
-			this.BR_UR_x = ((Long) data.get("BR_UR_x")).intValue();
-			this.BR_UR_y = ((Long) data.get("BR_UR_y")).intValue();
-			this.SR_LL_x = ((Long) data.get("SR_LL_x")).intValue();
-			this.SR_LL_y = ((Long) data.get("SR_LL_y")).intValue();			
-			this.SR_UR_x = ((Long) data.get("SR_UR_y")).intValue();			
-			this.SR_UR_y = ((Long) data.get("SR_UR_x")).intValue();			
-			this.SG_LL_x = ((Long) data.get("SG_LL_x")).intValue();			
-			this.SG_LL_y = ((Long) data.get("SG_LL_y")).intValue();			
-			this.SG_UR_x = ((Long) data.get("SG_UR_x")).intValue();			
-			this.SG_UR_y = ((Long) data.get("SG_UR_y")).intValue();
-		}catch (Exception e){
-
-		}
-		return parameters;
-	}
+	/**
+	 * Method to receive parameters of the play field from the game controller
+	 * @author Alexandre Coulombe
+	 * @param RedTeam
+	 * @param GreenTeam
+	 * @param RedCorner
+	 * @param GreenCorner
+	 * @param OG
+	 * @param OR
+	 * @param Red_LL_x
+	 * @param Red_LL_y
+	 * @param Red_UR_x
+	 * @param Red_UR_y
+	 * @param Green_LL_x
+	 * @param Green_LL_y
+	 * @param Green_UR_x
+	 * @param Green_UR_y
+	 * @param TN_LL_x
+	 * @param TN_LL_y
+	 * @param TN_UR_x
+	 * @param TN_UR_y
+	 * @param BR_LL_x
+	 * @param BR_LL_y
+	 * @param BR_UR_x
+	 * @param BR_UR_y
+	 * @param SR_LL_x
+	 * @param SR_LL_y
+	 * @param SR_UR_x
+	 * @param SR_UR_y
+	 * @param SG_LL_x
+	 * @param SG_LL_y
+	 * @param SG_UR_x
+	 * @param SG_UR_y
+	 */
+//	public Parameter_intake wifiIntake(){
+//		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+//
+//		try{
+//			Map data = conn.getData();
+//
+//			this.RedTeam = ((Long) data.get("RedTeam")).intValue();
+//			this.GreenTeam = ((Long) data.get("GreenTeam")).intValue();
+//			this.RedCorner = ((Long) data.get("RedCorner")).intValue();
+//			this.GreenCorner = ((Long) data.get("GreenCorner")).intValue();
+//			this.OG = ((Long) data.get("OG")).intValue();
+//			this.OR = ((Long) data.get("OR")).intValue();
+//			this.Red_LL_x = ((Long) data.get("Red_LL_x")).intValue();
+//			this.Red_LL_y = ((Long) data.get("Red_LL_y")).intValue();
+//			this.Red_UR_x = ((Long) data.get("Red_UR_x")).intValue();
+//			this.Red_UR_y = ((Long) data.get("Red_UR_y")).intValue();
+//			this.Green_LL_x = ((Long) data.get("Green_LL_x")).intValue();
+//			this.Green_LL_y = ((Long) data.get("Green_LL_y")).intValue();
+//			this.Green_UR_x = ((Long) data.get("Green_UR_x")).intValue();
+//			this.Green_UR_y = ((Long) data.get("Green_UR_y")).intValue();
+//			this.TN_LL_x = ((Long) data.get("TN_LL_x")).intValue();
+//			this.TN_LL_y = ((Long) data.get("TN_LL_y")).intValue();
+//			this.TN_UR_x = ((Long) data.get("TN_UR_x")).intValue();
+//			this.TN_UR_y = ((Long) data.get("TN_UR_y")).intValue();
+//			this.BR_LL_x = ((Long) data.get("BR_LL_x")).intValue();
+//			this.BR_LL_y = ((Long) data.get("BR_LL_y")).intValue();
+//			this.BR_UR_x = ((Long) data.get("BR_UR_x")).intValue();
+//			this.BR_UR_y = ((Long) data.get("BR_UR_y")).intValue();
+//			this.SR_LL_x = ((Long) data.get("SR_LL_x")).intValue();
+//			this.SR_LL_y = ((Long) data.get("SR_LL_y")).intValue();			
+//			this.SR_UR_x = ((Long) data.get("SR_UR_y")).intValue();			
+//			this.SR_UR_y = ((Long) data.get("SR_UR_x")).intValue();			
+//			this.SG_LL_x = ((Long) data.get("SG_LL_x")).intValue();			
+//			this.SG_LL_y = ((Long) data.get("SG_LL_y")).intValue();			
+//			this.SG_UR_x = ((Long) data.get("SG_UR_x")).intValue();			
+//			this.SG_UR_y = ((Long) data.get("SG_UR_y")).intValue();
+//		}catch (Exception e){
+//
+//		}
+//		return parameters;
+//	}
 	/**
 	 * Method to receive parameters of the play field from the game controller
 	 * @author Alexandre Coulombe
@@ -224,51 +257,50 @@ public class Parameter_intake {
 		return "";
 	}
 	/**
-	 * Method to return the x coordinate of the starting corner of Green team
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for green team
 	 * @author Alexandre Coulombe
 	 * @return x coordinate of starting corner
 	 */
 	public int Green_start_coord_x(){
-		switch (GreenCorner){
-		case 1:
-			return 1;
-		case 2:
-			return 7;
-		case 3:
-			return 7;
-		case 4:
-			return 1;
+			switch (GreenCorner){
+			case 1:
+				return 1;
+			case 2:
+				return 7;
+			case 3:
+				return 7;
+			case 4:
+				return 1;
+			}
+			return -1;
 		}
-		return -1;
-	}
 	/**
-	 * Method to return the x coordinate of the starting corner of Red team 
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for red team
 	 * @author Alexandre Coulombe
 	 * @return x coordinate of starting corner
 	 */
 	public int Red_start_coord_x(){
-		switch (RedCorner){
-		case 1:
-			return 1;
-		case 2:
-			return 7;
-		case 3:
-			return 7;
-		case 4:
-			return 1;
-		}
+			switch (RedCorner){
+			case 1:
+				return 1;
+			case 2:
+				return 7;
+			case 3:
+				return 7;
+			case 4:
+				return 1;
+			}
 		return -1;
 	}
 	/**
-	 * Method to return the x coordinate of the starting corner of Green team 
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for green team
 	 * @author Alexandre Coulombe
 	 * @return y coordinate of starting corner
 	 */
 	public int Green_start_coord_y(){
-		if(GreenTeam==13){
 			switch (GreenCorner){
 			case 1:
 				return 1;
@@ -279,25 +311,64 @@ public class Parameter_intake {
 			case 4:
 				return 7;
 			}
+			return -1;
 		}
-		return -1;
-	}
 	/**
-	 * Method to return the y coordinate of the starting corner of Red team 
-	 * Will return -1 if a fault occurs
+	 * Method to return the x coordinate of the starting corner of the robot
+	 * Will return -1 if a fault occurs for red team
 	 * @author Alexandre Coulombe
 	 * @return y coordinate of starting corner
 	 */
 	public int Red_start_coord_y(){
-		switch (RedCorner){
+			switch (RedCorner){
+			case 1:
+				return 1;
+			case 2:
+				return 1;
+			case 3:
+				return 7;
+			case 4:
+				return 7;
+			}
+		return -1;
+	}
+	/**
+	 * Method to return the heading of the robot after it localizes based
+	 * on the information of the starting corner for Green team
+	 * returns -1 is a fault occurs
+	 * @author Alexandre Coulombe
+	 * @return heading after localization
+	 */
+	public int Green_start_heading(){
+		switch (GreenCorner){
 		case 1:
-			return 1;
+			return 90;
 		case 2:
-			return 1;
+			return 0;
 		case 3:
-			return 7;
+			return 270;
 		case 4:
-			return 7;
+			return 180;
+		}
+		return -1;
+	}
+	/**
+	 * Method to return the heading of the robot after it localizes based
+	 * on the information of the starting corner for Red team
+	 * returns -1 is a fault occurs
+	 * @author Alexandre Coulombe
+	 * @return heading after localization
+	 */
+	public int Red_start_heading(){
+		switch (RedCorner){
+			case 1:
+				return 90;
+			case 2:
+				return 0;
+			case 3:
+				return 270;
+			case 4:
+				return 180;
 		}
 		return -1;
 	}
@@ -527,6 +598,5 @@ public class Parameter_intake {
 		}
 		return BR_length;
 	}
-
 }
 
