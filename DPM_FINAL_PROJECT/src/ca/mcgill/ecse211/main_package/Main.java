@@ -187,7 +187,7 @@ public class Main {
 		// not get stuck in a loop
 
 		// set initial state
-		state = List_of_states.TEST;
+		state = List_of_states.IDLE;
 		while (true) {
 			switch (state) {
 
@@ -230,24 +230,24 @@ public class Main {
 
 			// do nothing until button is pressed up
 			case IDLE:
-				motorControl.setLeftSpeed(125);
-				motorControl.setRightSpeed(125);
+				odometer.setXYT(1 * TILE_SIZE + 0.01, 1 * TILE_SIZE + 0.01, 90);
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
 
-				odometer.setXYT(1 * TILE_SIZE + 0.01, 1 * TILE_SIZE + 0.01, 0.01);
+				
 				state = List_of_states.TURNING;
 				break;
 			// dime turn towards necessary destination
 			case TURNING:
 				motorControl.setLeftSpeed(125);
 				motorControl.setRightSpeed(125);
-				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
-				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
+				xf = waypoints[current_waypoint][0] * TILE_SIZE;
+				yf = waypoints[current_waypoint][1] * TILE_SIZE;
 				navigator.turn_to_destination(xf, yf);
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.stop();
+				motorControl.moveSetDistance(2);
 				state = List_of_states.TRAVELLING;
 				break;
 
@@ -261,7 +261,7 @@ public class Main {
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
 					motorControl.stop();
-					motorControl.moveSetDistance(1.5);
+					motorControl.moveSetDistance(2);
 					current_waypoint++;
 
 					// resets the machine to its initial state

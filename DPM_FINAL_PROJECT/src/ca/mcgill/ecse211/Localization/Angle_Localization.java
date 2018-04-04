@@ -22,7 +22,7 @@ public class Angle_Localization {
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
 	private UltrasonicLocalizer USL;
-	private int threshold = 25;
+	private int threshold = 27;
 	public int x_line_count;
 	public int y_line_count;
 	public double LIGHT_OFFSET = 0.5;
