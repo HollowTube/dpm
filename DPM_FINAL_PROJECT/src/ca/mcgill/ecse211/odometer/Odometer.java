@@ -30,7 +30,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  */
 public class Odometer extends OdometerData implements Runnable {
 
-	private OdometerData odoData;
 	private static Odometer odo = null; // Returned as singleton
 
 	// Motors and related variables
@@ -56,13 +55,11 @@ public class Odometer extends OdometerData implements Runnable {
 	 */
 	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, final double TRACK,
 			final double WHEEL_RAD) throws OdometerExceptions {
-		odoData = OdometerData.getOdometerData(); // Allows access to x,y,z
 													// manipulation methods
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 
 		// Reset the values of x, y and z to 0
-		odoData.setXYT(position[0], position[1], position[2]);
 
 		this.leftMotorTachoCount = 0;
 		this.rightMotorTachoCount = 0;
@@ -120,7 +117,7 @@ public class Odometer extends OdometerData implements Runnable {
 		int prevRightCount = 0;
 		double deltaD, deltaT = 0;
 		double dx, dy;
-		double theta = position[2]; // initial heading
+		double theta = 0;
 
 		while (true) {
 			updateStart = System.currentTimeMillis();
@@ -128,6 +125,9 @@ public class Odometer extends OdometerData implements Runnable {
 			leftMotorTachoCount = leftMotor.getTachoCount();
 			rightMotorTachoCount = rightMotor.getTachoCount();
 			// gets current tachometer count
+			System.out.println(odo.getXYT()[2]);
+			theta = odo.getXYT()[2]*Math.PI/180;
+//			System.out.println(theta*180/Math.PI);
 
 			deltaL = Math.PI * WHEEL_RAD * (leftMotorTachoCount - prevLeftCount) / 180; // calculates the distance each
 																						// wheel has travelled
@@ -137,10 +137,11 @@ public class Odometer extends OdometerData implements Runnable {
 
 			deltaD = 0.5 * (deltaL + deltaR);
 			deltaT = (deltaL - deltaR) / TRACK;
-			theta += deltaT;
+			
 
 			dx = deltaD * Math.sin(theta);
 			dy = deltaD * Math.cos(theta);
+			theta+= deltaT;
 
 			odo.update(dx, dy, deltaT * 180 / Math.PI);
 
