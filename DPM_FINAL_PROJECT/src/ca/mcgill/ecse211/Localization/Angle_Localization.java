@@ -27,9 +27,6 @@ public class Angle_Localization {
 	public int y_line_count;
 	public double LIGHT_OFFSET = 0.5;
 
-	private static final double SQUARE_LENGTH = 30.48;
-	private static final double LIGHTSENS_OFFSET = 3.5;
-
 	double initial_position[];
 	double current_position[];
 	private boolean recovery = false;
@@ -125,9 +122,9 @@ public class Angle_Localization {
 	public void fix_angle_on_path() {
 		left_sensor.getValue();
 		right_sensor.getValue();
-		if (right_sensor.falling() && !recovery) {
+		if (right_sensor.lessThan(threshold) && !recovery) {
 			motorcontrol.rightStop();
-			while (!left_sensor.falling()) {
+			while (!left_sensor.lessThan(threshold)) {
 				left_sensor.getValue();
 			}
 			motorcontrol.leftStop();
@@ -135,9 +132,9 @@ public class Angle_Localization {
 			initial_position = odometer.getXYT();
 			recovery = true;
 
-		} else if (left_sensor.falling() && !recovery) {
+		} else if (left_sensor.lessThan(threshold) && !recovery) {
 			motorcontrol.leftStop();
-			while (!right_sensor.falling()) {
+			while (!right_sensor.lessThan(threshold)) {
 				right_sensor.getValue();
 			}
 			motorcontrol.rightStop();
@@ -162,11 +159,6 @@ public class Angle_Localization {
 	 * @author Alexandre Coulombe
 	 */
 	private void angle_correction() {
-		long correctionStart, correctionEnd;
-		double position[];
-		double head = 0;
-		int currentYQuad, currentXQuad;
-		double newy, newx = 0;
 
 		double heading = odometer.getXYT()[2];
 		if (heading > 315 || heading < 45) {

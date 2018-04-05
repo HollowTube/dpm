@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.main_package;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 /**
  * This class handles all of the motor control. If a any method wants to access the
@@ -13,6 +14,7 @@ import lejos.robotics.RegulatedMotor;
 public class MotorControl {
 	public static RegulatedMotor leftMotor;
 	public static RegulatedMotor rightMotor;
+	public static RegulatedMotor usMotor;
 
 	private static double radius;
 	private static double track;
@@ -29,15 +31,16 @@ public class MotorControl {
 	 * @param radius Wheel radius
 	 * @param track Robot track
 	 */
-	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor, double radius, double track) {
+	public MotorControl(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor,EV3MediumRegulatedMotor usMotor, double radius, double track) {
 		MotorControl.leftMotor = leftmotor;
 		MotorControl.rightMotor = rightmotor;
+		MotorControl.usMotor = usMotor;
 		MotorControl.radius = radius;
 		MotorControl.track = track;
 	}
 
 	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor,
-			EV3LargeRegulatedMotor rightMotor, double radius, double track) {
+			EV3LargeRegulatedMotor rightMotor, EV3MediumRegulatedMotor usMotor, double radius, double track) {
 		leftMotor.setSpeed(200);
 		rightMotor.setSpeed(200);
 		leftMotor.setAcceleration(1750);
@@ -45,7 +48,7 @@ public class MotorControl {
 		if (motorcontrol != null) { // Return existing object
 			return motorcontrol;
 		} else { // create object and return it
-			motorcontrol = new MotorControl(leftMotor, rightMotor, radius, track);
+			motorcontrol = new MotorControl(leftMotor, rightMotor,usMotor, radius, track);
 			return motorcontrol;
 		}
 
@@ -94,7 +97,6 @@ public class MotorControl {
 		leftMotor.rotate(convertDistance(radius, path_distance), true); // travel straight
 		rightMotor.rotate(convertDistance(radius, path_distance), false);
 	}
-
 	/**
 	 * Moves left motor forwards
 	 */
@@ -156,15 +158,13 @@ public class MotorControl {
 	 * This method makes the robot turn clockwise 
 	 */
 	public void turnCW(){
-		leftMotor.forward();
-		rightMotor.backward();
+		usMotor.rotate(-91,false);
 	}
 	/**
 	 * This method makes the robot turn counter-clockwise 
 	 */
 	public void turnCCW(){
-		leftMotor.backward();
-		rightMotor.forward();
+		usMotor.rotate(90,false);
 	}
 	/**
 	 * This method sets acceleration of the motors
