@@ -11,6 +11,7 @@ import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.*;
 import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
@@ -34,6 +35,8 @@ public class Main {
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	private static final EV3MediumRegulatedMotor usMotor = new EV3MediumRegulatedMotor(LocalEV3.get().getPort("C"));
+	
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 	private static final Port leftPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
@@ -71,7 +74,7 @@ public class Main {
 	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflected, sampleReflected);
 
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING, APPROACH
 	}
 
 	static List_of_states state;
@@ -94,7 +97,7 @@ public class Main {
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
-		MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, WHEEL_RAD, TRACK);
+		MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor,usMotor, WHEEL_RAD, TRACK);
 		Navigation navigator = new Navigation();
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
 		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright, ulLoc);
@@ -113,22 +116,23 @@ public class Main {
 		// simply input waypoints here, will only update after it reaches the
 		// destination
 
-		// int[][] waypoints = null;
-		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.Green_start_coord_y() },
+		int[][] waypoints = null;
+		int[][] Green_waypoints = {
 				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
-				{ parameters.SR_UR_x, parameters.TN_end_y(parameters.TN_coord_y()) },
-				{ parameters.SR_UR_x, parameters.SR_LL_y }, { parameters.SR_LL_x, parameters.SR_UR_y },
-				{ parameters.Red_start_coord_x(), parameters.SR_UR_y },
-				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
-				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+//				{ parameters.SR_UR_x, parameters.TN_end_y(parameters.TN_coord_y()) },
+//				{ parameters.SR_UR_x, parameters.SR_LL_y }, { parameters.SR_LL_x, parameters.SR_UR_y },
+//				{ parameters.Red_start_coord_x(), parameters.SR_UR_y },
+//				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
+//				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+				{ parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y())},
 				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() } };
 
-		int[][] Red_waypoints = { { parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
+		int[][] Red_waypoints = {
 				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
@@ -141,13 +145,13 @@ public class Main {
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
-		int[][] waypoints = { { 1, 2 }, { 3, 2 }, { 3, 6 }, { 6, 6 }, { 6, 2 }, { 1, 2 } };
+		//int[][] waypoints = { { 1, 2 }, { 3, 2 }, { 3, 6 }, { 6, 6 }, { 6, 2 }, { 1, 2 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
-		// if(parameters.GreenTeam==13){
-		// waypoints = Green_waypoints;
-		// }
+		 if(parameters.GreenTeam==13){
+			 waypoints = Green_waypoints;
+		 }
 		// else if(parameters.RedTeam==13){
 		// waypoints = Red_waypoints;
 		// }
@@ -162,14 +166,14 @@ public class Main {
 
 		// lcd.clear();
 
-		 buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-		 if (buttonChoice == Button.ID_DOWN) {
-		 Calibration.radius_calibration();
-		 } else if (buttonChoice == Button.ID_UP) {
-		 Calibration.track_calibration();
-		 }else if (buttonChoice == Button.ID_ENTER) {
-		 Testing.straightLine();
-		 }
+//		 buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
+//		 if (buttonChoice == Button.ID_DOWN) {
+//		 Calibration.radius_calibration();
+//		 } else if (buttonChoice == Button.ID_UP) {
+//		 Calibration.track_calibration();
+//		 }else if (buttonChoice == Button.ID_ENTER) {
+//		 Testing.straightLine();
+//		 }
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
@@ -230,6 +234,8 @@ public class Main {
 			// do nothing until button is pressed up
 			case IDLE:
 				odometer.setXYT(1 * TILE_SIZE + 0.01, 1 * TILE_SIZE + 0.01, 90);
+				motorControl.setLeftSpeed(120);
+				motorControl.setRightSpeed(120);
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
 
@@ -238,8 +244,8 @@ public class Main {
 				break;
 			// dime turn towards necessary destination
 			case TURNING:
-				motorControl.setLeftSpeed(100);
-				motorControl.setRightSpeed(100);
+				motorControl.setLeftSpeed(120);
+				motorControl.setRightSpeed(120);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE+ 0.01
 						;
@@ -271,7 +277,7 @@ public class Main {
 
 					} else if (current_waypoint == 2) {
 						state = List_of_states.TUNNEL_CROSSING;
-					} else if (current_waypoint == 4) {
+					} else if (current_waypoint == 5) {
 						state = List_of_states.BRIDGE_CROSSING;
 					} else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 10 && parameters.RedTeam == 13)) {
@@ -279,9 +285,11 @@ public class Main {
 					} else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
-					} else if (current_waypoint == 6) {
-						state = List_of_states.SEARCHING;
-					} else {
+					} 
+						//else if (current_waypoint == 6) {
+//						state = List_of_states.SEARCHING;
+					//}
+					else {
 						state = List_of_states.TURNING;
 					}
 					break;
@@ -333,8 +341,8 @@ public class Main {
 
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
-				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
-				motorControl.moveSetDistance(16);
+				navigator.offset90(xf * TILE_SIZE+0.01, yf * TILE_SIZE+0.01);
+				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
 				motorControl.moveSetDistance(5);
 				motorControl.backward();
@@ -354,12 +362,31 @@ public class Main {
 				break;
 
 			case SEARCHING:
-				// put search methods here
+				motorControl.forward();
+				A_loc.fix_angle_on_path();
+				if(usPoller.obstacleDetected(20)) {
+					motorControl.stop();
+					state = List_of_states.APPROACH;
+				}
+				
+				break;
+				//TODO motor control for 3rd motor
+				//TODO check for object
+			case APPROACH:
+				motorControl.dimeTurn(90);
+				motorControl.forward();
+				while(!usPoller.obstacleDetected(10)) {
+				}	
+				motorControl.stop();
+				//TODO identify color
 				break;
 			case TEST:
+//				usMotor.rotate(90,false);
+//				motorControl.turnCW();
+
 				motorControl.forward();
-//				
 				A_loc.fix_angle_on_path();
+				
 //				motorControl.stop();
 //				lightPollerleft.getValue();
 //				if(lightPollerleft.underBaseline()) {
@@ -373,7 +400,7 @@ public class Main {
 			default:
 				break;
 			}
-			sleeptime(10);
+			sleeptime(20);
 		}
 	}
 

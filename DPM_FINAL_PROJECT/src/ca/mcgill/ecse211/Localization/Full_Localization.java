@@ -18,7 +18,7 @@ public class Full_Localization {
 	private MotorControl motorcontrol;
 	private LightPoller left_LS;
 	private LightPoller right_LS;
-	private float LS_offset=4.8f;
+	private float LS_offset=5f;
 	private double TILE_SIZE = 30.48; 
 	private UltrasonicLocalizer USL;
 	private Angle_Localization LSL;

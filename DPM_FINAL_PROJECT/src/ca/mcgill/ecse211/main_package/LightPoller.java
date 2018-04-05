@@ -17,7 +17,7 @@ public class LightPoller {
 	private SampleProvider lt;
 	private float[] ltdata;
 	private float lightVal;
-	private final float THRESHOLD = 2.1f;
+	private final float THRESHOLD = 2.0f;
 	private float prev_light;
 	private float current_light;
 	private float baseline;
@@ -70,7 +70,7 @@ public class LightPoller {
 			prev_light = current_light;
 		}
 		current_light = lightVal / 3;
-		System.out.println(current_light);
+//		System.out.println(current_light);
 
 	}
 
