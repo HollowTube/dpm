@@ -18,7 +18,7 @@ public class Full_Localization {
 	private MotorControl motorcontrol;
 	private LightPoller left_LS;
 	private LightPoller right_LS;
-	private float LS_offset=3;
+	private float LS_offset=4.8f;
 	private double TILE_SIZE = 30.48; 
 	private UltrasonicLocalizer USL;
 	private Angle_Localization LSL;
@@ -79,8 +79,8 @@ public class Full_Localization {
 	 */
 	public void Tile_Localize() throws OdometerExceptions{
 		
-		motorcontrol.setLeftSpeed(150);	//performs light sensor localization
-		motorcontrol.setRightSpeed(150);
+		motorcontrol.setLeftSpeed(100);	//performs light sensor localization
+		motorcontrol.setRightSpeed(100);
 		motorcontrol.forward(); 	// set the robot in motion towards y = 0 line
 		LSL.fix_angle(); 			// stop at y = 0 line
 		//parameter_correction(exp_x,exp_y);
@@ -101,8 +101,8 @@ public class Full_Localization {
 			Thread.sleep(200);
 		}catch (Exception e){}
 		
-		motorcontrol.setLeftSpeed(150);
-		motorcontrol.setRightSpeed(150);
+		motorcontrol.setLeftSpeed(100);
+		motorcontrol.setRightSpeed(100);
 		motorcontrol.forward(); 	//set the robot in motion towards x = 0 line
 		LSL.fix_angle(); 			//stop at x = 0 line
 		motorcontrol.moveSetDistance(LS_offset);

@@ -6,11 +6,11 @@ import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
-
 /**
  * This class is in charge to make the robot's orientation exactly pointing in
- * the right direction. It uses two light sensors to keep the orientation of
- * the robot always straight which is necessary since the robot will always move in 90 degree angles.
+ * the right direction. It uses two light sensors to keep the orientation of the
+ * robot always straight which is necessary since the robot will always move in
+ * 90 degree angles.
  * 
  * @author Tritin and Alexandre
  *
@@ -22,11 +22,11 @@ public class Angle_Localization {
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
 	private UltrasonicLocalizer USL;
-	private int threshold = 27;
+	private int threshold = 25;
 	public int x_line_count;
 	public int y_line_count;
 	public double LIGHT_OFFSET = 0.5;
-	
+
 	private static final double SQUARE_LENGTH = 30.48;
 	private static final double LIGHTSENS_OFFSET = 3.5;
 
@@ -38,11 +38,14 @@ public class Angle_Localization {
 	 * Class constructor.
 	 * 
 	 * @author Tritin
-	 * @param L_sens Left Light Sensor
-	 * @param R_sens Right Light Sensor
+	 * @param L_sens
+	 *            Left Light Sensor
+	 * @param R_sens
+	 *            Right Light Sensor
 	 * @throws OdometerExceptions
 	 */
-	public Angle_Localization(LightPoller L_sens, LightPoller R_sens, UltrasonicLocalizer USL) throws OdometerExceptions {
+	public Angle_Localization(LightPoller L_sens, LightPoller R_sens, UltrasonicLocalizer USL)
+			throws OdometerExceptions {
 		Angle_Localization.odometer = Odometer.getOdometer();
 		Angle_Localization.motorcontrol = MotorControl.getMotor();
 		this.left_sensor = L_sens;
@@ -54,9 +57,9 @@ public class Angle_Localization {
 	 * Method to stop the robot so that the wheel track is parallel to grid line.
 	 * The robot must be put in forward motion before calling the method.
 	 * <p>
-	 * The light sensor will stop its motor when it detects the line. The other motor will
-	 * continue to approach the line until it detects it and stops.
-	 * It will then correct the odometer angle heading.
+	 * The light sensor will stop its motor when it detects the line. The other
+	 * motor will continue to approach the line until it detects it and stops. It
+	 * will then correct the odometer angle heading.
 	 * 
 	 * This method will block
 	 * 
@@ -64,12 +67,14 @@ public class Angle_Localization {
 	 */
 	public void fix_angle() {
 		while (true) {
-			if (USL.getDistance()<20){
-				avoid_obstacle();
-			}
-			else if(right_sensor.lessThan(threshold)) {
+			left_sensor.getValue();
+			right_sensor.getValue();
+			// if (USL.getDistance() < 20) {
+			// avoid_obstacle();
+			if (right_sensor.lessThan(threshold)) {
 				motorcontrol.rightStop();
 				do {
+					left_sensor.getValue();
 					if (left_sensor.lessThan(threshold)) {
 						motorcontrol.leftStop();
 						break;
@@ -79,6 +84,7 @@ public class Angle_Localization {
 			} else if (left_sensor.lessThan(threshold)) {
 				motorcontrol.leftStop();
 				do {
+					right_sensor.getValue();
 					if (right_sensor.lessThan(threshold)) {
 						motorcontrol.rightStop();
 						break;
@@ -105,32 +111,35 @@ public class Angle_Localization {
 	}
 
 	/**
-	 * Method to stop the robot while on path with a wheel track parallel to the grid line.
-	 * The robot must be put in forward motion before calling the method.
+	 * Method to stop the robot while on path with a wheel track parallel to the
+	 * grid line. The robot must be put in forward motion before calling the method.
 	 * <p>
-	 * The light sensor will stop its motor when it detects the line. The other motor
-	 * will continue to approach the line until it detects it and stops.
-	 * It will then correct the odometer angle heading.
+	 * The light sensor will stop its motor when it detects the line. The other
+	 * motor will continue to approach the line until it detects it and stops. It
+	 * will then correct the odometer angle heading.
 	 * <p>
 	 * This method will not block.
 	 * 
 	 * @author Tri-tin Truong
 	 */
 	public void fix_angle_on_path() {
-
-		if (right_sensor.lessThan(threshold) && !recovery) {
+		left_sensor.getValue();
+		right_sensor.getValue();
+		if (right_sensor.falling() && !recovery) {
 			motorcontrol.rightStop();
-			while (!left_sensor.lessThan(threshold))
-				;
+			while (!left_sensor.falling()) {
+				left_sensor.getValue();
+			}
 			motorcontrol.leftStop();
 			angle_correction();
 			initial_position = odometer.getXYT();
 			recovery = true;
 
-		} else if (left_sensor.lessThan(threshold) && !recovery) {
+		} else if (left_sensor.falling() && !recovery) {
 			motorcontrol.leftStop();
-			while(!right_sensor.lessThan(threshold))
-				;
+			while (!right_sensor.falling()) {
+				right_sensor.getValue();
+			}
 			motorcontrol.rightStop();
 			angle_correction();
 			initial_position = odometer.getXYT();
@@ -158,8 +167,7 @@ public class Angle_Localization {
 		double head = 0;
 		int currentYQuad, currentXQuad;
 		double newy, newx = 0;
-		
-		
+
 		double heading = odometer.getXYT()[2];
 		if (heading > 315 || heading < 45) {
 			odometer.setTheta(0);
@@ -171,11 +179,15 @@ public class Angle_Localization {
 			odometer.setTheta(270);
 		}
 	}
+
 	/**
-	 * Method to calculate the distance error between two points using the change in x and in y directions.
+	 * Method to calculate the distance error between two points using the change in
+	 * x and in y directions.
 	 * 
-	 * @param dx Change in x direction
-	 * @param dy Change in y direction
+	 * @param dx
+	 *            Change in x direction
+	 * @param dy
+	 *            Change in y direction
 	 * @return Distance error
 	 */
 	private static double euclidian_error(double dx, double dy) {

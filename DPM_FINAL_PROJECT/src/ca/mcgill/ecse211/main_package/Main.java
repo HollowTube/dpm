@@ -38,8 +38,8 @@ public class Main {
 	private static final Port leftPort = LocalEV3.get().getPort("S1");
 	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
 
-	public static final double WHEEL_RAD = 2.06;
-	public static final double TRACK = 15.2;
+	public static final double WHEEL_RAD = 3.27;
+	public static final double TRACK = 15.9688;
 	public static final double TILE_SIZE = 30.48;
 
 	// ultrasonic sensor initialization
@@ -162,15 +162,14 @@ public class Main {
 
 		// lcd.clear();
 
-		// buttonChoice = Button.waitForAnyPress(); // Record choice (left or right
-		// press)
-		// if (buttonChoice == Button.ID_DOWN) {
-		// Calibration.radius_calibration();
-		// } else if (buttonChoice == Button.ID_UP) {
-		// Calibration.track_calibration();
-		// }else if (buttonChoice == Button.ID_ENTER) {
-		// Testing.straightLine();
-		// }
+		 buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
+		 if (buttonChoice == Button.ID_DOWN) {
+		 Calibration.radius_calibration();
+		 } else if (buttonChoice == Button.ID_UP) {
+		 Calibration.track_calibration();
+		 }else if (buttonChoice == Button.ID_ENTER) {
+		 Testing.straightLine();
+		 }
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
@@ -187,7 +186,7 @@ public class Main {
 		// not get stuck in a loop
 
 		// set initial state
-		state = List_of_states.IDLE;
+		state = List_of_states.INITIALIZE;
 		while (true) {
 			switch (state) {
 
@@ -224,8 +223,8 @@ public class Main {
 				// try{
 				// Thread.sleep(1000);
 				// }catch(Exception e){}
-				// odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
-				state = List_of_states.IDLE;
+//				 odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
+				state = List_of_states.TURNING;
 				break;
 
 			// do nothing until button is pressed up
@@ -235,14 +234,15 @@ public class Main {
 					sleeptime(50); // waits until the up button is pressed
 
 				
-				state = List_of_states.TURNING;
+				state = List_of_states.TEST;
 				break;
 			// dime turn towards necessary destination
 			case TURNING:
-				motorControl.setLeftSpeed(125);
-				motorControl.setRightSpeed(125);
-				xf = waypoints[current_waypoint][0] * TILE_SIZE;
-				yf = waypoints[current_waypoint][1] * TILE_SIZE;
+				motorControl.setLeftSpeed(100);
+				motorControl.setRightSpeed(100);
+				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
+				yf = waypoints[current_waypoint][1] * TILE_SIZE+ 0.01
+						;
 				navigator.turn_to_destination(xf, yf);
 				motorControl.backward();
 				A_loc.fix_angle();
@@ -310,10 +310,14 @@ public class Main {
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
 				motorControl.moveSetDistance(16.5);
 				motorControl.dimeTurn(90);
+				motorControl.setLeftSpeed(100);
+				motorControl.setRightSpeed(100);
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.stop();
 				// motorControl.dimeTurn(-5);
+				motorControl.setLeftSpeed(150);
+				motorControl.setRightSpeed(150);
 				motorControl.moveSetDistance(110);
 				try {
 					Localize.Tile_Localize();
@@ -354,10 +358,17 @@ public class Main {
 				break;
 			case TEST:
 				motorControl.forward();
+//				
+				A_loc.fix_angle_on_path();
+//				motorControl.stop();
+//				lightPollerleft.getValue();
+//				if(lightPollerleft.underBaseline()) {
+//					Sound.beep();
+//				}
 				// while(!lightPollerleft.lessThan(30));
 				// motorControl.stop();
 
-				// state = List_of_states.IDLE;
+//				 state = List_of_states.IDLE;
 				break;
 			default:
 				break;
