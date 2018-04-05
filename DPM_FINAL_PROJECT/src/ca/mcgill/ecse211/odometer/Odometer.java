@@ -125,7 +125,7 @@ public class Odometer extends OdometerData implements Runnable {
 			leftMotorTachoCount = leftMotor.getTachoCount();
 			rightMotorTachoCount = rightMotor.getTachoCount();
 			// gets current tachometer count
-			System.out.println(odo.getXYT()[2]);
+			//System.out.println(odo.getXYT()[2]);
 			theta = odo.getXYT()[2]*Math.PI/180;
 //			System.out.println(theta*180/Math.PI);
 

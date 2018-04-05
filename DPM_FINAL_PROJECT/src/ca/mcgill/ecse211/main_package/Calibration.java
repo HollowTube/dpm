@@ -30,7 +30,7 @@ public class Calibration {
 	 */
 	public static void radius_calibration() {
 		double bottom_bound = 1;
-		double top_bound = 3;
+		double top_bound = 4;
 		double mid;
 		int button_choice;
 		LCD.clear();
