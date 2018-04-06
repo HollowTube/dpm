@@ -43,7 +43,7 @@ public class Odometer extends OdometerData implements Runnable {
 
 	private double[] position = { 0, 0, 0 }; // initialize initial position here
 
-	private static final long ODOMETER_PERIOD = 25; // odometer update period in ms
+	private static final long ODOMETER_PERIOD = 50; // odometer update period in ms
 
 	/**
 	 * This is the default constructor of this class. It initiates all motors and

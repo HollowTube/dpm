@@ -9,6 +9,7 @@ import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -64,18 +65,18 @@ public class Main {
 	static int sampleSizeReflectedRight = colorRGBSensorReflectedRight.sampleSize();
 	static float[] sampleReflectedRight = new float[sampleSizeReflectedRight];
 
-	// color light sensor initialization
-	static EV3ColorSensor colorSensor = new EV3ColorSensor(colorPort);
-	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
-	static int sampleSize = colorRGBSensor.sampleSize();
-	static float[] sample = new float[sampleSize];
+//	// color light sensor initialization
+//	static EV3ColorSensor colorSensor = new EV3ColorSensor(colorPort);
+//	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
+//	static int sampleSize = colorRGBSensor.sampleSize();
+//	static float[] sample = new float[sampleSize];
 
 	// initialization of poller classes
 	static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
 	static LightPoller lightPollerRight = new LightPoller(colorRGBSensorReflectedRight, sampleReflectedRight);
 	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
-	final static LightPollerColor colorPoller = new LightPollerColor(colorRGBSensor, sample);
+	//final static LightPollerColor colorPoller = new LightPollerColor(colorRGBSensor, sample);
 
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING, APPROACH
@@ -249,7 +250,9 @@ public class Main {
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
 					motorControl.stop();
+					
 					motorControl.moveSetDistance(2);
+					Sound.beep();
 					current_waypoint++;
 
 					// resets the machine to its initial state
@@ -268,30 +271,14 @@ public class Main {
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
 					}
-					// else if (current_waypoint == 6) {
-					// state = List_of_states.SEARCHING;
-					// }
 					else {
 						state = List_of_states.TURNING;
 					}
 					break;
-				} else if (usPoller.obstacleDetected(30)) {
-					motorControl.stop();
 				}
-				break;
-
-			case TILE_LOCALIZATION:
-				try {
-					Localize.Tile_Localize();
-				} catch (OdometerExceptions e) {
-					e.printStackTrace();
-				}
-				state = List_of_states.IDLE;
-				break;
-
-			case IDENTIFYING:
-
-				state = List_of_states.IDLE;
+//					else if (usPoller.obstacleDetected(30)) {
+//					motorControl.stop();
+//				}
 				break;
 
 			case BRIDGE_CROSSING:
@@ -356,8 +343,6 @@ public class Main {
 				}
 
 				break;
-			// TODO motor control for 3rd motor
-			// TODO check for object
 			case APPROACH:
 				motorControl.dimeTurn(90);
 				motorControl.forward();
@@ -369,37 +354,50 @@ public class Main {
 			case TEST:
 				// usMotor.rotate(90,false);
 				// motorControl.turnCW();
-
+				motorControl.setLeftSpeed(120);
+				motorControl.setRightSpeed(120);
 				motorControl.forward();
-				if (usPoller.obstacleDetected(30)) {
-					motorControl.stop();
-					initialPosition = odometer.getXYT();
-					motorControl.moveSetDistance(16.5);
-					motorControl.dimeTurn(180);
-					motorControl.turnCCW();
-
-					while (!usPoller.obstacleDetected(30)) {
-						motorControl.rotateCCW();
-					}
-					motorControl.dimeTurn(-15);
-					motorControl.stop();
-					while (!usPoller.obstacleDetected(10)) {
-						motorControl.forward();
-					}
-					motorControl.moveSetDistance(12);
-					motorControl.stop();
-					colorPoller.detectColor();
-					
-					motorControl.dimeTurn(180);
-					motorControl.forward();
-					A_loc.fix_angle();
-					odometer.setX(initialPosition[0]);
-					odometer.setY(initialPosition[1]);
-					motorControl.dimeTurn(90);
-					
-					motorControl.turnCW();
-					state = List_of_states.IDLE;
-				}
+//				lightPollerleft.getValue();
+				A_loc.fix_angle_on_path();
+//				if(lightPollerRight.lessThan(22)) {
+//					Sound.beep();
+//				}
+//				if(lightPollerleft.lessThan(22)) {
+//					Sound.buzz();
+//				}
+//				lightPollerRight.getValue();
+				
+				
+//				A_loc.fix_angle_on_path();
+//				if (usPoller.obstacleDetected(30)) {
+//					motorControl.stop();
+//					initialPosition = odometer.getXYT();
+//					motorControl.moveSetDistance(16.5);
+//					motorControl.dimeTurn(180);
+//					motorControl.turnCCW();
+//
+//					while (!usPoller.obstacleDetected(30)) {
+//						motorControl.rotateCCW();
+//					}
+//					motorControl.dimeTurn(-15);
+//					motorControl.stop();
+//					while (!usPoller.obstacleDetected(10)) {
+//						motorControl.forward();
+//					}
+//					motorControl.moveSetDistance(12);
+//					motorControl.stop();
+////					colorPoller.detectColor();
+//					
+//					motorControl.dimeTurn(180);
+//					motorControl.forward();
+//					A_loc.fix_angle();
+//					odometer.setX(initialPosition[0]);
+//					odometer.setY(initialPosition[1]);
+//					motorControl.dimeTurn(90);
+//					
+//					motorControl.turnCW();
+//					state = List_of_states.IDLE;
+//				}
 
 				// motorControl.stop();
 				// lightPollerleft.getValue();
@@ -414,7 +412,8 @@ public class Main {
 			default:
 				break;
 			}
-			sleeptime(20);
+			sleeptime(10);
+//			LCD.clear();
 		}
 	}
 
