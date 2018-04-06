@@ -188,6 +188,9 @@ public class Main {
 
 		// set initial state
 		state = List_of_states.TEST;
+		motorControl.setLeftSpeed(120);
+		motorControl.setRightSpeed(120);
+		odometer.setXYT(0, 0, 270);
 		while (true) {
 			switch (state) {
 
@@ -355,43 +358,46 @@ public class Main {
 			case TEST:
 				// usMotor.rotate(90,false);
 				// motorControl.turnCW();
-				motorControl.setLeftSpeed(120);
-				motorControl.setRightSpeed(120);
+
 				motorControl.forward();
 //				lightPollerleft.getValue();
-				A_loc.fix_angle_on_path();
-//				if(lightPollerRight.lessThan(22)) {
+//				A_loc.fix_angle_on_path();
+//				lightPollerRight.getValue();
+//				if(lightPollerRight.lessThan(18)) {
 //					Sound.beep();
 //				}
-//				if(lightPollerleft.lessThan(22)) {
+//				if(lightPollerleft.lessThan(18)) {
 //					Sound.buzz();
 //				}
 //				lightPollerRight.getValue();
 				
 				
-//				A_loc.fix_angle_on_path();
+				A_loc.fix_angle_on_path();
 //				if (usPoller.obstacleDetected(30)) {
 //					motorControl.stop();
 //					initialPosition = odometer.getXYT();
-//					motorControl.moveSetDistance(16.5);
+//					motorControl.moveSetDistance(15);
 //					motorControl.dimeTurn(180);
 //					motorControl.turnCCW();
 //
 //					while (!usPoller.obstacleDetected(30)) {
 //						motorControl.rotateCCW();
+//						sleeptime(15);
 //					}
-//					motorControl.dimeTurn(-15);
+//					motorControl.dimeTurn(-16);
 //					motorControl.stop();
 //					while (!usPoller.obstacleDetected(10)) {
 //						motorControl.forward();
+//						sleeptime(15);
 //					}
-//					motorControl.moveSetDistance(12);
+//					motorControl.moveSetDistance(13);
 //					motorControl.stop();
 ////					colorPoller.detectColor();
 //					
 //					motorControl.dimeTurn(180);
 //					motorControl.forward();
 //					A_loc.fix_angle();
+//					motorControl.moveSetDistance(5);
 //					odometer.setX(initialPosition[0]);
 //					odometer.setY(initialPosition[1]);
 //					motorControl.dimeTurn(90);
@@ -413,7 +419,7 @@ public class Main {
 			default:
 				break;
 			}
-			sleeptime(10);
+			sleeptime(15);
 //			LCD.clear();
 		}
 	}
