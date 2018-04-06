@@ -155,16 +155,20 @@ public class MotorControl {
 		rightMotor.stop(false);
 	}
 	/**
-	 * This method makes the robot turn clockwise 
+	 * This method makes the Ultrasonic turn clockwise 
 	 */
 	public void turnCW(){
 		usMotor.rotate(-91,false);
 	}
 	/**
-	 * This method makes the robot turn counter-clockwise 
+	 * This method makes the Ultrasonic turn counter-clockwise 
 	 */
 	public void turnCCW(){
 		usMotor.rotate(90,false);
+	}
+	public void rotateCCW() {
+		leftMotor.backward();
+		rightMotor.forward();
 	}
 	/**
 	 * This method sets acceleration of the motors

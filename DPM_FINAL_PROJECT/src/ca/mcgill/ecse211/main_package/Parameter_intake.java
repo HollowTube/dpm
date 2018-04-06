@@ -16,7 +16,7 @@ public class Parameter_intake {
 	public int RedTeam; 		//Team starting from red zone
 	public int GreenTeam = 13;   	//Team starting from green zone
 	public int RedCorner;		//Starting corner for red team
-	public int GreenCorner = 1;		//Starting corner for green team
+	public int GreenCorner = 2;		//Starting corner for green team
 	public int OG;				//color of green opponent flag
 	public int OR;				//color of red opponent flag
 	public int Red_LL_x = 0;		//x coordinate of lower left hand corner of Red Zone
