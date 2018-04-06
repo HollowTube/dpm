@@ -36,42 +36,46 @@ public class Main {
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 	private static final EV3MediumRegulatedMotor usMotor = new EV3MediumRegulatedMotor(LocalEV3.get().getPort("C"));
-	
+
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 	private static final Port leftPort = LocalEV3.get().getPort("S1");
-	private static final Port sensorPortColor = LocalEV3.get().getPort("S3");
+	private static final Port rightPort = LocalEV3.get().getPort("S3");
+	private static final Port colorPort = LocalEV3.get().getPort("S4");
 
 	public static final double WHEEL_RAD = 3.27;
 	public static final double TRACK = 15.9688;
 	public static final double TILE_SIZE = 30.48;
 
 	// ultrasonic sensor initialization
-
 	static Port portUS = LocalEV3.get().getPort("S2");
 	static SensorModes myUS = new EV3UltrasonicSensor(portUS);
 	static SampleProvider myDistance = myUS.getMode("Distance");
 	static float[] sampleUS = new float[myDistance.sampleSize()];
 
 	// left light sensor initialization
-	static EV3ColorSensor colorSensorReflected = new EV3ColorSensor(leftPort);
-	static SampleProvider colorRGBSensorReflected = colorSensorReflected.getRedMode();
-	static int sampleSizeReflected = colorRGBSensorReflected.sampleSize();
-	static float[] sampleReflected = new float[sampleSizeReflected];
+	static EV3ColorSensor colorSensorReflectedLeft = new EV3ColorSensor(leftPort);
+	static SampleProvider colorRGBSensorReflectedLeft = colorSensorReflectedLeft.getRedMode();
+	static int sampleSizeReflectedLeft = colorRGBSensorReflectedLeft.sampleSize();
+	static float[] sampleReflectedLeft = new float[sampleSizeReflectedLeft];
 
 	// right light sensor intialization
-	static EV3ColorSensor colorSensor = new EV3ColorSensor(sensorPortColor);
+	static EV3ColorSensor colorSensorReflectedRight = new EV3ColorSensor(rightPort);
+	static SampleProvider colorRGBSensorReflectedRight = colorSensorReflectedRight.getRedMode();
+	static int sampleSizeReflectedRight = colorRGBSensorReflectedRight.sampleSize();
+	static float[] sampleReflectedRight = new float[sampleSizeReflectedRight];
+
+	// color light sensor initialization
+	static EV3ColorSensor colorSensor = new EV3ColorSensor(colorPort);
 	static SampleProvider colorRGBSensor = colorSensor.getRedMode();
 	static int sampleSize = colorRGBSensor.sampleSize();
 	static float[] sample = new float[sampleSize];
 
-	// final static LightPollerColor lightPoller = new
-	// LightPollerColor(colorRGBSensor, sample);
-
 	// initialization of poller classes
 	static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
-	static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflected, sampleReflected);
-	static LightPoller lightPollerright = new LightPoller(colorRGBSensor, sample);
-	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflected, sampleReflected);
+	static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
+	static LightPoller lightPollerRight = new LightPoller(colorRGBSensorReflectedRight, sampleReflectedRight);
+	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
+	final static LightPollerColor colorPoller = new LightPollerColor(colorRGBSensor, sample);
 
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING, APPROACH
@@ -89,19 +93,20 @@ public class Main {
 	 */
 	public static void main(String[] args) throws OdometerExceptions {
 
-		int buttonChoice;
 		// Odometer related objects
 		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 
-		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflected, sampleReflected);
+		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflectedLeft,
+				sampleReflectedLeft);
+
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
-		MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor,usMotor, WHEEL_RAD, TRACK);
+		MotorControl motorControl = MotorControl.getMotor(leftMotor, rightMotor, usMotor, WHEEL_RAD, TRACK);
 		Navigation navigator = new Navigation();
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
-		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerright, ulLoc);
-		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerright);
+		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerRight, ulLoc);
+		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerRight);
 		//
 		// lcd.drawString("< Left | Right >", 0, 0);
 		// lcd.drawString(" No | ", 0, 1);
@@ -113,27 +118,23 @@ public class Main {
 		// buttonChoice = Button.waitForAnyPress();
 		// parameters.wifiIntake();
 
-		// simply input waypoints here, will only update after it reaches the
-		// destination
-
 		int[][] waypoints = null;
-		int[][] Green_waypoints = {
-				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
+		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
-//				{ parameters.SR_UR_x, parameters.TN_end_y(parameters.TN_coord_y()) },
-//				{ parameters.SR_UR_x, parameters.SR_LL_y }, { parameters.SR_LL_x, parameters.SR_UR_y },
-//				{ parameters.Red_start_coord_x(), parameters.SR_UR_y },
-//				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
-//				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
-				{ parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y())},
+				// { parameters.SR_UR_x, parameters.TN_end_y(parameters.TN_coord_y()) },
+				// { parameters.SR_UR_x, parameters.SR_LL_y }, { parameters.SR_LL_x,
+				// parameters.SR_UR_y },
+				// { parameters.Red_start_coord_x(), parameters.SR_UR_y },
+				// { parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
+				// { parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+				{ parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() } };
 
-		int[][] Red_waypoints = {
-				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+		int[][] Red_waypoints = { { parameters.Red_start_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.SG_UR_x, parameters.BR_end_y(parameters.BR_coord_y()) },
@@ -145,35 +146,30 @@ public class Main {
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
-		//int[][] waypoints = { { 1, 2 }, { 3, 2 }, { 3, 6 }, { 6, 6 }, { 6, 2 }, { 1, 2 } };
+		// int[][] waypoints = { { 1, 2 }, { 3, 2 }, { 3, 6 }, { 6, 6 }, { 6, 2 }, { 1,
+		// 2 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
-		 if(parameters.GreenTeam==13){
-			 waypoints = Green_waypoints;
-		 }
-		// else if(parameters.RedTeam==13){
-		// waypoints = Red_waypoints;
-		// }
-		// clear the display
+		double initialPosition[];
+		if (parameters.GreenTeam == 13) {
+			waypoints = Green_waypoints;
+		}
+		else {
+			waypoints = Red_waypoints;
+		}
+
 		lcd.clear();
-		// ask the user whether odometery correction should be run or not
-		// lcd.drawString("< Left | Right >", 0, 0);
-		// lcd.drawString(" No | with ", 0, 1);
-		// lcd.drawString(" corr- | corr- ", 0, 2);
-		// lcd.drawString(" ection| ection ", 0, 3);
-		// lcd.drawString(" | ", 0, 4);
 
-		// lcd.clear();
-
-//		 buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-//		 if (buttonChoice == Button.ID_DOWN) {
-//		 Calibration.radius_calibration();
-//		 } else if (buttonChoice == Button.ID_UP) {
-//		 Calibration.track_calibration();
-//		 }else if (buttonChoice == Button.ID_ENTER) {
-//		 Testing.straightLine();
-//		 }
+		// buttonChoice = Button.waitForAnyPress(); // Record choice (left or right
+		// press)
+		// if (buttonChoice == Button.ID_DOWN) {
+		// Calibration.radius_calibration();
+		// } else if (buttonChoice == Button.ID_UP) {
+		// Calibration.track_calibration();
+		// }else if (buttonChoice == Button.ID_ENTER) {
+		// Testing.straightLine();
+		// }
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
@@ -190,7 +186,7 @@ public class Main {
 		// not get stuck in a loop
 
 		// set initial state
-		state = List_of_states.INITIALIZE;
+		state = List_of_states.TEST;
 		while (true) {
 			switch (state) {
 
@@ -210,11 +206,6 @@ public class Main {
 								TILE_SIZE * parameters.Red_start_coord_y() + 0.01,
 								parameters.Red_start_heading() + 0.01);
 					}
-					// Localize.Corner_Localize(parameters.Start_coord_x(),
-					// parameters.Start_coord_y());
-					// Localize.Tile_Localize(parameters.Start_coord_x(),
-					// parameters.Start_coord_y());
-					// Localize.Corner_Localize(1, 1);
 				} catch (OdometerExceptions e) {
 					e.printStackTrace();
 				}
@@ -222,12 +213,6 @@ public class Main {
 					Thread.sleep(1000);
 				} catch (Exception e) {
 				}
-				// rightMotor.resetTachoCount();
-				// leftMotor.resetTachoCount();
-				// try{
-				// Thread.sleep(1000);
-				// }catch(Exception e){}
-//				 odometer.setXYT(1 * TILE_SIZE, 1.01 * TILE_SIZE, 0.01);
 				state = List_of_states.TURNING;
 				break;
 
@@ -239,7 +224,6 @@ public class Main {
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleeptime(50); // waits until the up button is pressed
 
-				
 				state = List_of_states.TEST;
 				break;
 			// dime turn towards necessary destination
@@ -247,8 +231,7 @@ public class Main {
 				motorControl.setLeftSpeed(120);
 				motorControl.setRightSpeed(120);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
-				yf = waypoints[current_waypoint][1] * TILE_SIZE+ 0.01
-						;
+				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
 				navigator.turn_to_destination(xf, yf);
 				motorControl.backward();
 				A_loc.fix_angle();
@@ -285,14 +268,16 @@ public class Main {
 					} else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
-					} 
-						//else if (current_waypoint == 6) {
-//						state = List_of_states.SEARCHING;
-					//}
+					}
+					// else if (current_waypoint == 6) {
+					// state = List_of_states.SEARCHING;
+					// }
 					else {
 						state = List_of_states.TURNING;
 					}
 					break;
+				} else if (usPoller.obstacleDetected(30)) {
+					motorControl.stop();
 				}
 				break;
 
@@ -323,7 +308,7 @@ public class Main {
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.stop();
-				// motorControl.dimeTurn(-5);
+
 				motorControl.setLeftSpeed(150);
 				motorControl.setRightSpeed(150);
 				motorControl.moveSetDistance(110);
@@ -332,6 +317,7 @@ public class Main {
 					odometer.setX(xf * TILE_SIZE);
 					odometer.setY(yf * TILE_SIZE);
 				} catch (OdometerExceptions e) {
+
 				}
 				current_waypoint++;
 				state = List_of_states.TURNING;
@@ -341,61 +327,90 @@ public class Main {
 
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
-				navigator.offset90(xf * TILE_SIZE+0.01, yf * TILE_SIZE+0.01);
+				navigator.offset90(xf * TILE_SIZE + 0.01, yf * TILE_SIZE + 0.01);
 				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
 				motorControl.moveSetDistance(5);
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.stop();
+
 				motorControl.moveSetDistance(110);
 				try {
 					Localize.Tile_Localize();
 					odometer.setX(xf * TILE_SIZE);
 					odometer.setY(yf * TILE_SIZE);
 				} catch (OdometerExceptions e) {
+
 				}
 
 				current_waypoint++;
-				// System.out.println("xf: "+xf +" yf: "+ yf + " " + current_waypoint);
 				state = List_of_states.TURNING;
 				break;
 
 			case SEARCHING:
 				motorControl.forward();
 				A_loc.fix_angle_on_path();
-				if(usPoller.obstacleDetected(20)) {
+				if (usPoller.obstacleDetected(20)) {
 					motorControl.stop();
 					state = List_of_states.APPROACH;
 				}
-				
+
 				break;
-				//TODO motor control for 3rd motor
-				//TODO check for object
+			// TODO motor control for 3rd motor
+			// TODO check for object
 			case APPROACH:
 				motorControl.dimeTurn(90);
 				motorControl.forward();
-				while(!usPoller.obstacleDetected(10)) {
-				}	
+				while (!usPoller.obstacleDetected(10)) {
+				}
 				motorControl.stop();
-				//TODO identify color
+				// TODO identify color
 				break;
 			case TEST:
-//				usMotor.rotate(90,false);
-//				motorControl.turnCW();
+				// usMotor.rotate(90,false);
+				// motorControl.turnCW();
 
 				motorControl.forward();
-				A_loc.fix_angle_on_path();
-				
-//				motorControl.stop();
-//				lightPollerleft.getValue();
-//				if(lightPollerleft.underBaseline()) {
-//					Sound.beep();
-//				}
+				if (usPoller.obstacleDetected(30)) {
+					motorControl.stop();
+					initialPosition = odometer.getXYT();
+					motorControl.moveSetDistance(16.5);
+					motorControl.dimeTurn(180);
+					motorControl.turnCCW();
+
+					while (!usPoller.obstacleDetected(30)) {
+						motorControl.rotateCCW();
+					}
+					motorControl.dimeTurn(-15);
+					motorControl.stop();
+					while (!usPoller.obstacleDetected(10)) {
+						motorControl.forward();
+					}
+					motorControl.moveSetDistance(12);
+					motorControl.stop();
+					colorPoller.detectColor();
+					
+					motorControl.dimeTurn(180);
+					motorControl.forward();
+					A_loc.fix_angle();
+					odometer.setX(initialPosition[0]);
+					odometer.setY(initialPosition[1]);
+					motorControl.dimeTurn(90);
+					
+					motorControl.turnCW();
+					state = List_of_states.IDLE;
+				}
+
+				// motorControl.stop();
+				// lightPollerleft.getValue();
+				// if(lightPollerleft.underBaseline()) {
+				// Sound.beep();
+				// }
 				// while(!lightPollerleft.lessThan(30));
 				// motorControl.stop();
 
-//				 state = List_of_states.IDLE;
+				// state = List_of_states.IDLE;
 				break;
 			default:
 				break;
