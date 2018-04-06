@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.main_package;
 
+import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
 /**
@@ -58,8 +59,8 @@ public class LightPoller {
 	 */
 	public void getValue() {
 //		lightVal = 0;
-		lightVal = lt.fetchSample(ltdata, 0);
-		lightVal = (ltdata[0] * 100);
+		lt.fetchSample(ltdata, 0);
+		lightVal = (ltdata[0]*100);
 //		for (int i = 0; i < 3; i++) {
 //			lt.fetchSample(ltdata, 0);
 //			lightVal += (ltdata[0] * 100);
@@ -84,11 +85,13 @@ public class LightPoller {
 	 *            Threshold value for black line
 	 * @return True is lower, False otherwise
 	 */
-	public boolean lessThan(double threshold) {
+	public boolean lessThan(float threshold) {
 //		getValue();
-//		lt.fetchSample(ltdata, 0);
-//		current_light = (ltdata[0] * 100);
+		lt.fetchSample(ltdata, 0);
+		current_light = (ltdata[0] * 100);
+//		System.out.println(current_light);
 		if (current_light < threshold) {
+//			Sound.beep();
 			return true;
 		} else
 			return false;

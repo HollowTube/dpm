@@ -22,8 +22,8 @@ public class Angle_Localization {
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
 	private UltrasonicLocalizer USL;
-	private int thresholdRight = 22;
-	private int thresholdLeft = 22;
+	private float thresholdRight = 17.5f;
+	private float thresholdLeft = 17.5f;
 
 	double initial_position[];
 	double current_position[];
@@ -62,14 +62,14 @@ public class Angle_Localization {
 	 */
 	public void fix_angle() {
 		while (true) {
-			left_sensor.getValue();
-			right_sensor.getValue();
+//			left_sensor.getValue();
+//			right_sensor.getValue();
 			// if (USL.getDistance() < 20) {
 			// avoid_obstacle();
 			if (right_sensor.lessThan(thresholdRight)) {
 				motorcontrol.rightStop();
 				do {
-//					left_sensor.getValue();
+					// left_sensor.getValue();
 					if (left_sensor.lessThan(thresholdLeft)) {
 						motorcontrol.leftStop();
 						break;
@@ -79,7 +79,7 @@ public class Angle_Localization {
 			} else if (left_sensor.lessThan(thresholdLeft)) {
 				motorcontrol.leftStop();
 				do {
-//					right_sensor.getValue();
+					// right_sensor.getValue();
 					if (right_sensor.lessThan(thresholdRight)) {
 						motorcontrol.rightStop();
 						break;
@@ -118,12 +118,19 @@ public class Angle_Localization {
 	 * @author Tri-tin Truong
 	 */
 	public void fix_angle_on_path() {
-		left_sensor.getValue();
-		right_sensor.getValue();
+//		left_sensor.getValue();
+//		right_sensor.getValue();
 		if (right_sensor.lessThan(thresholdRight) && !recovery) {
 			motorcontrol.rightStop();
+//			Sound.buzz();
 			while (!left_sensor.lessThan(thresholdLeft)) {
-			left_sensor.getValue();
+//				left_sensor.getValue();
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			motorcontrol.leftStop();
 			angle_correction();
@@ -132,8 +139,15 @@ public class Angle_Localization {
 
 		} else if (left_sensor.lessThan(thresholdLeft) && !recovery) {
 			motorcontrol.leftStop();
+//			Sound.beep();
 			while (!right_sensor.lessThan(thresholdRight)) {
-				right_sensor.getValue();
+//				right_sensor.getValue();
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			motorcontrol.rightStop();
 			angle_correction();
