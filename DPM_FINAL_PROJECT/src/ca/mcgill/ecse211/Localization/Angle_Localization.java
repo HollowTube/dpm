@@ -22,7 +22,8 @@ public class Angle_Localization {
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
 	private UltrasonicLocalizer USL;
-	private int threshold = 25;
+	private int thresholdRight = 22;
+	private int thresholdLeft = 22;
 
 	double initial_position[];
 	double current_position[];
@@ -65,21 +66,21 @@ public class Angle_Localization {
 			right_sensor.getValue();
 			// if (USL.getDistance() < 20) {
 			// avoid_obstacle();
-			if (right_sensor.lessThan(threshold)) {
+			if (right_sensor.lessThan(thresholdRight)) {
 				motorcontrol.rightStop();
 				do {
-					left_sensor.getValue();
-					if (left_sensor.lessThan(threshold)) {
+//					left_sensor.getValue();
+					if (left_sensor.lessThan(thresholdLeft)) {
 						motorcontrol.leftStop();
 						break;
 					}
 				} while (true);
 				break;
-			} else if (left_sensor.lessThan(threshold)) {
+			} else if (left_sensor.lessThan(thresholdLeft)) {
 				motorcontrol.leftStop();
 				do {
-					right_sensor.getValue();
-					if (right_sensor.lessThan(threshold)) {
+//					right_sensor.getValue();
+					if (right_sensor.lessThan(thresholdRight)) {
 						motorcontrol.rightStop();
 						break;
 					}
@@ -119,19 +120,19 @@ public class Angle_Localization {
 	public void fix_angle_on_path() {
 		left_sensor.getValue();
 		right_sensor.getValue();
-		if (right_sensor.lessThan(threshold) && !recovery) {
+		if (right_sensor.lessThan(thresholdRight) && !recovery) {
 			motorcontrol.rightStop();
-			while (!left_sensor.lessThan(threshold)) {
-				left_sensor.getValue();
+			while (!left_sensor.lessThan(thresholdLeft)) {
+			left_sensor.getValue();
 			}
 			motorcontrol.leftStop();
 			angle_correction();
 			initial_position = odometer.getXYT();
 			recovery = true;
 
-		} else if (left_sensor.lessThan(threshold) && !recovery) {
+		} else if (left_sensor.lessThan(thresholdLeft) && !recovery) {
 			motorcontrol.leftStop();
-			while (!right_sensor.lessThan(threshold)) {
+			while (!right_sensor.lessThan(thresholdRight)) {
 				right_sensor.getValue();
 			}
 			motorcontrol.rightStop();
