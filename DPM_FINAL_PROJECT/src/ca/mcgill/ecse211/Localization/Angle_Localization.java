@@ -22,8 +22,8 @@ public class Angle_Localization {
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
 	private UltrasonicLocalizer USL;
-	private float thresholdRight = 17.5f;
-	private float thresholdLeft = 17.5f;
+	private float thresholdRight = 18f;
+	private float thresholdLeft = 16f;
 
 	double initial_position[];
 	double current_position[];

@@ -73,7 +73,7 @@ public class LightPoller {
 			prev_light = current_light;
 		}
 		current_light = lightVal ;
-//		System.out.println(current_light);
+		System.out.println(current_light);
 	}
 
 	/**
