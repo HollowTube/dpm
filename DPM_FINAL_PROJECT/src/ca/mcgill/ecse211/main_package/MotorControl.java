@@ -170,6 +170,10 @@ public class MotorControl {
 		leftMotor.backward();
 		rightMotor.forward();
 	}
+	public void rotateCW() {
+		rightMotor.backward();
+		leftMotor.forward();
+	}
 	/**
 	 * This method sets acceleration of the motors
 	 */
