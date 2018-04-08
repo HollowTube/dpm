@@ -88,7 +88,7 @@ public class MotorControl {
 		rightMotor.rotate(convertDistance(radius, dist), false);
 	}
 	/**
-	 * This method moves the robot forward and sets the left and right motor speeds independently.
+	 * This method moves the robot forward a set distance
 	 * 
 	 * @param leftSpeed Speed left motor
 	 * @param rightSpeed Speed right motor
@@ -96,6 +96,16 @@ public class MotorControl {
 	public void moveSetDistance(double path_distance) {
 		leftMotor.rotate(convertDistance(radius, path_distance), true); // travel straight
 		rightMotor.rotate(convertDistance(radius, path_distance), false);
+	}
+	/**
+	 * This method moves the robot backwards a set distance
+	 * 
+	 * @param leftSpeed Speed left motor
+	 * @param rightSpeed Speed right motor
+	 */
+	public void moveSetDistanceBack(double path_distance) {
+		leftMotor.rotate(-convertDistance(radius, path_distance), true); // travel straight
+		rightMotor.rotate(-convertDistance(radius, path_distance), false);
 	}
 	/**
 	 * Moves left motor forwards

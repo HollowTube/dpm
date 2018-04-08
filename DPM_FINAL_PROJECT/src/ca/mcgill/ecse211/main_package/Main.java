@@ -66,18 +66,17 @@ public class Main {
 	static float[] sampleReflectedRight = new float[sampleSizeReflectedRight];
 
 	// // color light sensor initialization
-	// static EV3ColorSensor colorSensor = new EV3ColorSensor(colorPort);
-	// static SampleProvider colorRGBSensor = colorSensor.getRedMode();
-	// static int sampleSize = colorRGBSensor.sampleSize();
-	// static float[] sample = new float[sampleSize];
+	static EV3ColorSensor colorSensor = new EV3ColorSensor(colorPort);
+	static SampleProvider colorRGBSensor = colorSensor.getRGBMode();
+	static int sampleSize = colorRGBSensor.sampleSize();
+	static float[] sample = new float[sampleSize];
 
 	// initialization of poller classes
 	static myUSPoller usPoller = new myUSPoller(myDistance, sampleUS);
 	static LightPoller lightPollerleft = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
 	static LightPoller lightPollerRight = new LightPoller(colorRGBSensorReflectedRight, sampleReflectedRight);
 	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
-	// final static LightPollerColor colorPoller = new
-	// LightPollerColor(colorRGBSensor, sample);
+	final static LightPollerColor colorPoller = new LightPollerColor(colorRGBSensor, sample);
 
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING, APPROACH
@@ -120,7 +119,7 @@ public class Main {
 		// buttonChoice = Button.waitForAnyPress();
 		// parameters.wifiIntake();
 
-//		int[][] waypoints = null;
+		// int[][] waypoints = null;
 		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
@@ -148,18 +147,17 @@ public class Main {
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
-		 int[][] waypoints = { { 0, 3 }, {2, 3 }, { 2, 0 }, { 0, 0 }, { 6, 2 }, { 1,
-		 2 } };
+		int[][] waypoints = { { 0, 3 }, { 2, 3 }, { 2, 0 }, { 0, 0 }, { 1, 8 }, { 1, 2 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
 		double initialPosition[];
-		boolean isHunting = false;
-//		if (parameters.GreenTeam == 13) {
-//			waypoints = Green_waypoints;
-//		} else {
-//			waypoints = Red_waypoints;
-//		}
+		boolean isHunting = true;
+		// if (parameters.GreenTeam == 13) {
+		// waypoints = Green_waypoints;
+		// } else {
+		// waypoints = Red_waypoints;
+		// }
 
 		lcd.clear();
 
@@ -173,8 +171,8 @@ public class Main {
 		// Testing.straightLine();
 		// }
 		// Start odometer and display threads
-		Thread odoDisplayThread = new Thread(odometryDisplay);
-		odoDisplayThread.start();
+//		Thread odoDisplayThread = new Thread(odometryDisplay);
+//		odoDisplayThread.start();
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
@@ -191,6 +189,7 @@ public class Main {
 		state = List_of_states.TURNING;
 		motorControl.setLeftSpeed(200);
 		motorControl.setRightSpeed(200);
+//		motorControl.forward();
 		odometer.setXYT(0, 0, 0);
 		while (true) {
 			switch (state) {
@@ -240,8 +239,8 @@ public class Main {
 				navigator.turn_to_destination(xf, yf);
 				motorControl.backward();
 				A_loc.fix_angle();
-				motorControl.stop();
 				motorControl.moveSetDistance(2);
+				motorControl.forward();
 				state = List_of_states.TRAVELLING;
 				break;
 
@@ -249,37 +248,41 @@ public class Main {
 			case TRAVELLING:
 
 				// navigator.travelTo(xf, yf);
-				motorControl.forward();
+				
 				A_loc.fix_angle_on_path();
-
+				motorControl.forward();
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
-					motorControl.stop();
 
 					motorControl.moveSetDistance(2);
-					Sound.beep();
 					current_waypoint++;
 
 					// resets the machine to its initial state
-					if (current_waypoint == waypoints.length) {
-						current_waypoint = 0;
-						state = List_of_states.IDLE;
-
-					} else if (current_waypoint == 2) {
-						state = List_of_states.TUNNEL_CROSSING;
-					} else if (current_waypoint == 5) {
-						state = List_of_states.BRIDGE_CROSSING;
-					} else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
-							|| (current_waypoint == 10 && parameters.RedTeam == 13)) {
-						state = List_of_states.TUNNEL_CROSSING;
-					} else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
-							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
-						state = List_of_states.BRIDGE_CROSSING;
-					} else {
-						state = List_of_states.TURNING;
-					}
+					// if (current_waypoint == waypoints.length) {
+					// current_waypoint = 0;
+					// state = List_of_states.IDLE;
+					//
+					// } else if (current_waypoint == 2) {
+					// state = List_of_states.TUNNEL_CROSSING;
+					// } else if (current_waypoint == 5) {
+					// state = List_of_states.BRIDGE_CROSSING;
+					// }
+					// else if(current_waypoint == 3){
+					// isHunting = true;
+					// motorControl.turnCW();
+					// state = List_of_states.TURNING;
+					// }
+					// else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
+					// || (current_waypoint == 10 && parameters.RedTeam == 13)) {
+					// state = List_of_states.TUNNEL_CROSSING;
+					// } else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
+					// || (current_waypoint == 2 && parameters.RedTeam == 13)) {
+					// state = List_of_states.BRIDGE_CROSSING;
+					// } else {
+					state = List_of_states.TURNING;
+					// }
 					break;
-				} else if (usPoller.obstacleDetected(30)) {
+				} else if (isHunting && usPoller.obstacleDetected(30)) {
 					state = List_of_states.APPROACH;
 				}
 				break;
@@ -349,31 +352,36 @@ public class Main {
 			case APPROACH:
 
 				motorControl.stop();
-				
+
 				motorControl.moveSetDistance(15);
 				initialPosition = odometer.getXYT();
-				motorControl.dimeTurn(70);
+				motorControl.dimeTurn(40);
 				motorControl.turnCCW();
-
+				motorControl.rotateCW();
 				while (!usPoller.obstacleDetected(30)) {
-					motorControl.rotateCW();
-					sleeptime(15);
-				}
-				motorControl.dimeTurn(16);
-				motorControl.stop();
-				while (!usPoller.obstacleDetected(10)) {
-					motorControl.forward();
-					sleeptime(15);
-				}
-				motorControl.moveSetDistance(13);
-				motorControl.stop();
-				// colorPoller.detectColor();
 
+					sleeptime(15);
+				}
+				motorControl.dimeTurn(17);
+				motorControl.stop();
+				motorControl.forward();
+				while (!usPoller.obstacleDetected(10)) {
+
+					sleeptime(15);
+				}
+				motorControl.moveSetDistance(10);
+				if(colorPoller.target_found("blue")) {
+					isHunting = false;
+				}
+
+				motorControl.moveSetDistance(-2);
 				motorControl.dimeTurn(180);
 				motorControl.setLeftSpeed(100);
 				motorControl.setRightSpeed(100);
 				motorControl.forward();
 				A_loc.fix_angle();
+				motorControl.setLeftSpeed(200);
+				motorControl.setRightSpeed(200);
 				motorControl.moveSetDistance(5);
 
 				motorControl.dimeTurn(90);
@@ -381,71 +389,19 @@ public class Main {
 				motorControl.turnCW();
 				odometer.setX(initialPosition[0]);
 				odometer.setY(initialPosition[1]);
-				motorControl.moveSetDistance(5);
+				motorControl.moveSetDistance(3);
 				motorControl.setLeftSpeed(200);
 				motorControl.setRightSpeed(200);
+				motorControl.forward();
 				state = List_of_states.TRAVELLING;
 				// TODO identify color
 				break;
 			case TEST:
-				// usMotor.rotate(90,false);
-				// motorControl.turnCW();
 
-				motorControl.forward();
-				// lightPollerleft.getValue();
-				// A_loc.fix_angle_on_path();
-				// lightPollerleft.getValue();
-				// if(lightPollerRight.lessThan(18)) {
-				// Sound.beep();
-				// }
-				// if(lightPollerleft.lessThan(18)) {
-				// Sound.buzz();
-				// }
-				// lightPollerRight.getValue();
 
-				// A_loc.fix_angle_on_path();
-				if (usPoller.obstacleDetected(30)) {
-					motorControl.stop();
-					initialPosition = odometer.getXYT();
-					motorControl.moveSetDistance(15);
-					motorControl.dimeTurn(70);
-					motorControl.turnCCW();
+				colorPoller.target_found("blue");
 
-					while (!usPoller.obstacleDetected(30)) {
-						motorControl.rotateCW();
-						sleeptime(15);
-					}
-					motorControl.dimeTurn(16);
-					motorControl.stop();
-					while (!usPoller.obstacleDetected(10)) {
-						motorControl.forward();
-						sleeptime(15);
-					}
-					motorControl.moveSetDistance(13);
-					motorControl.stop();
-					// colorPoller.detectColor();
-
-					motorControl.dimeTurn(180);
-					motorControl.forward();
-					A_loc.fix_angle();
-					motorControl.moveSetDistance(5);
-					odometer.setX(initialPosition[0]);
-					odometer.setY(initialPosition[1]);
-					motorControl.dimeTurn(90);
-
-					motorControl.turnCW();
-					state = List_of_states.IDLE;
-				}
-
-				// motorControl.stop();
-				// lightPollerleft.getValue();
-				// if(lightPollerleft.underBaseline()) {
-				// Sound.beep();
-				// }
-				// while(!lightPollerleft.lessThan(30));
-				// motorControl.stop();
-
-				// state = List_of_states.IDLE;
+				 state = List_of_states.IDLE;
 				break;
 			default:
 				break;

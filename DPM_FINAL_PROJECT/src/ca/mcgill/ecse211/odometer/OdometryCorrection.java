@@ -14,7 +14,7 @@ import lejos.robotics.SampleProvider;
  *
  */
 public class OdometryCorrection implements Runnable {
-	private static final long CORRECTION_PERIOD = 10;
+	private static final long CORRECTION_PERIOD = 20;
 	private static final double SQUARE_LENGTH = 30.48;
 	private static final double ANGLE_THRESHOLD = 20;
 	private static final double LIGHTSENS_OFFSET = 4.8;

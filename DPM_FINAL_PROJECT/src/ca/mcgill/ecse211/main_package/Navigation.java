@@ -171,7 +171,6 @@ public class Navigation {
 
 		dx = (xf) - xi;
 		dy = (yf) - yi;
-		Sound.beep();
 		final_heading = getHeading(dx, dy);
 		turning_angle = min_angle(initial_heading, final_heading);
 		motorcontrol.dimeTurn(turning_angle);

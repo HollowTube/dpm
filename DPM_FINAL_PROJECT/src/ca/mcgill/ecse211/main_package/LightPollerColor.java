@@ -7,8 +7,9 @@ import lejos.robotics.SampleProvider;
 import lejos.hardware.lcd.LCD;
 
 /**
- * This class uses a probabilistic normal distribution model to detect the right colored blocks.
- * It allows identification of the correct block by choosing the highest probable one as the right one.
+ * This class uses a probabilistic normal distribution model to detect the right
+ * colored blocks. It allows identification of the correct block by choosing the
+ * highest probable one as the right one.
  * 
  * @author Tritin
  *
@@ -18,24 +19,25 @@ public class LightPollerColor {
 	private SampleProvider lt;
 	private float[] ltdata;
 	public MotorControl motorcontrol;
- 
 
-	private Color red_block = new Color(0.20767974f, 0.027133795f, 0.015695887f, 0.3038505f, 0.04516072f, 0.02923487f,
+	private Color red_block = new Color(0.16767974f, 0.017133795f, 0.015695887f, 0.3038505f, 0.04516072f, 0.02923487f,
 			"red");
 	private Color blue_block = new Color(0.035873442f, 0.058556151f, 0.059581107f, 0.04077874f, 0.05821204f,
-			0.004725411f, "blue");
-	private Color yellow_block = new Color(0.30775123f, 0.221819854f, 0.246875f, 0.9973893f, 0.5888729f, 0.1106323f,
+			0.04725411f, "blue");
+	private Color yellow_block = new Color(0.24775123f, 0.141819854f, 0.0246875f, 0.5973893f, 0.5888729f, 0.05106323f,
 			"yellow");
-	private Color white_block = new Color(0.325635933f, 0.246581879f, 0.145455755f, 0.32806904f, 0.33583433f,
-			0.1739245f, "white");
+	private Color white_block = new Color(0.244844f, 0.226581879f, 0.135455755f, 0.32806904f, 0.33583433f,
+			0.05739245f, "white");
 	ArrayList<Color> colors = new ArrayList<Color>();
 
 	/**
-	 * LightPollerColor class constructor.
-	 * It is comprised of the SampleProvider sample of the sensor and its value.
+	 * LightPollerColor class constructor. It is comprised of the SampleProvider
+	 * sample of the sensor and its value.
 	 * 
-	 * @param lt Light sensor sample
-	 * @param ltdata Value of sample  
+	 * @param lt
+	 *            Light sensor sample
+	 * @param ltdata
+	 *            Value of sample
 	 */
 	public LightPollerColor(SampleProvider lt, float[] ltdata) {
 		this.lt = lt;
@@ -43,9 +45,10 @@ public class LightPollerColor {
 	}
 
 	/**
-	 * Method to calibrate the light sensor for each different colored block. 
-	 * Each time it is called, it collects data on the RGB values for a specific block.
-	 * This will not be used once calibration in the right light condition is finished.
+	 * Method to calibrate the light sensor for each different colored block. Each
+	 * time it is called, it collects data on the RGB values for a specific block.
+	 * This will not be used once calibration in the right light condition is
+	 * finished.
 	 * 
 	 */
 	public void calibrate() {
@@ -63,12 +66,13 @@ public class LightPollerColor {
 			}
 		}
 
-		Sound.beep();
+//		Sound.beep();
 	}
 
 	/**
-	 * This method obtains the average out of 10 samples for RGB values detected by the light sensor.
-	 * This is used when trying to identify the right colored block.
+	 * This method obtains the average out of 10 samples for RGB values detected by
+	 * the light sensor. This is used when trying to identify the right colored
+	 * block.
 	 * 
 	 * @return Average array [avg_red, avg_green, avg_blue]
 	 */
@@ -95,13 +99,16 @@ public class LightPollerColor {
 	}
 
 	/**
-	 * This method uses the mean and standard deviation found for each color during calibration
-	 * to obtain the probability for each color. It uses a normal distribution model for each RGB value.
-	 * Then, it compares the reading with each distribution and finds an average probability.
+	 * This method uses the mean and standard deviation found for each color during
+	 * calibration to obtain the probability for each color. It uses a normal
+	 * distribution model for each RGB value. Then, it compares the reading with
+	 * each distribution and finds an average probability.
 	 * 
 	 * 
-	 * @param color Block Color
-	 * @param reading Reading obtained by the light sensor
+	 * @param color
+	 *            Block Color
+	 * @param reading
+	 *            Reading obtained by the light sensor
 	 * @return Average probability of Block Color from RGB values
 	 */
 	private double getProbability(Color color, float[] reading) {
@@ -112,11 +119,13 @@ public class LightPollerColor {
 		green_dist = Math.abs(color.green_mean - reading[1]);
 		blue_dist = Math.abs(color.blue_mean - reading[2]);
 
+
 		red_prob = (float) (1 - color.red.probability(color.getRed_mean() - red_dist, color.getRed_mean() + red_dist));
 		green_prob = (float) (1
 				- (color.green.probability(color.getGreen_mean() - green_dist, color.getGreen_mean() + green_dist)));
 		blue_prob = (float) (1
 				- (color.red.probability(color.getBlue_mean() - blue_dist, color.getBlue_mean() + blue_dist)));
+		
 
 		// returns the average probability of each probability
 		return (red_prob + green_prob + blue_prob) / 3;
@@ -124,27 +133,28 @@ public class LightPollerColor {
 
 	/**
 	 * This method displays the color detected, either red, blue, yellow or white.
-	 * It uses the reading from the light sensor and finds the probability of that reading with each color.
-	 * It then chooses the largest one by comparing each value once and retaining the larger one each team.
-	 * Whichever color has the maximum probability, the LCD displays it.
+	 * It uses the reading from the light sensor and finds the probability of that
+	 * reading with each color. It then chooses the largest one by comparing each
+	 * value once and retaining the larger one each team. Whichever color has the
+	 * maximum probability, the LCD displays it.
 	 * 
 	 */
 	public void detectColor() {
-		double prob_red = 0, prob_blue = 0, prob_yellow = 0,
-				prob_white = 0;
+		double prob_red = 0, prob_blue = 0, prob_yellow = 0, prob_white = 0;
 		double max_prob;
 		lt.fetchSample(ltdata, 0);
 		float[] reading = getAverageMeasurement();
+		
 
 		prob_yellow = getProbability(yellow_block, reading);
 		prob_blue = getProbability(blue_block, reading);
 		prob_red = getProbability(red_block, reading);
 		prob_white = getProbability(white_block, reading);
 
-		// System.out.println("yellow " + prob_yellow);
-		// System.out.println("blue " + prob_blue);
-		// System.out.println("red " + prob_red);
-		// System.out.println("white " + prob_white);
+		System.out.println("yellow " + prob_yellow);
+		System.out.println("blue " + prob_blue);
+		System.out.println("red " + prob_red);
+		System.out.println("white " + prob_white);
 
 		max_prob = Math.max(Math.max(Math.max(prob_blue, prob_yellow), prob_red), prob_white);
 
@@ -160,15 +170,15 @@ public class LightPollerColor {
 	}
 
 	/**
-	 * If the color scanned is the target color, the robot will beep twice and return true
-	 * else will beep once and return false.
+	 * If the color scanned is the target color, the robot will beep twice and
+	 * return true else will beep once and return false.
 	 * 
-	 * @param name Target block color
+	 * @param name
+	 *            Target block color
 	 * @return True if TB is found, false otherwise
 	 */
 	public boolean target_found(String name) {
-		double prob_red = 0, prob_blue = 0, prob_yellow = 0,
-				prob_white = 0, max_prob = 0;
+		double prob_red = 0, prob_blue = 0, prob_yellow = 0, prob_white = 0, max_prob = 0;
 		String max_color;
 
 		lt.fetchSample(ltdata, 0);
@@ -209,9 +219,11 @@ public class LightPollerColor {
 	}
 
 	/**
-	 * This method makes sure that that the colored block chosen is the one with highest probability.
+	 * This method makes sure that that the colored block chosen is the one with
+	 * highest probability.
 	 * 
-	 * @param list Array with each probability
+	 * @param list
+	 *            Array with each probability
 	 * @return Color having maximum probability
 	 */
 	public Color max_color(ArrayList<Color> list) {
