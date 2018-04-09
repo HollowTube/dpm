@@ -108,12 +108,7 @@ public class Main {
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
 		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerRight, ulLoc);
 		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerRight);
-		//
-		// lcd.drawString("< Left | Right >", 0, 0);
-		// lcd.drawString(" No | ", 0, 1);
-		// lcd.drawString(" wifi | wifi ", 0, 2);
-		// lcd.drawString(" | ", 0, 3);
-		// lcd.drawString(" | ", 0, 4);
+		Search search = new Search(usPoller, A_loc, navigator, colorPoller);
 		Parameter_intake parameters = Parameter_intake.getParameter();
 
 		// buttonChoice = Button.waitForAnyPress();
@@ -147,7 +142,7 @@ public class Main {
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
-		int[][] waypoints = { { 0, 3 }, { 2, 3 }, { 2, 0 }, { 0, 0 }, { 1, 8 }, { 1, 2 } };
+		int[][] waypoints = { { 0, 2 }, { 3, 2 }, { 3, 0 }, { 0, 0 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
@@ -171,8 +166,8 @@ public class Main {
 		// Testing.straightLine();
 		// }
 		// Start odometer and display threads
-//		Thread odoDisplayThread = new Thread(odometryDisplay);
-//		odoDisplayThread.start();
+		Thread odoDisplayThread = new Thread(odometryDisplay);
+		odoDisplayThread.start();
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
@@ -189,7 +184,7 @@ public class Main {
 		state = List_of_states.TURNING;
 		motorControl.setLeftSpeed(200);
 		motorControl.setRightSpeed(200);
-//		motorControl.forward();
+		// motorControl.forward();
 		odometer.setXYT(0, 0, 0);
 		while (true) {
 			switch (state) {
@@ -226,7 +221,7 @@ public class Main {
 				motorControl.setLeftSpeed(200);
 				motorControl.setRightSpeed(200);
 				while (Button.waitForAnyPress() != Button.ID_UP)
-					sleeptime(50); // waits until the up button is pressed
+					sleepTime(50); // waits until the up button is pressed
 
 				state = List_of_states.TEST;
 				break;
@@ -239,6 +234,7 @@ public class Main {
 				navigator.turn_to_destination(xf, yf);
 				motorControl.backward();
 				A_loc.fix_angle();
+				motorControl.stop();
 				motorControl.moveSetDistance(2);
 				motorControl.forward();
 				state = List_of_states.TRAVELLING;
@@ -248,41 +244,39 @@ public class Main {
 			case TRAVELLING:
 
 				// navigator.travelTo(xf, yf);
-				
+
 				A_loc.fix_angle_on_path();
 				motorControl.forward();
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
 
-					motorControl.moveSetDistance(2);
+					motorControl.moveSetDistance(3);
 					current_waypoint++;
 
 					// resets the machine to its initial state
-					// if (current_waypoint == waypoints.length) {
-					// current_waypoint = 0;
-					// state = List_of_states.IDLE;
-					//
-					// } else if (current_waypoint == 2) {
-					// state = List_of_states.TUNNEL_CROSSING;
-					// } else if (current_waypoint == 5) {
-					// state = List_of_states.BRIDGE_CROSSING;
-					// }
-					// else if(current_waypoint == 3){
-					// isHunting = true;
-					// motorControl.turnCW();
-					// state = List_of_states.TURNING;
-					// }
-					// else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
-					// || (current_waypoint == 10 && parameters.RedTeam == 13)) {
-					// state = List_of_states.TUNNEL_CROSSING;
-					// } else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
-					// || (current_waypoint == 2 && parameters.RedTeam == 13)) {
-					// state = List_of_states.BRIDGE_CROSSING;
-					// } else {
-					state = List_of_states.TURNING;
-					// }
+					if (current_waypoint == waypoints.length) {
+						current_waypoint = 0;
+						state = List_of_states.IDLE;
+
+					} else if (current_waypoint == 2) {
+						state = List_of_states.TUNNEL_CROSSING;
+					} else if (current_waypoint == 5) {
+						state = List_of_states.BRIDGE_CROSSING;
+					} else if (current_waypoint == 3) {
+						isHunting = true;
+						motorControl.turnCW();
+						state = List_of_states.TURNING;
+					} else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
+							|| (current_waypoint == 10 && parameters.RedTeam == 13)) {
+						state = List_of_states.TUNNEL_CROSSING;
+					} else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
+							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
+						state = List_of_states.BRIDGE_CROSSING;
+					} else {
+						state = List_of_states.TURNING;
+					}
 					break;
-				} else if (isHunting && usPoller.obstacleDetected(30)) {
+				} else if (isHunting && usPoller.obstacleDetected(35)) {
 					state = List_of_states.APPROACH;
 				}
 				break;
@@ -333,80 +327,30 @@ public class Main {
 					odometer.setX(xf * TILE_SIZE);
 					odometer.setY(yf * TILE_SIZE);
 				} catch (OdometerExceptions e) {
-
 				}
 
 				current_waypoint++;
 				state = List_of_states.TURNING;
 				break;
-
-			case SEARCHING:
-				motorControl.forward();
-				A_loc.fix_angle_on_path();
-				if (usPoller.obstacleDetected(20)) {
-					motorControl.stop();
-					state = List_of_states.APPROACH;
-				}
-
-				break;
 			case APPROACH:
 
-				motorControl.stop();
-
-				motorControl.moveSetDistance(15);
-				initialPosition = odometer.getXYT();
-				motorControl.dimeTurn(40);
-				motorControl.turnCCW();
-				motorControl.rotateCW();
-				while (!usPoller.obstacleDetected(30)) {
-
-					sleeptime(15);
-				}
-				motorControl.dimeTurn(17);
-				motorControl.stop();
-				motorControl.forward();
-				while (!usPoller.obstacleDetected(10)) {
-
-					sleeptime(15);
-				}
-				motorControl.moveSetDistance(10);
-				if(colorPoller.target_found("blue")) {
+				if (search.DoSearch()) {
 					isHunting = false;
 				}
 
-				motorControl.moveSetDistance(-2);
-				motorControl.dimeTurn(180);
-				motorControl.setLeftSpeed(100);
-				motorControl.setRightSpeed(100);
-				motorControl.forward();
-				A_loc.fix_angle();
-				motorControl.setLeftSpeed(200);
-				motorControl.setRightSpeed(200);
-				motorControl.moveSetDistance(5);
-
-				motorControl.dimeTurn(90);
-
-				motorControl.turnCW();
-				odometer.setX(initialPosition[0]);
-				odometer.setY(initialPosition[1]);
-				motorControl.moveSetDistance(3);
-				motorControl.setLeftSpeed(200);
-				motorControl.setRightSpeed(200);
-				motorControl.forward();
 				state = List_of_states.TRAVELLING;
 				// TODO identify color
 				break;
 			case TEST:
 
-
 				colorPoller.target_found("blue");
 
-				 state = List_of_states.IDLE;
+				state = List_of_states.IDLE;
 				break;
 			default:
 				break;
 			}
-			sleeptime(15);
+			sleepTime(15);
 			// LCD.clear();
 		}
 	}
@@ -417,7 +361,7 @@ public class Main {
 	 * @param time
 	 *            sleep time
 	 */
-	public static void sleeptime(int time) {
+	public static void sleepTime(int time) {
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException e) {
