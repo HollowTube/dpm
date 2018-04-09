@@ -7,7 +7,10 @@ import ca.mcgill.ecse211.main_package.MotorControl;
 
 /**
  * This class is in charge of performing the full localization using the Ultrasonic sensor first
- * to get an initial orientation idea and then the lightsensor afterwards to perfectly correct the values.
+ * to get an initial orientation idea and then the lightsensors afterwards to perfectly place the robot
+ * at the desired known coordinate and set the odometer data to the correct values. It contains three methods
+ * for localizing, one of which is to localize position on the field, another for the heading with the use of a wall
+ * and the previous for a corner localization
  * 
  * @author Alexandre
  *

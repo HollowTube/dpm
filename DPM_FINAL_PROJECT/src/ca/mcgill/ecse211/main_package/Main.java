@@ -123,29 +123,34 @@ public class Main {
 		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
-				// { parameters.SR_UR_x, parameters.TN_end_y(parameters.TN_coord_y()) },
-				// { parameters.SR_UR_x, parameters.SR_LL_y }, { parameters.SR_LL_x,
-				// parameters.SR_UR_y },
-				// { parameters.Red_start_coord_x(), parameters.SR_UR_y },
-				// { parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
-				// { parameters.Red_start_coord_x(), parameters.BR_coord_y() },
-				{ parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
+				{ parameters.SR_LL_x, parameters.TN_end_y(parameters.TN_coord_y()) },
+				{ parameters.SR_LL_x, parameters.SR_LL_y }, //Search starts after arriving here
+				{ parameters.SR_LL_x, parameters.SR_UR_y }, 
+				{ parameters.SR_UR_x, parameters.SR_UR_y },
+				{ parameters.SR_UR_x, parameters.SR_LL_y },
+				{ parameters.SR_LL_x, parameters.SR_LL_y },
+//				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
+//				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+//				{ parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
+				{ parameters.BR_coord_x(), parameters.SR_LL_y },
 				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
-				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
+				{ parameters.Green_start_coord_x(), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() } };
 
 		int[][] Red_waypoints = { { parameters.Red_start_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
-				{ parameters.SG_UR_x, parameters.BR_end_y(parameters.BR_coord_y()) },
-				{ parameters.SG_UR_x, parameters.SG_LL_y }, { parameters.SG_LL_x, parameters.SG_UR_y },
-				{ parameters.Green_start_coord_x(), parameters.SG_UR_y },
-				{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() },
-				{ parameters.Green_start_coord_x(), parameters.TN_coord_y() },
+				{ parameters.SG_LL_x, parameters.BR_end_y(parameters.BR_coord_y()) },
+				{ parameters.SG_LL_x, parameters.SG_LL_y }, //Search starts after arriving here
+				{ parameters.SG_LL_x, parameters.SG_UR_y }, 
+				{ parameters.SG_UR_x, parameters.SG_UR_y },
+				{ parameters.SG_UR_x, parameters.SG_LL_y },
+				{ parameters.SG_LL_x, parameters.SG_LL_y },
+				{ parameters.TN_coord_x(), parameters.SG_LL_y },
 				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
-				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+				{ parameters.Red_start_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
 		int[][] waypoints = { { 0, 3 }, { 2, 3 }, { 2, 0 }, { 0, 0 }, { 1, 8 }, { 1, 2 } };
 		int current_waypoint = 0;
@@ -267,15 +272,15 @@ public class Main {
 					// } else if (current_waypoint == 5) {
 					// state = List_of_states.BRIDGE_CROSSING;
 					// }
-					// else if(current_waypoint == 3){
+					// else if(current_waypoint == 5){
 					// isHunting = true;
 					// motorControl.turnCW();
 					// state = List_of_states.TURNING;
 					// }
 					// else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
-					// || (current_waypoint == 10 && parameters.RedTeam == 13)) {
+					// || (current_waypoint == 11 && parameters.RedTeam == 13)) {
 					// state = List_of_states.TUNNEL_CROSSING;
-					// } else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
+					// } else if ((current_waypoint == 11 && parameters.GreenTeam == 13)
 					// || (current_waypoint == 2 && parameters.RedTeam == 13)) {
 					// state = List_of_states.BRIDGE_CROSSING;
 					// } else {
