@@ -19,7 +19,7 @@ public class Angle_Localization {
 	private static MotorControl motorcontrol;
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
-	private float thresholdRight = 19f;
+	private float thresholdRight = 20f;
 	private float thresholdLeft = 16f;
 
 	double initial_position[];

@@ -74,7 +74,8 @@ public class Main {
 	static LightPoller lightPollerRight = new LightPoller(colorRGBSensorReflectedRight, sampleReflectedRight);
 	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
 	final static LightPollerColor colorPoller = new LightPollerColor(colorRGBSensor, sample);
-
+	
+	private static final long CORRECTION_PERIOD = 25;
 	// State declerations
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, TEST, BRIDGE_CROSSING, TRAVELLING, TUNNEL_CROSSING, APPROACH
@@ -102,7 +103,7 @@ public class Main {
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
 		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerRight, ulLoc);
 		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerRight);
-		//Search search = new Search(usPoller, A_loc, navigator, colorPoller);
+		Search search = new Search(usPoller, A_loc, navigator, colorPoller);
 		Parameter_intake parameters = Parameter_intake.getParameter();
 
 		// instance variables
@@ -166,12 +167,13 @@ public class Main {
 
 		Thread odoCorrectionThread = new Thread(odometryCorrection);
 		odoCorrectionThread.start();
-
+		long correctionStart, correctionEnd;
 		// set initial state
 		state = List_of_states.INITIALIZE;
 		motorControl.setLeftSpeed(200);
 		motorControl.setRightSpeed(200);
 		while (true) {
+			correctionStart = System.currentTimeMillis();
 			switch (state) {
 
 			/**
@@ -207,8 +209,8 @@ public class Main {
 			// do nothing until button is pressed up
 			case IDLE:
 				odometer.setXYT(1 * TILE_SIZE + 0.01, 1 * TILE_SIZE + 0.01, 90);
-				motorControl.setLeftSpeed(200);
-				motorControl.setRightSpeed(200);
+				motorControl.setLeftSpeed(190);
+				motorControl.setRightSpeed(190);
 				while (Button.waitForAnyPress() != Button.ID_UP)
 					sleepTime(50); // waits until the up button is pressed
 
@@ -221,9 +223,9 @@ public class Main {
 			 * 
 			 */
 			case TURNING:
-				sleepTime(200);
-				motorControl.setLeftSpeed(200);
-				motorControl.setRightSpeed(200);
+				sleepTime(500);
+				motorControl.setLeftSpeed(190);
+				motorControl.setRightSpeed(190);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
 
@@ -285,9 +287,11 @@ public class Main {
 						state = List_of_states.BRIDGE_CROSSING;
 					} else if (current_waypoint == 5) {
 						motorControl.turnCW();
+						//isHunting = true;
 						state = List_of_states.TURNING;
 					} else if (current_waypoint == 9) {
 						motorControl.turnCCW();
+						//isHunting = false;
 						state = List_of_states.TURNING;
 					} else {
 						state = List_of_states.TURNING;
@@ -310,7 +314,7 @@ public class Main {
 				// --------------------
 
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
-				motorControl.moveSetDistance(15);
+				motorControl.moveSetDistance(15.5);
 				motorControl.dimeTurn(90);
 				motorControl.setLeftSpeed(150);
 				motorControl.setRightSpeed(150);
@@ -322,8 +326,8 @@ public class Main {
 				// Actual crossing
 				// ----------------------------------
 
-				motorControl.setLeftSpeed(250);
-				motorControl.setRightSpeed(250);
+				motorControl.setLeftSpeed(360);
+				motorControl.setRightSpeed(360);
 				motorControl.moveSetDistance(110);
 
 				// --------------------
@@ -350,7 +354,7 @@ public class Main {
 				// Localize before crossing
 				// --------------------
 				navigator.offset90(xf * TILE_SIZE + 0.01, yf * TILE_SIZE + 0.01);
-				motorControl.moveSetDistance(15);
+				motorControl.moveSetDistance(15.5);
 				motorControl.dimeTurn(90);
 				motorControl.backward();
 				A_loc.fix_angle();
@@ -359,8 +363,8 @@ public class Main {
 				// --------------------
 				// Actual crossing
 				// --------------------
-				motorControl.setLeftSpeed(250);
-				motorControl.setRightSpeed(250);
+				motorControl.setLeftSpeed(360);
+				motorControl.setRightSpeed(360);
 				motorControl.moveSetDistance(110);
 
 				// --------------------
@@ -401,7 +405,14 @@ public class Main {
 			default:
 				break;
 			}
-			sleepTime(15);
+			correctionEnd = System.currentTimeMillis();
+			if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
+				try {
+					Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
+				} catch (InterruptedException e) {
+					// there is nothing to be done here
+				}
+			}
 		}
 	}
 

@@ -129,8 +129,8 @@ public class Parameter_intake {
 			this.BR_UR_y = ((Long) data.get("BR_UR_y")).intValue();
 			this.SR_LL_x = ((Long) data.get("SR_LL_x")).intValue();
 			this.SR_LL_y = ((Long) data.get("SR_LL_y")).intValue();			
-			this.SR_UR_x = ((Long) data.get("SR_UR_y")).intValue();			
-			this.SR_UR_y = ((Long) data.get("SR_UR_x")).intValue();			
+			this.SR_UR_x = ((Long) data.get("SR_UR_x")).intValue();			
+			this.SR_UR_y = ((Long) data.get("SR_UR_y")).intValue();			
 			this.SG_LL_x = ((Long) data.get("SG_LL_x")).intValue();			
 			this.SG_LL_y = ((Long) data.get("SG_LL_y")).intValue();			
 			this.SG_UR_x = ((Long) data.get("SG_UR_x")).intValue();			
