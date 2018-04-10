@@ -112,7 +112,7 @@ public class Main {
 		Parameter_intake parameters = Parameter_intake.getParameter();
 
 		// buttonChoice = Button.waitForAnyPress();
-		//parameters.wifiIntake();
+		parameters.wifiIntake();
 
 		int[][] waypoints = null;
 		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
