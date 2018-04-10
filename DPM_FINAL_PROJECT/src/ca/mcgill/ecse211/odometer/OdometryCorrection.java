@@ -2,8 +2,6 @@
  * OdometryCorrection.java
  */
 package ca.mcgill.ecse211.odometer;
-
-import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
 /**
@@ -37,6 +35,12 @@ public class OdometryCorrection implements Runnable {
 
 	}
 
+	/**
+	 * Simple boolean threshold trigger, returns true when light value in the left
+	 * sensor falls below a threshold
+	 * 
+	 * @return
+	 */
 	public boolean correctionTrigger() {
 		lt.fetchSample(ltdata, 0);
 		lightVal = (int) (ltdata[0] * 100);

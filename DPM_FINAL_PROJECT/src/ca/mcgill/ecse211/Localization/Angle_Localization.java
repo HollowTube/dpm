@@ -3,8 +3,6 @@ package ca.mcgill.ecse211.Localization;
 import ca.mcgill.ecse211.main_package.LightPoller;
 import ca.mcgill.ecse211.main_package.MotorControl;
 import ca.mcgill.ecse211.odometer.*;
-import lejos.hardware.Sound;
-import lejos.robotics.SampleProvider;
 
 /**
  * This class is in charge to make the robot's orientation exactly pointing in
@@ -21,7 +19,6 @@ public class Angle_Localization {
 	private static MotorControl motorcontrol;
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
-	private UltrasonicLocalizer USL;
 	private float thresholdRight = 19f;
 	private float thresholdLeft = 16f;
 
@@ -45,7 +42,6 @@ public class Angle_Localization {
 		Angle_Localization.motorcontrol = MotorControl.getMotor();
 		this.left_sensor = L_sens;
 		this.right_sensor = R_sens;
-		this.USL = USL;
 	}
 
 	/**
@@ -62,8 +58,8 @@ public class Angle_Localization {
 	 */
 	public void fix_angle() {
 		while (true) {
-//			left_sensor.getValue();
-//			right_sensor.getValue();
+			// left_sensor.getValue();
+			// right_sensor.getValue();
 			// if (USL.getDistance() < 20) {
 			// avoid_obstacle();
 			if (right_sensor.lessThan(thresholdRight)) {
@@ -92,20 +88,6 @@ public class Angle_Localization {
 	}
 
 	/**
-	 * 
-	 */
-	private void avoid_obstacle() {
-		motorcontrol.stop();
-		motorcontrol.dimeTurn(90);
-		motorcontrol.moveSetDistance(15);
-		motorcontrol.dimeTurn(-90);
-		motorcontrol.moveSetDistance(20);
-		motorcontrol.dimeTurn(-90);
-		motorcontrol.moveSetDistance(15);
-		motorcontrol.dimeTurn(90);
-	}
-
-	/**
 	 * Method to stop the robot while on path with a wheel track parallel to the
 	 * grid line. The robot must be put in forward motion before calling the method.
 	 * <p>
@@ -118,17 +100,17 @@ public class Angle_Localization {
 	 * @author Tri-tin Truong
 	 */
 	public void fix_angle_on_path() {
-//		left_sensor.getValue();
-//		right_sensor.getValue();
+		// left_sensor.getValue();
+		// right_sensor.getValue();
 		if (right_sensor.lessThan(thresholdRight) && !recovery) {
 			motorcontrol.rightStop();
-//			Sound.buzz();
+			// Sound.buzz();
 			while (!left_sensor.lessThan(thresholdLeft)) {
-//				left_sensor.getValue();
+				// left_sensor.getValue();
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
 			}
@@ -139,13 +121,13 @@ public class Angle_Localization {
 
 		} else if (left_sensor.lessThan(thresholdLeft) && !recovery) {
 			motorcontrol.leftStop();
-//			Sound.beep();
+			// Sound.beep();
 			while (!right_sensor.lessThan(thresholdRight)) {
-//				right_sensor.getValue();
+				// right_sensor.getValue();
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
 			}

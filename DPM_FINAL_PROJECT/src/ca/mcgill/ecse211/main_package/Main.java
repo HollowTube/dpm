@@ -227,9 +227,9 @@ public class Main {
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
 
-				//--------------------
+				// --------------------
 				// Checks if robot already at destination and skips a point if this happens
-				//--------------------
+				// --------------------
 				if (current_waypoint != 0 && waypoints[current_waypoint][0] == waypoints[current_waypoint - 1][0]
 						&& waypoints[current_waypoint][1] == waypoints[current_waypoint - 1][1]) {
 					current_waypoint++;
@@ -275,6 +275,8 @@ public class Main {
 						current_waypoint = 0;
 						state = List_of_states.IDLE;
 
+						
+//						do tunnel crossing
 					} else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 11 && parameters.RedTeam == 13)) {
 						state = List_of_states.TUNNEL_CROSSING;
@@ -340,7 +342,7 @@ public class Main {
 				break;
 
 			case TUNNEL_CROSSING:
-
+				// sets new waypoints
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
 
@@ -400,7 +402,6 @@ public class Main {
 				break;
 			}
 			sleepTime(15);
-			// LCD.clear();
 		}
 	}
 
