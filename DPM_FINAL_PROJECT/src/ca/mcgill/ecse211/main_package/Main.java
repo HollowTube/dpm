@@ -114,21 +114,18 @@ public class Main {
 		// buttonChoice = Button.waitForAnyPress();
 		// parameters.wifiIntake();
 
-		// int[][] waypoints = null;
+		int[][] waypoints = null;
 		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.SR_LL_x, parameters.TN_end_y(parameters.TN_coord_y()) },
-				{ parameters.SR_LL_x, parameters.SR_LL_y }, //Search starts after arriving here
-				{ parameters.SR_LL_x, parameters.SR_UR_y }, 
-				{ parameters.SR_UR_x, parameters.SR_UR_y },
-				{ parameters.SR_UR_x, parameters.SR_LL_y },
-				{ parameters.SR_LL_x, parameters.SR_LL_y },
-//				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
-//				{ parameters.Red_start_coord_x(), parameters.BR_coord_y() },
-//				{ parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
-				{ parameters.BR_coord_x(), parameters.SR_LL_y },
-				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
+				{ parameters.SR_LL_x, parameters.SR_LL_y }, // Search starts after arriving here
+				{ parameters.SR_LL_x, parameters.SR_UR_y }, { parameters.SR_UR_x, parameters.SR_UR_y },
+				{ parameters.SR_UR_x, parameters.SR_LL_y }, { parameters.SR_LL_x, parameters.SR_LL_y },
+				// { parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
+				// { parameters.Red_start_coord_x(), parameters.BR_coord_y() },
+				// { parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
+				{ parameters.BR_coord_x(), parameters.SR_LL_y }, { parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.Green_start_coord_x(), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.Green_start_coord_x(), parameters.Green_start_coord_y() } };
@@ -137,8 +134,8 @@ public class Main {
 				{ parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.SG_LL_x, parameters.BR_end_y(parameters.BR_coord_y()) },
-				{ parameters.SG_LL_x, parameters.SG_LL_y }, //Search starts after arriving here
-				{ parameters.SG_LL_x, parameters.SG_UR_y }, 
+				{ parameters.SG_LL_x, parameters.SG_LL_y }, // Search starts after arriving here
+				{ parameters.SG_LL_x, parameters.SG_UR_y },
 				{ parameters.SG_UR_x, parameters.SG_UR_y },
 				{ parameters.SG_UR_x, parameters.SG_LL_y },
 				{ parameters.SG_LL_x, parameters.SG_LL_y },
@@ -147,17 +144,17 @@ public class Main {
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
-		int[][] waypoints = { { 0, 2 }, { 3, 2 }, { 3, 0 }, { 0, 0 } };
+		// int[][] waypoints = { { 0, 2 }, { 3, 2 }, { 3, 0 }, { 0, 0 } };
 		int current_waypoint = 0;
 		double xf = 0;
 		double yf = 0;
 		double initialPosition[];
-		boolean isHunting = true;
-		// if (parameters.GreenTeam == 13) {
-		// waypoints = Green_waypoints;
-		// } else {
-		// waypoints = Red_waypoints;
-		// }
+		boolean isHunting = false;
+		if (parameters.GreenTeam == 13) {
+			waypoints = Green_waypoints;
+		} else {
+			waypoints = Red_waypoints;
+		}
 
 		lcd.clear();
 
@@ -186,7 +183,7 @@ public class Main {
 		// not get stuck in a loop
 
 		// set initial state
-		state = List_of_states.TURNING;
+		state = List_of_states.INITIALIZE;
 		motorControl.setLeftSpeed(200);
 		motorControl.setRightSpeed(200);
 		// motorControl.forward();
@@ -232,10 +229,24 @@ public class Main {
 				break;
 			// dime turn towards necessary destination
 			case TURNING:
+				sleepTime(100);
 				motorControl.setLeftSpeed(200);
 				motorControl.setRightSpeed(200);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
+
+				if (current_waypoint != 0 && waypoints[current_waypoint][0] == waypoints[current_waypoint - 1][0]
+						&& waypoints[current_waypoint][1] == waypoints[current_waypoint - 1][1]) {
+					current_waypoint++;
+					if ((current_waypoint == 2 && parameters.GreenTeam == 13)
+							|| (current_waypoint == 11 && parameters.RedTeam == 13)) {
+						state = List_of_states.TUNNEL_CROSSING;
+					} else if ((current_waypoint == 11 && parameters.GreenTeam == 13)
+							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
+						state = List_of_states.BRIDGE_CROSSING;
+					}
+					break;
+				}
 				navigator.turn_to_destination(xf, yf);
 				motorControl.backward();
 				A_loc.fix_angle();
@@ -247,8 +258,6 @@ public class Main {
 
 			// travels to waypoints while scanning for objects
 			case TRAVELLING:
-
-				// navigator.travelTo(xf, yf);
 
 				A_loc.fix_angle_on_path();
 				motorControl.forward();
@@ -263,18 +272,10 @@ public class Main {
 						current_waypoint = 0;
 						state = List_of_states.IDLE;
 
-					} else if (current_waypoint == 2) {
-						state = List_of_states.TUNNEL_CROSSING;
-					} else if (current_waypoint == 5) {
-						state = List_of_states.BRIDGE_CROSSING;
-					} else if (current_waypoint == 3) {
-						isHunting = true;
-						motorControl.turnCW();
-						state = List_of_states.TURNING;
 					} else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
-							|| (current_waypoint == 10 && parameters.RedTeam == 13)) {
+							|| (current_waypoint == 11 && parameters.RedTeam == 13)) {
 						state = List_of_states.TUNNEL_CROSSING;
-					} else if ((current_waypoint == 10 && parameters.GreenTeam == 13)
+					} else if ((current_waypoint == 11 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
 					} else {
@@ -342,9 +343,12 @@ public class Main {
 				if (search.DoSearch()) {
 					isHunting = false;
 				}
+				motorControl.setLeftSpeed(200);
+				motorControl.setRightSpeed(200);
+				navigator.turn_to_destination(xf, yf);
 
 				state = List_of_states.TRAVELLING;
-				// TODO identify color
+
 				break;
 			case TEST:
 

@@ -13,20 +13,20 @@ package ca.mcgill.ecse211.main_package;
 //import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 
 public class Parameter_intake {
-	public int RedTeam; 		//Team starting from red zone
-	public int GreenTeam = 13;   	//Team starting from green zone
-	public int RedCorner;		//Starting corner for red team
-	public int GreenCorner = 1;		//Starting corner for green team
+	public int RedTeam =1; 		//Team starting from red zone
+	public int GreenTeam =13;   	//Team starting from green zone
+	public int RedCorner = 2;		//Starting corner for red team
+	public int GreenCorner = 4;		//Starting corner for green team
 	public int OG;				//color of green opponent flag
 	public int OR;				//color of red opponent flag
-	public int Red_LL_x = 0;		//x coordinate of lower left hand corner of Red Zone
-	public int Red_LL_y = 5;		//y coordinate of lower left hand corner of Red Zone
+	public int Red_LL_x = 2;		//x coordinate of lower left hand corner of Red Zone
+	public int Red_LL_y = 0;		//y coordinate of lower left hand corner of Red Zone
 	public int Red_UR_x = 8;		//x coordinate of upper right hand corner of Red Zone
-	public int Red_UR_y = 8;		//y coordinate of upper right hand corner of Red Zone
+	public int Red_UR_y = 3;		//y coordinate of upper right hand corner of Red Zone
 	public int Green_LL_x = 0;		//x coordinate of lower left hand corner of Green Zone
-	public int Green_LL_y = 0;		//y coordinate of lower left hand corner of Green Zone
-	public int Green_UR_x = 8;		//x coordinate of upper right hand corner of Green Zone
-	public int Green_UR_y = 3;		//y coordinate of upper right hand corner of Green Zone
+	public int Green_LL_y = 5;		//y coordinate of lower left hand corner of Green Zone
+	public int Green_UR_x = 6;		//x coordinate of upper right hand corner of Green Zone
+	public int Green_UR_y = 8;		//y coordinate of upper right hand corner of Green Zone
 	public int TN_LL_x = 3;			//x coordinate of lower left corner of the tunnel footprint
 	public int TN_LL_y = 3;			//y coordinate of lower left corner of the tunnel footprint
 	public int TN_UR_x = 4;			//x coordinate of upper right corner of the tunnel footprint
@@ -35,14 +35,14 @@ public class Parameter_intake {
 	public int BR_LL_y = 3;			//y coordinate of lower left corner of the bridge footprint
 	public int BR_UR_x = 6;			//x coordinate of upper right corner of the bridge footprint
 	public int BR_UR_y = 5;			//y coordinate of upper right corner of the bridge footprint
-	public int SR_LL_x;			//x coordinate of lower left corner of the search region in red player zone
-	public int SR_LL_y;			//y coordinate of lower left corner of the search region in red player zone
-	public int SR_UR_x;			//x coordinate of upper right corner of the search region in red player zone
-	public int SR_UR_y;			//y coordinate of upper right corner of the search region in red player zone
-	public int SG_LL_x;			//x coordinate of lower left corner of the search region in green player zone
-	public int SG_LL_y;			//y coordinate of lower left corner of the search region in green player zone
-	public int SG_UR_x;			//x coordinate of upper right corner of the search region in green player zone
-	public int SG_UR_y;			//y coordinate of upper right corner of the search region in green player zone
+	public int SR_LL_x = 4;			//x coordinate of lower left corner of the search region in red player zone
+	public int SR_LL_y = 1;			//y coordinate of lower left corner of the search region in red player zone
+	public int SR_UR_x = 7;			//x coordinate of upper right corner of the search region in red player zone
+	public int SR_UR_y = 2;			//y coordinate of upper right corner of the search region in red player zone
+	public int SG_LL_x = 1;			//x coordinate of lower left corner of the search region in green player zone
+	public int SG_LL_y = 6;			//y coordinate of lower left corner of the search region in green player zone
+	public int SG_UR_x = 5;			//x coordinate of upper right corner of the search region in green player zone
+	public int SG_UR_y = 7;			//y coordinate of upper right corner of the search region in green player zone
 
 	// ** Set these as appropriate for your team and current situation **
 //	private static final String SERVER_IP = "192.168.2.3"; 
@@ -227,7 +227,7 @@ public class Parameter_intake {
 	 */
 	public String Target_color(){
 		if(GreenTeam==13){
-			switch (OG){
+			switch (OR){
 			case 1:
 				return "red";
 			case 2:
@@ -241,7 +241,7 @@ public class Parameter_intake {
 			}
 		}
 		else if(RedTeam==13){
-			switch (OR){
+			switch (OG){
 			case 1:
 				return "red";
 			case 2:
