@@ -41,8 +41,6 @@ public class Odometer extends OdometerData implements Runnable {
 	private final double TRACK;
 	private final double WHEEL_RAD;
 
-	private double[] position = { 0, 0, 0 }; // initialize initial position here
-
 	private static final long ODOMETER_PERIOD = 100; // odometer update period in ms
 
 	/**
@@ -124,10 +122,8 @@ public class Odometer extends OdometerData implements Runnable {
 
 			leftMotorTachoCount = leftMotor.getTachoCount();
 			rightMotorTachoCount = rightMotor.getTachoCount();
-			// gets current tachometer count
-			//System.out.println(odo.getXYT()[2]);
+
 			theta = odo.getXYT()[2]*Math.PI/180;
-//			System.out.println(theta*180/Math.PI);
 
 			deltaL = Math.PI * WHEEL_RAD * (leftMotorTachoCount - prevLeftCount) / 180; // calculates the distance each
 																						// wheel has travelled

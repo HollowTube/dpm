@@ -365,7 +365,7 @@ public class MotorControl {
 	 * @param new_radius New Radius for different wheels
 	 */
 	public void setRadius(double new_radius) {
-		this.radius = new_radius;
+		MotorControl.radius = new_radius;
 	}
 	
 	/**
@@ -374,6 +374,6 @@ public class MotorControl {
 	 * @param new_track New robot track is it changes configuration
 	 */
 	public void setTrack(double new_track) {
-		this.track = new_track;
+		MotorControl.track = new_track;
 	}
 }

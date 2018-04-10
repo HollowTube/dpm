@@ -2,7 +2,6 @@ package ca.mcgill.ecse211.main_package;
 
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
-import lejos.hardware.Sound;
 
 /**
  * This class is used for the robot's navigation in a grid. It
@@ -17,7 +16,6 @@ public class Navigation {
 	private static MotorControl motorcontrol;
 
 	private final int FORWARD_SPEED = 150;
-	private final int HEADING_THRESHOLD = 1;
 
 	private double[] position;
 	private static double final_heading = 0;
@@ -31,29 +29,6 @@ public class Navigation {
 
 	private double[] get_position() {
 		return odometer.getXYT();
-	}
-
-	/**
-	 * This method allows the robot to travel to a destination (point on the field).
-	 * 
-	 * 
-	 * @param xf x coordinate of destination
-	 * @param yf y coordinate of destination
-	 */
-	public void travelTo(double xf, double yf) {
-		position = get_position();
-		
-		double heading_error = min_angle(position[2], getHeading(xf - position[0], yf - position[1]));
-		if (Math.abs(heading_error) > HEADING_THRESHOLD) {
-			angle_correction(heading_error);
-		}
-		else {
-			left_speed = FORWARD_SPEED;
-			right_speed = FORWARD_SPEED;
-			motorcontrol.setLeftSpeed(left_speed);
-			motorcontrol.setRightSpeed(right_speed);
-			motorcontrol.forward();
-		}
 	}
 
 	/**
@@ -185,16 +160,7 @@ public class Navigation {
 	 * @return True if reached, false otherwise
 	 */
 	public boolean destination_reached(double xf, double yf) {
-		double[] position = get_position();
-//		if((position[2]<45 || position[2]>300) || (position[2]<300 && position[2]>120)){
-//			if(Math.abs(xf - position[0]) < 1.5) return true;
-//			else return false;
-//		}
-//		else if(Math.abs(yf - position[1]) < 1.5) {
-//			return true;
-//		}
-//		else return false;
-//	
+		double[] position = get_position();	
 		
 		if (Math.abs(xf - position[0]) < 1.5 && Math.abs(yf - position[1]) < 1.5) {
 			return true;

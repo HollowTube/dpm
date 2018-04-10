@@ -3,7 +3,6 @@ import java.text.DecimalFormat;
 
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
-import lejos.hardware.lcd.TextLCD;
 
 /**
  * This class is useful for the robot to calibrate its wheel radius and its track.

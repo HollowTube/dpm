@@ -17,10 +17,7 @@ import ca.mcgill.ecse211.main_package.MotorControl;
  */
 public class Full_Localization {
 	private Odometer odo;
-	private SampleProvider us;
 	private MotorControl motorcontrol;
-	private LightPoller left_LS;
-	private LightPoller right_LS;
 	private float LS_offset=5f;
 	private double TILE_SIZE = 30.48; 
 	private UltrasonicLocalizer USL;
@@ -38,10 +35,7 @@ public class Full_Localization {
 	 */
 	public Full_Localization(SampleProvider us, MotorControl motorcontrol, LightPoller left_LS, LightPoller right_LS) throws OdometerExceptions{
 		this.odo = Odometer.getOdometer();
-		this.us= us;
 		this.motorcontrol = motorcontrol;
-		this.left_LS=left_LS;
-		this.right_LS=right_LS;
 		this.USL = new UltrasonicLocalizer(odo, us, 2, motorcontrol);
 		this.LSL = new Angle_Localization(left_LS, right_LS, USL);
 	}
@@ -86,7 +80,6 @@ public class Full_Localization {
 		motorcontrol.setRightSpeed(150);
 		motorcontrol.forward(); 	// set the robot in motion towards y = 0 line
 		LSL.fix_angle(); 			// stop at y = 0 line
-		//parameter_correction(exp_x,exp_y);
 		
 		try{
 			Thread.sleep(200);
@@ -112,13 +105,6 @@ public class Full_Localization {
 			Thread.sleep(200);
 		}catch (Exception e){}
 		
-//		motorcontrol.dimeTurn(-90);
-//		motorcontrol.stop();
-//		motorcontrol.backward();
-//		LSL.fix_angle();
-//		motorcontrol.stop();
-//		motorcontrol.moveSetDistance(LS_offset);
-//		parameter_correction(exp_x,exp_y);
 	}
 	
 	/**

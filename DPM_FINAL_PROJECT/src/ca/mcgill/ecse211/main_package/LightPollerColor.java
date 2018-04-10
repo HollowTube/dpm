@@ -26,8 +26,8 @@ public class LightPollerColor {
 			0.04725411f, "blue");
 	private Color yellow_block = new Color(0.24775123f, 0.141819854f, 0.0246875f, 0.5973893f, 0.5888729f, 0.05106323f,
 			"yellow");
-	private Color white_block = new Color(0.244844f, 0.226581879f, 0.135455755f, 0.32806904f, 0.33583433f,
-			0.05739245f, "white");
+	private Color white_block = new Color(0.244844f, 0.226581879f, 0.135455755f, 0.32806904f, 0.33583433f, 0.05739245f,
+			"white");
 
 	/**
 	 * LightPollerColor class constructor. It is comprised of the SampleProvider
@@ -60,7 +60,6 @@ public class LightPollerColor {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -85,7 +84,7 @@ public class LightPollerColor {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 		}
@@ -97,10 +96,11 @@ public class LightPollerColor {
 
 	/**
 	 * This method uses the mean and standard deviation found for each color during
-	 * calibration to obtain the probability for each color. It uses a single sample hypothesis test. By It uses a normal
-	 * distribution model for each RGB value. Then, it compares the reading with
-	 * each distribution and finds an average probability.
-	 * 
+	 * calibration to obtain the probability for each color. It uses a single sample
+	 * hypothesis test with the null hypothesis being that it is the correct color
+	 * and the alternate hypothesis that is the wrong color. For the given color,
+	 * this method does 3 different hypothesis tests corresponding to the RGB values
+	 * It will return the average of the 3 test statistics.
 	 * 
 	 * @param color
 	 *            Block Color
@@ -116,13 +116,11 @@ public class LightPollerColor {
 		green_dist = Math.abs(color.green_mean - reading[1]);
 		blue_dist = Math.abs(color.blue_mean - reading[2]);
 
-
 		red_prob = (float) (1 - color.red.probability(color.getRed_mean() - red_dist, color.getRed_mean() + red_dist));
 		green_prob = (float) (1
 				- (color.green.probability(color.getGreen_mean() - green_dist, color.getGreen_mean() + green_dist)));
 		blue_prob = (float) (1
 				- (color.red.probability(color.getBlue_mean() - blue_dist, color.getBlue_mean() + blue_dist)));
-		
 
 		// returns the average probability of each probability
 		return (red_prob + green_prob + blue_prob) / 3;
@@ -141,7 +139,6 @@ public class LightPollerColor {
 		double max_prob;
 		lt.fetchSample(ltdata, 0);
 		float[] reading = getAverageMeasurement();
-		
 
 		prob_yellow = getProbability(yellow_block, reading);
 		prob_blue = getProbability(blue_block, reading);
@@ -186,10 +183,10 @@ public class LightPollerColor {
 		prob_red = getProbability(red_block, reading);
 		prob_white = getProbability(white_block, reading);
 
-//		System.out.println("yellow " + prob_yellow);
-//		System.out.println("blue " + prob_blue);
-//		System.out.println("red " + prob_red);
-//		System.out.println("white " + prob_white);
+		// System.out.println("yellow " + prob_yellow);
+		// System.out.println("blue " + prob_blue);
+		// System.out.println("red " + prob_red);
+		// System.out.println("white " + prob_white);
 
 		max_prob = Math.max(Math.max(Math.max(prob_blue, prob_yellow), prob_red), prob_white);
 
