@@ -122,9 +122,6 @@ public class Main {
 				{ parameters.SR_LL_x, parameters.SR_LL_y }, // Search starts after arriving here
 				{ parameters.SR_LL_x, parameters.SR_UR_y }, { parameters.SR_UR_x, parameters.SR_UR_y },
 				{ parameters.SR_UR_x, parameters.SR_LL_y }, { parameters.SR_LL_x, parameters.SR_LL_y },
-				// { parameters.Red_start_coord_x(), parameters.Red_start_coord_y() },
-				// { parameters.Red_start_coord_x(), parameters.BR_coord_y() },
-				// { parameters.BR_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.BR_coord_x(), parameters.SR_LL_y }, { parameters.BR_coord_x(), parameters.BR_coord_y() },
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.Green_start_coord_x(), parameters.BR_end_y(parameters.BR_coord_y()) },
@@ -135,12 +132,9 @@ public class Main {
 				{ parameters.BR_end_x(parameters.BR_coord_x()), parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.SG_LL_x, parameters.BR_end_y(parameters.BR_coord_y()) },
 				{ parameters.SG_LL_x, parameters.SG_LL_y }, // Search starts after arriving here
-				{ parameters.SG_LL_x, parameters.SG_UR_y },
-				{ parameters.SG_UR_x, parameters.SG_UR_y },
-				{ parameters.SG_UR_x, parameters.SG_LL_y },
-				{ parameters.SG_LL_x, parameters.SG_LL_y },
-				{ parameters.TN_coord_x(), parameters.SG_LL_y },
-				{ parameters.TN_coord_x(), parameters.TN_coord_y() },
+				{ parameters.SG_LL_x, parameters.SG_UR_y }, { parameters.SG_UR_x, parameters.SG_UR_y },
+				{ parameters.SG_UR_x, parameters.SG_LL_y }, { parameters.SG_LL_x, parameters.SG_LL_y },
+				{ parameters.TN_coord_x(), parameters.SG_LL_y }, { parameters.TN_coord_x(), parameters.TN_coord_y() },
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
@@ -191,6 +185,10 @@ public class Main {
 		while (true) {
 			switch (state) {
 
+			/**
+			 * Localization of the robot, places the robot at designated start coordinate
+			 * and sets odometer
+			 */
 			case INITIALIZE:
 				try {
 					// ulLoc.Localize();
@@ -211,7 +209,7 @@ public class Main {
 					e.printStackTrace();
 				}
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(500);
 				} catch (Exception e) {
 				}
 				state = List_of_states.TURNING;
@@ -227,14 +225,21 @@ public class Main {
 
 				state = List_of_states.TEST;
 				break;
-			// dime turn towards necessary destination
+			/**
+			 * Turning state, will turn towards the next waypoint and relocalize its angle
+			 * Will also check if previous waypoint is same as current waypoint, at which
+			 * point it will skip the current waypoint
+			 * 
+			 */
 			case TURNING:
 				sleepTime(100);
 				motorControl.setLeftSpeed(200);
 				motorControl.setRightSpeed(200);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
-
+				
+				
+				//check to see if on duplicate point
 				if (current_waypoint != 0 && waypoints[current_waypoint][0] == waypoints[current_waypoint - 1][0]
 						&& waypoints[current_waypoint][1] == waypoints[current_waypoint - 1][1]) {
 					current_waypoint++;
@@ -245,22 +250,29 @@ public class Main {
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
 					}
+					else if(current_waypoint == 5){
+						motorControl.turnCW();
+						state = List_of_states.TURNING;
+					}
+					else if (current_waypoint == 9) {
+						motorControl.turnCCW();
+						state = List_of_states.TURNING;
+					}
+					
 					break;
 				}
 				navigator.turn_to_destination(xf, yf);
 				motorControl.backward();
 				A_loc.fix_angle();
-				motorControl.stop();
 				motorControl.moveSetDistance(2);
-				motorControl.forward();
 				state = List_of_states.TRAVELLING;
 				break;
 
 			// travels to waypoints while scanning for objects
 			case TRAVELLING:
-
-				A_loc.fix_angle_on_path();
 				motorControl.forward();
+				A_loc.fix_angle_on_path();
+				
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
 
@@ -271,6 +283,7 @@ public class Main {
 					if (current_waypoint == waypoints.length) {
 						current_waypoint = 0;
 						state = List_of_states.IDLE;
+					
 
 					} else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 11 && parameters.RedTeam == 13)) {
@@ -278,7 +291,15 @@ public class Main {
 					} else if ((current_waypoint == 11 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
-					} else {
+					}else if(current_waypoint == 5){
+						motorControl.turnCW();
+						state = List_of_states.TURNING;
+					}
+					else if (current_waypoint == 9) {
+						motorControl.turnCCW();
+						state = List_of_states.TURNING;
+					}
+					else {
 						state = List_of_states.TURNING;
 					}
 					break;
@@ -293,16 +314,16 @@ public class Main {
 				yf = waypoints[current_waypoint][1];
 
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
-				motorControl.moveSetDistance(16.5);
+				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
-				motorControl.setLeftSpeed(100);
-				motorControl.setRightSpeed(100);
+				motorControl.setLeftSpeed(150);
+				motorControl.setRightSpeed(150);
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.stop();
 
-				motorControl.setLeftSpeed(150);
-				motorControl.setRightSpeed(150);
+				motorControl.setLeftSpeed(250);
+				motorControl.setRightSpeed(250);
 				motorControl.moveSetDistance(110);
 				try {
 					Localize.Tile_Localize();
@@ -322,10 +343,11 @@ public class Main {
 				navigator.offset90(xf * TILE_SIZE + 0.01, yf * TILE_SIZE + 0.01);
 				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
-				motorControl.moveSetDistance(5);
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.stop();
+				motorControl.setLeftSpeed(250);
+				motorControl.setRightSpeed(250);
 
 				motorControl.moveSetDistance(110);
 				try {
@@ -343,7 +365,7 @@ public class Main {
 				if (search.DoSearch()) {
 					isHunting = false;
 				}
-				motorControl.setLeftSpeed(200);
+				motorControl.setLeftSpeed(220);
 				motorControl.setRightSpeed(200);
 				navigator.turn_to_destination(xf, yf);
 
