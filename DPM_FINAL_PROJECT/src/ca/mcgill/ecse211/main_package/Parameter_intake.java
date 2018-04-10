@@ -264,13 +264,13 @@ public class Parameter_intake {
 	 */
 	public int Green_start_coord_x(){
 			switch (GreenCorner){
-			case 1:
+			case 0:
 				return 1;
+			case 1:
+				return 7;
 			case 2:
 				return 7;
 			case 3:
-				return 7;
-			case 4:
 				return 1;
 			}
 			return -1;
@@ -283,13 +283,13 @@ public class Parameter_intake {
 	 */
 	public int Red_start_coord_x(){
 			switch (RedCorner){
-			case 1:
+			case 0:
 				return 1;
+			case 1:
+				return 7;
 			case 2:
 				return 7;
 			case 3:
-				return 7;
-			case 4:
 				return 1;
 			}
 		return -1;
@@ -302,13 +302,13 @@ public class Parameter_intake {
 	 */
 	public int Green_start_coord_y(){
 			switch (GreenCorner){
+			case 0:
+				return 1;
 			case 1:
 				return 1;
 			case 2:
-				return 1;
-			case 3:
 				return 7;
-			case 4:
+			case 3:
 				return 7;
 			}
 			return -1;
@@ -321,13 +321,13 @@ public class Parameter_intake {
 	 */
 	public int Red_start_coord_y(){
 			switch (RedCorner){
+			case 0:
+				return 1;
 			case 1:
 				return 1;
 			case 2:
-				return 1;
-			case 3:
 				return 7;
-			case 4:
+			case 3:
 				return 7;
 			}
 		return -1;
@@ -341,13 +341,13 @@ public class Parameter_intake {
 	 */
 	public int Green_start_heading(){
 		switch (GreenCorner){
-		case 1:
+		case 0:
 			return 90;
-		case 2:
+		case 1:
 			return 0;
-		case 3:
+		case 2:
 			return 270;
-		case 4:
+		case 3:
 			return 180;
 		}
 		return -1;
@@ -361,13 +361,13 @@ public class Parameter_intake {
 	 */
 	public int Red_start_heading(){
 		switch (RedCorner){
-			case 1:
+			case 0:
 				return 90;
-			case 2:
+			case 1:
 				return 0;
-			case 3:
+			case 2:
 				return 270;
-			case 4:
+			case 3:
 				return 180;
 		}
 		return -1;
