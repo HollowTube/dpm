@@ -13,46 +13,46 @@ package ca.mcgill.ecse211.main_package;
  */
 
 
-//import java.util.Map;
-//import ca.mcgill.ecse211.WiFiClient.WifiConnection;
+import java.util.Map;
+import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 
 public class Parameter_intake {
-	public int RedTeam =13; 		//Team starting from red zone
-	public int GreenTeam =1;   		//Team starting from green zone
-	public int RedCorner = 3;		//Starting corner for red team
-	public int GreenCorner = 1;		//Starting corner for green team
+	public int RedTeam; 		//Team starting from red zone
+	public int GreenTeam;   		//Team starting from green zone
+	public int RedCorner;		//Starting corner for red team
+	public int GreenCorner;		//Starting corner for green team
 	public int OG;					//color of green opponent flag
 	public int OR;					//color of red opponent flag
-	public int Red_LL_x = 0;		//x coordinate of lower left hand corner of Red Zone
-	public int Red_LL_y = 5;		//y coordinate of lower left hand corner of Red Zone
-	public int Red_UR_x = 4;		//x coordinate of upper right hand corner of Red Zone
-	public int Red_UR_y = 8;		//y coordinate of upper right hand corner of Red Zone
-	public int Green_LL_x = 1;		//x coordinate of lower left hand corner of Green Zone
-	public int Green_LL_y = 0;		//y coordinate of lower left hand corner of Green Zone
-	public int Green_UR_x = 8;		//x coordinate of upper right hand corner of Green Zone
-	public int Green_UR_y = 3;		//y coordinate of upper right hand corner of Green Zone
-	public int TN_LL_x = 3;			//x coordinate of lower left corner of the tunnel footprint
-	public int TN_LL_y = 3;			//y coordinate of lower left corner of the tunnel footprint
-	public int TN_UR_x = 4;			//x coordinate of upper right corner of the tunnel footprint
-	public int TN_UR_y = 5;			//y coordinate of upper right corner of the tunnel footprint
-	public int BR_LL_x = 1;			//x coordinate of lower left corner of the bridge footprint
-	public int BR_LL_y = 3;			//y coordinate of lower left corner of the bridge footprint
-	public int BR_UR_x = 2;			//x coordinate of upper right corner of the bridge footprint
-	public int BR_UR_y = 5;			//y coordinate of upper right corner of the bridge footprint
-	public int SR_LL_x = 1;			//x coordinate of lower left corner of the search region in red player zone
-	public int SR_LL_y = 6;			//y coordinate of lower left corner of the search region in red player zone
-	public int SR_UR_x = 3;			//x coordinate of upper right corner of the search region in red player zone
-	public int SR_UR_y = 7;			//y coordinate of upper right corner of the search region in red player zone
-	public int SG_LL_x = 2;			//x coordinate of lower left corner of the search region in green player zone
-	public int SG_LL_y = 1;			//y coordinate of lower left corner of the search region in green player zone
-	public int SG_UR_x = 5;			//x coordinate of upper right corner of the search region in green player zone
-	public int SG_UR_y = 2;			//y coordinate of upper right corner of the search region in green player zone
+	public int Red_LL_x;		//x coordinate of lower left hand corner of Red Zone
+	public int Red_LL_y;		//y coordinate of lower left hand corner of Red Zone
+	public int Red_UR_x;		//x coordinate of upper right hand corner of Red Zone
+	public int Red_UR_y;		//y coordinate of upper right hand corner of Red Zone
+	public int Green_LL_x;		//x coordinate of lower left hand corner of Green Zone
+	public int Green_LL_y;		//y coordinate of lower left hand corner of Green Zone
+	public int Green_UR_x;		//x coordinate of upper right hand corner of Green Zone
+	public int Green_UR_y;		//y coordinate of upper right hand corner of Green Zone
+	public int TN_LL_x;			//x coordinate of lower left corner of the tunnel footprint
+	public int TN_LL_y;			//y coordinate of lower left corner of the tunnel footprint
+	public int TN_UR_x;			//x coordinate of upper right corner of the tunnel footprint
+	public int TN_UR_y;			//y coordinate of upper right corner of the tunnel footprint
+	public int BR_LL_x;			//x coordinate of lower left corner of the bridge footprint
+	public int BR_LL_y;			//y coordinate of lower left corner of the bridge footprint
+	public int BR_UR_x;			//x coordinate of upper right corner of the bridge footprint
+	public int BR_UR_y;			//y coordinate of upper right corner of the bridge footprint
+	public int SR_LL_x;			//x coordinate of lower left corner of the search region in red player zone
+	public int SR_LL_y;			//y coordinate of lower left corner of the search region in red player zone
+	public int SR_UR_x;			//x coordinate of upper right corner of the search region in red player zone
+	public int SR_UR_y;			//y coordinate of upper right corner of the search region in red player zone
+	public int SG_LL_x;			//x coordinate of lower left corner of the search region in green player zone
+	public int SG_LL_y;			//y coordinate of lower left corner of the search region in green player zone
+	public int SG_UR_x;			//x coordinate of upper right corner of the search region in green player zone
+	public int SG_UR_y;			//y coordinate of upper right corner of the search region in green player zone
 
-//	// ** Set these as appropriate for your team and current situation **
-//	private static final String SERVER_IP = "192.168.2.3"; 
-//	private static final int TEAM_NUMBER = 13;
-//	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false; // Enable/disable printing of debug info from the WiFi class
-//	
+	// ** Set these as appropriate for your team and current situation **
+	private static final String SERVER_IP = "192.168.2.14"; 
+	private static final int TEAM_NUMBER = 13;
+	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false; // Enable/disable printing of debug info from the WiFi class
+	
 	private static Parameter_intake parameters=null;
 
 	/**
@@ -99,47 +99,47 @@ public class Parameter_intake {
 	 * @param SG_UR_x
 	 * @param SG_UR_y
 	 */
-//	public Parameter_intake wifiIntake(){
-//		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
-//
-//		try{
-//			Map data = conn.getData();
-//
-//			this.RedTeam = ((Long) data.get("RedTeam")).intValue();
-//			this.GreenTeam = ((Long) data.get("GreenTeam")).intValue();
-//			this.RedCorner = ((Long) data.get("RedCorner")).intValue();
-//			this.GreenCorner = ((Long) data.get("GreenCorner")).intValue();
-//			this.OG = ((Long) data.get("OG")).intValue();
-//			this.OR = ((Long) data.get("OR")).intValue();
-//			this.Red_LL_x = ((Long) data.get("Red_LL_x")).intValue();
-//			this.Red_LL_y = ((Long) data.get("Red_LL_y")).intValue();
-//			this.Red_UR_x = ((Long) data.get("Red_UR_x")).intValue();
-//			this.Red_UR_y = ((Long) data.get("Red_UR_y")).intValue();
-//			this.Green_LL_x = ((Long) data.get("Green_LL_x")).intValue();
-//			this.Green_LL_y = ((Long) data.get("Green_LL_y")).intValue();
-//			this.Green_UR_x = ((Long) data.get("Green_UR_x")).intValue();
-//			this.Green_UR_y = ((Long) data.get("Green_UR_y")).intValue();
-//			this.TN_LL_x = ((Long) data.get("TN_LL_x")).intValue();
-//			this.TN_LL_y = ((Long) data.get("TN_LL_y")).intValue();
-//			this.TN_UR_x = ((Long) data.get("TN_UR_x")).intValue();
-//			this.TN_UR_y = ((Long) data.get("TN_UR_y")).intValue();
-//			this.BR_LL_x = ((Long) data.get("BR_LL_x")).intValue();
-//			this.BR_LL_y = ((Long) data.get("BR_LL_y")).intValue();
-//			this.BR_UR_x = ((Long) data.get("BR_UR_x")).intValue();
-//			this.BR_UR_y = ((Long) data.get("BR_UR_y")).intValue();
-//			this.SR_LL_x = ((Long) data.get("SR_LL_x")).intValue();
-//			this.SR_LL_y = ((Long) data.get("SR_LL_y")).intValue();			
-//			this.SR_UR_x = ((Long) data.get("SR_UR_y")).intValue();			
-//			this.SR_UR_y = ((Long) data.get("SR_UR_x")).intValue();			
-//			this.SG_LL_x = ((Long) data.get("SG_LL_x")).intValue();			
-//			this.SG_LL_y = ((Long) data.get("SG_LL_y")).intValue();			
-//			this.SG_UR_x = ((Long) data.get("SG_UR_x")).intValue();			
-//			this.SG_UR_y = ((Long) data.get("SG_UR_y")).intValue();
-//		}catch (Exception e){
-//
-//		}
-//		return parameters;
-//	}
+	public Parameter_intake wifiIntake(){
+		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+
+		try{
+			Map data = conn.getData();
+
+			this.RedTeam = ((Long) data.get("RedTeam")).intValue();
+			this.GreenTeam = ((Long) data.get("GreenTeam")).intValue();
+			this.RedCorner = ((Long) data.get("RedCorner")).intValue();
+			this.GreenCorner = ((Long) data.get("GreenCorner")).intValue();
+			this.OG = ((Long) data.get("OG")).intValue();
+			this.OR = ((Long) data.get("OR")).intValue();
+			this.Red_LL_x = ((Long) data.get("Red_LL_x")).intValue();
+			this.Red_LL_y = ((Long) data.get("Red_LL_y")).intValue();
+			this.Red_UR_x = ((Long) data.get("Red_UR_x")).intValue();
+			this.Red_UR_y = ((Long) data.get("Red_UR_y")).intValue();
+			this.Green_LL_x = ((Long) data.get("Green_LL_x")).intValue();
+			this.Green_LL_y = ((Long) data.get("Green_LL_y")).intValue();
+			this.Green_UR_x = ((Long) data.get("Green_UR_x")).intValue();
+			this.Green_UR_y = ((Long) data.get("Green_UR_y")).intValue();
+			this.TN_LL_x = ((Long) data.get("TN_LL_x")).intValue();
+			this.TN_LL_y = ((Long) data.get("TN_LL_y")).intValue();
+			this.TN_UR_x = ((Long) data.get("TN_UR_x")).intValue();
+			this.TN_UR_y = ((Long) data.get("TN_UR_y")).intValue();
+			this.BR_LL_x = ((Long) data.get("BR_LL_x")).intValue();
+			this.BR_LL_y = ((Long) data.get("BR_LL_y")).intValue();
+			this.BR_UR_x = ((Long) data.get("BR_UR_x")).intValue();
+			this.BR_UR_y = ((Long) data.get("BR_UR_y")).intValue();
+			this.SR_LL_x = ((Long) data.get("SR_LL_x")).intValue();
+			this.SR_LL_y = ((Long) data.get("SR_LL_y")).intValue();			
+			this.SR_UR_x = ((Long) data.get("SR_UR_y")).intValue();			
+			this.SR_UR_y = ((Long) data.get("SR_UR_x")).intValue();			
+			this.SG_LL_x = ((Long) data.get("SG_LL_x")).intValue();			
+			this.SG_LL_y = ((Long) data.get("SG_LL_y")).intValue();			
+			this.SG_UR_x = ((Long) data.get("SG_UR_x")).intValue();			
+			this.SG_UR_y = ((Long) data.get("SG_UR_y")).intValue();
+		}catch (Exception e){
+
+		}
+		return parameters;
+	}
 	/**
 	 * Method to receive parameters of the play field from the game controller
 	 * @author Alexandre Coulombe
@@ -276,9 +276,9 @@ public class Parameter_intake {
 			case 0:
 				return 1;
 			case 1:
-				return 7;
+				return 11;
 			case 2:
-				return 7;
+				return 11;
 			case 3:
 				return 1;
 			}
@@ -296,9 +296,9 @@ public class Parameter_intake {
 			case 0:
 				return 1;
 			case 1:
-				return 7;
+				return 11;
 			case 2:
-				return 7;
+				return 11;
 			case 3:
 				return 1;
 			}
@@ -318,9 +318,9 @@ public class Parameter_intake {
 			case 1:
 				return 1;
 			case 2:
-				return 7;
+				return 11;
 			case 3:
-				return 7;
+				return 11;
 			}
 			return -1;
 		}
@@ -338,9 +338,9 @@ public class Parameter_intake {
 			case 1:
 				return 1;
 			case 2:
-				return 7;
+				return 11;
 			case 3:
-				return 7;
+				return 11;
 			}
 		return -1;
 	}

@@ -113,7 +113,7 @@ public class Main {
 
 		// waits for wifi intake
 		// buttonChoice = Button.waitForAnyPress();
-		//parameters.wifiIntake();
+		parameters.wifiIntake();
 
 		int[][] waypoints = null;
 		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
