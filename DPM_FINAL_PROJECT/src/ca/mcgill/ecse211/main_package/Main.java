@@ -102,7 +102,7 @@ public class Main {
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
 		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerRight, ulLoc);
 		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerRight);
-		Search search = new Search(usPoller, A_loc, navigator, colorPoller);
+		//Search search = new Search(usPoller, A_loc, navigator, colorPoller);
 		Parameter_intake parameters = Parameter_intake.getParameter();
 
 		// instance variables
@@ -113,7 +113,7 @@ public class Main {
 
 		// waits for wifi intake
 		// buttonChoice = Button.waitForAnyPress();
-		// parameters.wifiIntake();
+		//parameters.wifiIntake();
 
 		int[][] waypoints = null;
 		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },

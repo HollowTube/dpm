@@ -1,9 +1,13 @@
 package ca.mcgill.ecse211.main_package;
 
 /**
- * This Class takes in the parameters for the game with wifi.
+ * This Class takes in the parameters for the game with wifi. 
  * It allows the robot to know the layout of the playing field for the run.
- * It also supplies the key coordinates needed for the robot to the waypoint system for navigation.
+ * Once the parameters have been taken in, methods of this class can  
+ * supply the key coordinates such as the coordinates the robot must be at 
+ * before crossing the tunnel/bridge and the coordinate it will be located 
+ * after crossing the tunnel/bridge needed for the waypoint system for the 
+ * robot's navigation.
  * @author Alexandre
  *
  */
@@ -13,38 +17,38 @@ package ca.mcgill.ecse211.main_package;
 //import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 
 public class Parameter_intake {
-	public int RedTeam =1; 		//Team starting from red zone
-	public int GreenTeam =13;   	//Team starting from green zone
-	public int RedCorner = 1;		//Starting corner for red team
-	public int GreenCorner = 3;		//Starting corner for green team
-	public int OG;				//color of green opponent flag
-	public int OR;				//color of red opponent flag
+	public int RedTeam =13; 		//Team starting from red zone
+	public int GreenTeam =1;   		//Team starting from green zone
+	public int RedCorner = 3;		//Starting corner for red team
+	public int GreenCorner = 1;		//Starting corner for green team
+	public int OG;					//color of green opponent flag
+	public int OR;					//color of red opponent flag
 	public int Red_LL_x = 0;		//x coordinate of lower left hand corner of Red Zone
-	public int Red_LL_y = 0;		//y coordinate of lower left hand corner of Red Zone
+	public int Red_LL_y = 5;		//y coordinate of lower left hand corner of Red Zone
 	public int Red_UR_x = 4;		//x coordinate of upper right hand corner of Red Zone
-	public int Red_UR_y = 7;		//y coordinate of upper right hand corner of Red Zone
-	public int Green_LL_x = 6;		//x coordinate of lower left hand corner of Green Zone
-	public int Green_LL_y = 2;		//y coordinate of lower left hand corner of Green Zone
+	public int Red_UR_y = 8;		//y coordinate of upper right hand corner of Red Zone
+	public int Green_LL_x = 1;		//x coordinate of lower left hand corner of Green Zone
+	public int Green_LL_y = 0;		//y coordinate of lower left hand corner of Green Zone
 	public int Green_UR_x = 8;		//x coordinate of upper right hand corner of Green Zone
-	public int Green_UR_y = 8;		//y coordinate of upper right hand corner of Green Zone
-	public int TN_LL_x = 4;			//x coordinate of lower left corner of the tunnel footprint
-	public int TN_LL_y = 2;			//y coordinate of lower left corner of the tunnel footprint
-	public int TN_UR_x = 6;			//x coordinate of upper right corner of the tunnel footprint
-	public int TN_UR_y = 3;			//y coordinate of upper right corner of the tunnel footprint
-	public int BR_LL_x = 4;			//x coordinate of lower left corner of the bridge footprint
-	public int BR_LL_y = 5;			//y coordinate of lower left corner of the bridge footprint
-	public int BR_UR_x = 6;			//x coordinate of upper right corner of the bridge footprint
-	public int BR_UR_y = 6;			//y coordinate of upper right corner of the bridge footprint
+	public int Green_UR_y = 3;		//y coordinate of upper right hand corner of Green Zone
+	public int TN_LL_x = 3;			//x coordinate of lower left corner of the tunnel footprint
+	public int TN_LL_y = 3;			//y coordinate of lower left corner of the tunnel footprint
+	public int TN_UR_x = 4;			//x coordinate of upper right corner of the tunnel footprint
+	public int TN_UR_y = 5;			//y coordinate of upper right corner of the tunnel footprint
+	public int BR_LL_x = 1;			//x coordinate of lower left corner of the bridge footprint
+	public int BR_LL_y = 3;			//y coordinate of lower left corner of the bridge footprint
+	public int BR_UR_x = 2;			//x coordinate of upper right corner of the bridge footprint
+	public int BR_UR_y = 5;			//y coordinate of upper right corner of the bridge footprint
 	public int SR_LL_x = 1;			//x coordinate of lower left corner of the search region in red player zone
-	public int SR_LL_y = 1;			//y coordinate of lower left corner of the search region in red player zone
+	public int SR_LL_y = 6;			//y coordinate of lower left corner of the search region in red player zone
 	public int SR_UR_x = 3;			//x coordinate of upper right corner of the search region in red player zone
-	public int SR_UR_y = 4;			//y coordinate of upper right corner of the search region in red player zone
-	public int SG_LL_x = 6;			//x coordinate of lower left corner of the search region in green player zone
-	public int SG_LL_y = 4;			//y coordinate of lower left corner of the search region in green player zone
-	public int SG_UR_x = 7;			//x coordinate of upper right corner of the search region in green player zone
-	public int SG_UR_y = 6;			//y coordinate of upper right corner of the search region in green player zone
+	public int SR_UR_y = 7;			//y coordinate of upper right corner of the search region in red player zone
+	public int SG_LL_x = 2;			//x coordinate of lower left corner of the search region in green player zone
+	public int SG_LL_y = 1;			//y coordinate of lower left corner of the search region in green player zone
+	public int SG_UR_x = 5;			//x coordinate of upper right corner of the search region in green player zone
+	public int SG_UR_y = 2;			//y coordinate of upper right corner of the search region in green player zone
 
-	// ** Set these as appropriate for your team and current situation **
+//	// ** Set these as appropriate for your team and current situation **
 //	private static final String SERVER_IP = "192.168.2.3"; 
 //	private static final int TEAM_NUMBER = 13;
 //	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false; // Enable/disable printing of debug info from the WiFi class
@@ -61,8 +65,10 @@ public class Parameter_intake {
 
 	/**
 	 * Method to receive parameters of the play field from the game controller
+	 * The parameters receive from the game controller are saved in the parameters
+	 * set globally in the class. 
 	 * @author Alexandre Coulombe
-	 * @param RedTeam
+	 * @param RedTeam           
 	 * @param GreenTeam
 	 * @param RedCorner
 	 * @param GreenCorner
@@ -204,7 +210,9 @@ public class Parameter_intake {
 		this.SG_UR_y=SG_UR_y;
 	}
 	/**
-	 * Method to synchronize with the Parameter_intake use in all classes
+	 * Method to synchronize with the Parameter_intake used in all classes
+	 * If the object exists, it will return it. If it is the first time, 
+	 * it will create the object and return it
 	 * @author Alexandre Coulombe
 	 * @return the parameter_intake object to be used by all classes
 	 */
@@ -257,7 +265,8 @@ public class Parameter_intake {
 		return "";
 	}
 	/**
-	 * Method to return the x coordinate of the starting corner of the robot
+	 * Method to return the x coordinate of the starting corner 
+	 * for the robot on green team
 	 * Will return -1 if a fault occurs for green team
 	 * @author Alexandre Coulombe
 	 * @return x coordinate of starting corner
@@ -276,7 +285,8 @@ public class Parameter_intake {
 			return -1;
 		}
 	/**
-	 * Method to return the x coordinate of the starting corner of the robot
+	 * Method to return the x coordinate of the starting corner
+	 * for the robot on red team
 	 * Will return -1 if a fault occurs for red team
 	 * @author Alexandre Coulombe
 	 * @return x coordinate of starting corner
@@ -295,7 +305,8 @@ public class Parameter_intake {
 		return -1;
 	}
 	/**
-	 * Method to return the x coordinate of the starting corner of the robot
+	 * Method to return the x coordinate of the starting corner
+	 * for the robot on green team
 	 * Will return -1 if a fault occurs for green team
 	 * @author Alexandre Coulombe
 	 * @return y coordinate of starting corner
@@ -314,7 +325,8 @@ public class Parameter_intake {
 			return -1;
 		}
 	/**
-	 * Method to return the x coordinate of the starting corner of the robot
+	 * Method to return the x coordinate of the starting corner 
+	 * for the robot on red team
 	 * Will return -1 if a fault occurs for red team
 	 * @author Alexandre Coulombe
 	 * @return y coordinate of starting corner
