@@ -108,11 +108,11 @@ public class Main {
 		UltrasonicLocalizer ulLoc = new UltrasonicLocalizer(odometer, myDistance, 1, motorControl);
 		Angle_Localization A_loc = new Angle_Localization(lightPollerleft, lightPollerRight, ulLoc);
 		Full_Localization Localize = new Full_Localization(myDistance, motorControl, lightPollerleft, lightPollerRight);
-		Search search = new Search(usPoller, A_loc, navigator, colorPoller);
+		//Search search = new Search(usPoller, A_loc, navigator, colorPoller);
 		Parameter_intake parameters = Parameter_intake.getParameter();
 
 		// buttonChoice = Button.waitForAnyPress();
-		// parameters.wifiIntake();
+		//parameters.wifiIntake();
 
 		int[][] waypoints = null;
 		int[][] Green_waypoints = { { parameters.Green_start_coord_x(), parameters.TN_coord_y() },
@@ -360,18 +360,18 @@ public class Main {
 				current_waypoint++;
 				state = List_of_states.TURNING;
 				break;
-			case APPROACH:
-
-				if (search.DoSearch()) {
-					isHunting = false;
-				}
-				motorControl.setLeftSpeed(220);
-				motorControl.setRightSpeed(200);
-				navigator.turn_to_destination(xf, yf);
-
-				state = List_of_states.TRAVELLING;
-
-				break;
+//			case APPROACH:
+//
+//				if (search.DoSearch()) {
+//					isHunting = false;
+//				}
+//				motorControl.setLeftSpeed(220);
+//				motorControl.setRightSpeed(200);
+//				navigator.turn_to_destination(xf, yf);
+//
+//				state = List_of_states.TRAVELLING;
+//
+//				break;
 			case TEST:
 
 				colorPoller.target_found("blue");
