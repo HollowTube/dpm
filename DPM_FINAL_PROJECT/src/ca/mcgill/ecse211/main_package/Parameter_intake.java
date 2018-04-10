@@ -7,7 +7,7 @@ package ca.mcgill.ecse211.main_package;
  * @author Alexandre
  *
  */
-//TODO the wifi inputs should be handled in this class
+
 
 //import java.util.Map;
 //import ca.mcgill.ecse211.WiFiClient.WifiConnection;

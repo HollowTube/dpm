@@ -28,7 +28,6 @@ public class LightPollerColor {
 			"yellow");
 	private Color white_block = new Color(0.244844f, 0.226581879f, 0.135455755f, 0.32806904f, 0.33583433f,
 			0.05739245f, "white");
-	ArrayList<Color> colors = new ArrayList<Color>();
 
 	/**
 	 * LightPollerColor class constructor. It is comprised of the SampleProvider
@@ -65,8 +64,6 @@ public class LightPollerColor {
 				e.printStackTrace();
 			}
 		}
-
-//		Sound.beep();
 	}
 
 	/**
@@ -100,7 +97,7 @@ public class LightPollerColor {
 
 	/**
 	 * This method uses the mean and standard deviation found for each color during
-	 * calibration to obtain the probability for each color. It uses a normal
+	 * calibration to obtain the probability for each color. It uses a single sample hypothesis test. By It uses a normal
 	 * distribution model for each RGB value. Then, it compares the reading with
 	 * each distribution and finds an average probability.
 	 * 
@@ -208,11 +205,9 @@ public class LightPollerColor {
 		if (max_color.equals(name)) {
 			Sound.beep();
 			Sound.beep();
-			colors.clear();
 			return true;
 		} else {
 			Sound.beep();
-			colors.clear();
 			return false;
 		}
 

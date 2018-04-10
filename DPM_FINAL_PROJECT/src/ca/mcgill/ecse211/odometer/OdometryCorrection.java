@@ -7,8 +7,8 @@ import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
 /**
- * This class is in charge of the odometry correction to
- * keep a good sense of its position during the entire run.
+ * This class is in charge of the odometry correction to keep a good sense of
+ * its position during the entire run.
  * 
  * @author Tritin
  *
@@ -48,13 +48,13 @@ public class OdometryCorrection implements Runnable {
 	}
 
 	/**
-	 * Here is where the odometer correction code should be run as a thread.
-	 * Once the robot crosses a black line, the fist light sensor will stop the motor on the side
-	 * it is positioned at, until the other light sensor also detects the black line.
-	 * Then, the robot will move forward with perfect straight orientation and continue
-	 * its 90 degree only navigation.
+	 * Here is where the odometer correction code should be run as a thread. Once
+	 * the robot crosses a black line, depending on the orientation of the robot and
+	 * the position of the robot, this method will set the correct x and y position.
+	 * This method assumes that the robot is running only on the gridlines.
 	 * 
 	 * @throws OdometerExceptions
+	 * @author tritin
 	 */
 	// run method (required for Thread)
 	public void run() {
@@ -84,22 +84,21 @@ public class OdometryCorrection implements Runnable {
 					// origin),
 					newy = SQUARE_LENGTH * currentYQuad - LIGHTSENS_OFFSET;
 					newx = SQUARE_LENGTH * currentXQuad;
-					
+
 					odometer.setY(newy);
 					odometer.setX(newx);
-
 
 					// going down , same as above but in other direction
 				} else if (Math.abs(head - 180) < ANGLE_THRESHOLD) {
 					currentYQuad = (int) ((position[1] + 10) / SQUARE_LENGTH);
 					currentXQuad = (int) ((position[0] + 5) / SQUARE_LENGTH);
-					
+
 					newy = SQUARE_LENGTH * currentYQuad + LIGHTSENS_OFFSET;
 					newx = SQUARE_LENGTH * currentXQuad;
-					
+
 					odometer.setY(newy);
 					odometer.setX(newx);
-					
+
 				}
 				// going right
 				else if ((Math.abs(head - 90) < ANGLE_THRESHOLD)) {
@@ -113,19 +112,19 @@ public class OdometryCorrection implements Runnable {
 					// the offset from the light sensor
 					newx = SQUARE_LENGTH * currentXQuad - LIGHTSENS_OFFSET;
 					newy = SQUARE_LENGTH * currentYQuad;
-					
+
 					odometer.setY(newy);
 					odometer.setX(newx);
 
 				} // going left
 				else if ((Math.abs(head - 270) < ANGLE_THRESHOLD)) {
-					
+
 					currentYQuad = (int) ((position[1] + 10) / SQUARE_LENGTH);
 					currentXQuad = (int) ((position[0] + 10) / SQUARE_LENGTH);
-					
+
 					newx = SQUARE_LENGTH * currentXQuad + LIGHTSENS_OFFSET;
 					newy = SQUARE_LENGTH * currentYQuad;
-					
+
 					odometer.setY(newy);
 					odometer.setX(newx);
 

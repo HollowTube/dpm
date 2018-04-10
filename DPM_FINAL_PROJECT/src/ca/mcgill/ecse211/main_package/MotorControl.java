@@ -19,7 +19,6 @@ public class MotorControl {
 	private static double radius;
 	private static double track;
 	private final int ROTATE_SPEED = 150;
-	private final int PATH_SPEED = 200;
 	private static MotorControl motorcontrol = null;
 
 	
@@ -263,20 +262,6 @@ public class MotorControl {
 	public void setRightSpeed(int speed) {
 		rightMotor.setSpeed(speed);
 	}
-
-	// public void turn_to_heading(double finalHead) {
-	//
-	// double initial_heading, turning_angle;
-	//
-	// initial_heading = odometer.getXYT()[2];
-	//
-	// turning_angle = Navigation.min_angle(initial_heading, finalHead);
-	//
-	// dime_turn(turning_angle, 100, true);
-	// stop();
-	//
-	// }
-
 	/**
 	 * This method works exactly like the default rotation function for the left motor, except only
 	 * the distance is needed as input.
@@ -342,6 +327,8 @@ public class MotorControl {
 	public void turnTo(double theta) {
 		// if theta > 180 || theta < -180
 		// then turn 360-theta or 360-Math.abs(theta)
+		
+		
 		if (theta >= 180) {
 			// turn negative direction (left)
 			theta = (360 - theta);

@@ -2,14 +2,9 @@
 package ca.mcgill.ecse211.main_package;
 
 import ca.mcgill.ecse211.odometer.*;
-
-import java.lang.reflect.Parameter;
-
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
-import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -38,11 +33,13 @@ public class Main {
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 	private static final EV3MediumRegulatedMotor usMotor = new EV3MediumRegulatedMotor(LocalEV3.get().getPort("C"));
 
+	// Port initializations and LCD
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 	private static final Port leftPort = LocalEV3.get().getPort("S1");
 	private static final Port rightPort = LocalEV3.get().getPort("S3");
 	private static final Port colorPort = LocalEV3.get().getPort("S4");
 
+	// Physical constants
 	public static final double WHEEL_RAD = 3.27;
 	public static final double TRACK = 15.9688;
 	public static final double TILE_SIZE = 30.48;
@@ -78,13 +75,12 @@ public class Main {
 	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
 	final static LightPollerColor colorPoller = new LightPollerColor(colorRGBSensor, sample);
 
+	// State declerations
 	public enum List_of_states {
-		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, AVOIDANCE, COLOR_DEMO, RETURN_TO_PATH, TEST, ANGLE_LOCALIZATION, BRIDGE_CROSSING, TRAVELLING, TILE_LOCALIZATION, TUNNEL_CROSSING, APPROACH
+		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, TEST, BRIDGE_CROSSING, TRAVELLING, TUNNEL_CROSSING, APPROACH
 	}
 
 	static List_of_states state;
-
-	double xf, yf;
 
 	/**
 	 * Main method to run the program.
@@ -96,10 +92,8 @@ public class Main {
 
 		// Odometer related objects
 		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-
 		OdometryCorrection odometryCorrection = new OdometryCorrection(colorRGBSensorReflectedLeft,
 				sampleReflectedLeft);
-
 		Display odometryDisplay = new Display(lcd); // No need to change
 
 		// Various class initialization
@@ -111,6 +105,13 @@ public class Main {
 		Search search = new Search(usPoller, A_loc, navigator, colorPoller);
 		Parameter_intake parameters = Parameter_intake.getParameter();
 
+		// instance variables
+		int current_waypoint = 0;
+		double xf = 0;
+		double yf = 0;
+		boolean isHunting = false;
+
+		// waits for wifi intake
 		// buttonChoice = Button.waitForAnyPress();
 		// parameters.wifiIntake();
 
@@ -139,11 +140,7 @@ public class Main {
 				{ parameters.Red_start_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
 		// int[][] waypoints = { { 0, 2 }, { 3, 2 }, { 3, 0 }, { 0, 0 } };
-		int current_waypoint = 0;
-		double xf = 0;
-		double yf = 0;
-		double initialPosition[];
-		boolean isHunting = false;
+
 		if (parameters.GreenTeam == 13) {
 			waypoints = Green_waypoints;
 		} else {
@@ -167,21 +164,13 @@ public class Main {
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
 
-		// Start correction if right button was pressed
-		// if (buttonChoice == Button.ID_RIGHT) {
 		Thread odoCorrectionThread = new Thread(odometryCorrection);
 		odoCorrectionThread.start();
-		// }
-
-		// state machine implementation, if you add any states makes sure that it does
-		// not get stuck in a loop
 
 		// set initial state
 		state = List_of_states.INITIALIZE;
 		motorControl.setLeftSpeed(200);
 		motorControl.setRightSpeed(200);
-		// motorControl.forward();
-		odometer.setXYT(0, 0, 0);
 		while (true) {
 			switch (state) {
 
@@ -232,14 +221,15 @@ public class Main {
 			 * 
 			 */
 			case TURNING:
-				sleepTime(100);
+				sleepTime(200);
 				motorControl.setLeftSpeed(200);
 				motorControl.setRightSpeed(200);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
-				
-				
-				//check to see if on duplicate point
+
+				//--------------------
+				// Checks if robot already at destination and skips a point if this happens
+				//--------------------
 				if (current_waypoint != 0 && waypoints[current_waypoint][0] == waypoints[current_waypoint - 1][0]
 						&& waypoints[current_waypoint][1] == waypoints[current_waypoint - 1][1]) {
 					current_waypoint++;
@@ -249,16 +239,14 @@ public class Main {
 					} else if ((current_waypoint == 11 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
-					}
-					else if(current_waypoint == 5){
+					} else if (current_waypoint == 5) {
 						motorControl.turnCW();
 						state = List_of_states.TURNING;
-					}
-					else if (current_waypoint == 9) {
+					} else if (current_waypoint == 9) {
 						motorControl.turnCCW();
 						state = List_of_states.TURNING;
 					}
-					
+
 					break;
 				}
 				navigator.turn_to_destination(xf, yf);
@@ -268,11 +256,14 @@ public class Main {
 				state = List_of_states.TRAVELLING;
 				break;
 
-			// travels to waypoints while scanning for objects
+			/**
+			 * Travelling state: Robot moves forward until destination has arrived, will
+			 * switch to a different state depending on its current waypoint
+			 */
 			case TRAVELLING:
 				motorControl.forward();
 				A_loc.fix_angle_on_path();
-				
+
 				// triggers when the destination is reached
 				if (navigator.destination_reached(xf, yf)) {
 
@@ -283,7 +274,6 @@ public class Main {
 					if (current_waypoint == waypoints.length) {
 						current_waypoint = 0;
 						state = List_of_states.IDLE;
-					
 
 					} else if ((current_waypoint == 2 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 11 && parameters.RedTeam == 13)) {
@@ -291,15 +281,13 @@ public class Main {
 					} else if ((current_waypoint == 11 && parameters.GreenTeam == 13)
 							|| (current_waypoint == 2 && parameters.RedTeam == 13)) {
 						state = List_of_states.BRIDGE_CROSSING;
-					}else if(current_waypoint == 5){
+					} else if (current_waypoint == 5) {
 						motorControl.turnCW();
 						state = List_of_states.TURNING;
-					}
-					else if (current_waypoint == 9) {
+					} else if (current_waypoint == 9) {
 						motorControl.turnCCW();
 						state = List_of_states.TURNING;
-					}
-					else {
+					} else {
 						state = List_of_states.TURNING;
 					}
 					break;
@@ -310,8 +298,14 @@ public class Main {
 
 			case BRIDGE_CROSSING:
 				motorControl.stop();
+
+				// set the new waypoints
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
+
+				// --------------------
+				// Localize before crossing
+				// --------------------
 
 				navigator.offset90(xf * TILE_SIZE, yf * TILE_SIZE);
 				motorControl.moveSetDistance(15);
@@ -322,9 +316,18 @@ public class Main {
 				A_loc.fix_angle();
 				motorControl.stop();
 
+				// ---------------------------------
+				// Actual crossing
+				// ----------------------------------
+
 				motorControl.setLeftSpeed(250);
 				motorControl.setRightSpeed(250);
 				motorControl.moveSetDistance(110);
+
+				// --------------------
+				// Localize after crossing
+				// --------------------
+
 				try {
 					Localize.Tile_Localize();
 					odometer.setX(xf * TILE_SIZE);
@@ -340,16 +343,27 @@ public class Main {
 
 				xf = waypoints[current_waypoint][0];
 				yf = waypoints[current_waypoint][1];
+
+				// --------------------
+				// Localize before crossing
+				// --------------------
 				navigator.offset90(xf * TILE_SIZE + 0.01, yf * TILE_SIZE + 0.01);
 				motorControl.moveSetDistance(15);
 				motorControl.dimeTurn(90);
 				motorControl.backward();
 				A_loc.fix_angle();
 				motorControl.stop();
+
+				// --------------------
+				// Actual crossing
+				// --------------------
 				motorControl.setLeftSpeed(250);
 				motorControl.setRightSpeed(250);
-
 				motorControl.moveSetDistance(110);
+
+				// --------------------
+				// Localize after crossing
+				// --------------------
 				try {
 					Localize.Tile_Localize();
 					odometer.setX(xf * TILE_SIZE);
@@ -365,6 +379,10 @@ public class Main {
 				if (search.DoSearch()) {
 					isHunting = false;
 				}
+
+				// --------------------
+				// Turns back to original waypoint
+				// --------------------
 				motorControl.setLeftSpeed(220);
 				motorControl.setRightSpeed(200);
 				navigator.turn_to_destination(xf, yf);
