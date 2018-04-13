@@ -38,6 +38,16 @@ public class MotorControl {
 		MotorControl.track = track;
 	}
 
+	/**
+	 * Get method for MotorControl object. Will create new MotorControl object if none already exists.
+	 * 
+	 * @param leftMotor
+	 * @param rightMotor
+	 * @param usMotor
+	 * @param radius
+	 * @param track
+	 * @return MotorControl Object
+	 */
 	public synchronized static MotorControl getMotor(EV3LargeRegulatedMotor leftMotor,
 			EV3LargeRegulatedMotor rightMotor, EV3MediumRegulatedMotor usMotor, double radius, double track) {
 		leftMotor.setSpeed(200);
@@ -53,6 +63,11 @@ public class MotorControl {
 
 	}
 
+	/**
+	 * Get method for MotorControl debugging
+	 * 
+	 * @return 
+	 */
 	public synchronized static MotorControl getMotor() {
 
 		if (motorcontrol == null) {
@@ -87,7 +102,7 @@ public class MotorControl {
 		rightMotor.rotate(convertDistance(radius, dist), false);
 	}
 	/**
-	 * This method moves the robot forward a set distance
+	 * This method moves the robot forward a set distance in centimeters
 	 * 
 	 * @param leftSpeed Speed left motor
 	 * @param rightSpeed Speed right motor
@@ -97,7 +112,7 @@ public class MotorControl {
 		rightMotor.rotate(convertDistance(radius, path_distance), false);
 	}
 	/**
-	 * This method moves the robot backwards a set distance
+	 * This method moves the robot backwards a set distance in centimeters
 	 * 
 	 * @param leftSpeed Speed left motor
 	 * @param rightSpeed Speed right motor
@@ -124,7 +139,7 @@ public class MotorControl {
 	public void rightForwards() {
 		rightMotor.forward();
 	}
-	/*
+	/**
 	 * Moves right motor backwards
 	 */
 	public void rightBackwards(){
@@ -137,20 +152,23 @@ public class MotorControl {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
+	/**
+	 * This method gives the backwards command to both motors
+	 */
 	public void backward(){
 		leftMotor.backward();
 		rightMotor.backward();
 	}
 
 	/**
-	 * Stops left motor
+	 * Stops left motor without waiting for the other (right) motor to complete it's task
 	 */
 	public void leftStop() {
 		leftMotor.stop(true);
 	}
 
 	/**
-	 * Stops right motor
+	 * Stops right motor without waiting for the other (left) motor to complete it's task
 	 */
 	public void rightStop() {
 		rightMotor.stop(true);
@@ -164,25 +182,33 @@ public class MotorControl {
 		rightMotor.stop(false);
 	}
 	/**
-	 * This method makes the Ultrasonic turn clockwise 
+	 * This method makes the EV3MediumMotor attached to the Ultrasonic Sensor turn clockwise 
 	 */
 	public void turnCW(){
 		usMotor.rotate(-91,false);
 	}
 	/**
-	 * This method makes the Ultrasonic turn counter-clockwise 
+	 * This method makes the EV3MediumMotor attached to the Ultrasonic Sensor turn counter-clockwise 
 	 */
 	public void turnCCW(){
 		usMotor.rotate(90,false);
 	}
+	/**
+	 * Makes the robot spin in a counter-clockwise direction
+	 */
 	public void rotateCCW() {
 		leftMotor.backward();
 		rightMotor.forward();
 	}
+	
+	/**
+	 * Makes the robot spin in a clockwise direction
+	 */
 	public void rotateCW() {
 		rightMotor.backward();
 		leftMotor.forward();
 	}
+	
 	/**
 	 * This method sets acceleration of the motors
 	 */
@@ -266,7 +292,7 @@ public class MotorControl {
 	 * This method works exactly like the default rotation function for the left motor, except only
 	 * the distance is needed as input.
 	 * 
-	 * @param distance Its value
+	 * @param distance Its value in centimeters
 	 * @param block True or false value
 	 */
 	public void leftRot(double distance, boolean block) {
@@ -296,8 +322,8 @@ public class MotorControl {
 	 * This method takes in the rotation you want the robot to do and
 	 * converts it into a distance for the wheels to rotate in opposite direction.
 	 * 
-	 * @param radius Wheel radius
-	 * @param width track
+	 * @param radius Wheel radius in cm
+	 * @param width track in cm
 	 * @param angle Rotation angle
 	 * @return Value for wheel rotation
 	 */
@@ -309,8 +335,8 @@ public class MotorControl {
 	 * This method takes how far the robot is traveling
 	 * and converts it to the necessary wheel rotation.
 	 * 
-	 * @param radius Wheel radius
-	 * @param distance Travel distance
+	 * @param radius Wheel radius in cm
+	 * @param distance Travel distance in cm
 	 * @return Value for wheel rotation
 	 */
 	private int convertDistance(double radius, double distance) {
@@ -321,7 +347,7 @@ public class MotorControl {
 	 * Method to change the heading of the robot towards the proper destination.
 	 * This is done using the angle received as a parameter.
 	 * 
-	 * @param theta 
+	 * @param theta Angle in degrees
 	 * @author Alexandre
 	 */
 	public void turnTo(double theta) {
@@ -362,7 +388,7 @@ public class MotorControl {
 	/**
 	 * Method to change the radius of the wheels.
 	 * 
-	 * @param new_radius New Radius for different wheels
+	 * @param new_radius New Radius for different wheels in cm
 	 */
 	public void setRadius(double new_radius) {
 		MotorControl.radius = new_radius;
@@ -371,7 +397,7 @@ public class MotorControl {
 	/**
 	 * Method to change the track of the robot.
 	 * 
-	 * @param new_track New robot track is it changes configuration
+	 * @param new_track New robot track in cm
 	 */
 	public void setTrack(double new_track) {
 		MotorControl.track = new_track;

@@ -50,6 +50,10 @@ public class Search {
 		motorControl.turnCCW();
 	}
 
+	/**
+	 * Full search functionality method for accessibility.
+	 * @return True/False whether or not target block was found
+	 */
 	public boolean DoSearch() {
 		Setup();
 		Sweep();
@@ -63,20 +67,8 @@ public class Search {
 	}
 
 	/**
-	 * @param initialPosition
-	 */
-	private void reLocalize() {
-		motorControl.turnCW();
-		odometer.setX(initialPosition[0]);
-		odometer.setY(initialPosition[1]);
-		motorControl.moveSetDistance(8);
-		motorControl.setLeftSpeed(200);
-		motorControl.setRightSpeed(200);
-		motorControl.forward();
-	}
-
-	/**
-	 * @param initialPosition
+	 * This method returns the robot to the original position stored in initialPosition
+	 * 
 	 */
 	private void returnToPath() {
 		motorControl.setLeftSpeed(200);
@@ -91,6 +83,7 @@ public class Search {
 	}
 
 	/**
+	 * This method would approach an object until it is close enough for a light sensor reading
 	 * 
 	 */
 	private void goToTarget() {
@@ -109,10 +102,9 @@ public class Search {
 	}
 
 	/**
-	 * 
+	 * This method makes the robot perform a sweep near the heading it discovered a block.
 	 */
 	private void Sweep() {
-		// motorControl.dimeTurn(90);
 		motorControl.setLeftSpeed(100);
 		motorControl.setRightSpeed(100);
 		motorControl.rotateCW();

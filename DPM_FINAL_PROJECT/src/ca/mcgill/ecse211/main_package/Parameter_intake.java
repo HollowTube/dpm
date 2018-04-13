@@ -49,7 +49,7 @@ public class Parameter_intake {
 	public int SG_UR_y;			//y coordinate of upper right corner of the search region in green player zone
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.14"; 
+	private static final String SERVER_IP = "192.168.2.3"; 
 	private static final int TEAM_NUMBER = 13;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false; // Enable/disable printing of debug info from the WiFi class
 	
@@ -67,7 +67,6 @@ public class Parameter_intake {
 	 * Method to receive parameters of the play field from the game controller
 	 * The parameters receive from the game controller are saved in the parameters
 	 * set globally in the class. 
-	 * @author Alexandre Coulombe
 	 * @param RedTeam           
 	 * @param GreenTeam
 	 * @param RedCorner
@@ -464,7 +463,7 @@ public class Parameter_intake {
 	 * will have at the end of the traversal.
 	 * Will return -1 if a fault occurs
 	 * @author Alexandre Coulombe
-	 * @param TN_coord_y
+	 * @param integer TN_coord_y
 	 * @return expected y coordinate after crossing the tunnel
 	 */
 	public int TN_end_y(int TN_coord_y){
@@ -488,7 +487,7 @@ public class Parameter_intake {
 	 * It uses the coordinates mapping the tunnel and does a difference,
 	 * it takes the longest of the two directions 
 	 * @author Alexandre Coulombe
-	 * @return tunnel length
+	 * @return int tunnel length
 	 */
 	public int TN_length(){
 		int TN_length=TN_UR_x-TN_LL_x;
@@ -601,7 +600,7 @@ public class Parameter_intake {
 	 * It uses the coordinates mapping the bridge and does a difference,
 	 * it takes the longest of the two directions 
 	 * @author Alexandre Coulombe
-	 * @return bridge length
+	 * @return bridge length (number of tiles)
 	 */
 	public int BR_length(){
 		int BR_length=BR_UR_x-BR_LL_x;

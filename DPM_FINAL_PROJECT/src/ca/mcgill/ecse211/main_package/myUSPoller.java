@@ -15,7 +15,7 @@ public class myUSPoller {
 	private float[] sampleUS;
 	SampleProvider myDistance;
 	double wallDist;
-	// MedianFilter myfilter = new MedianFilter(myDistance, BUFFER_SIZE);
+
 
 	/**
 	 * Class Constructor.
@@ -28,6 +28,10 @@ public class myUSPoller {
 		this.sampleUS = usdata;
 	}
 
+	/**
+	 * Method to retrieve a reading from the Ultrasonic Sensor filtering out distances greater than 250cm.
+	 * @return Ultrasonic Distance reading in cm
+	 */
 	public synchronized double getDist() {
 		myDistance.fetchSample(sampleUS, 0); // Read latest sample in buffer
 		wallDist = (int) (sampleUS[0] * 100.0); // Convert from MKS to CGS; truncate to int
@@ -54,10 +58,5 @@ public class myUSPoller {
 			return false;
 		}
 	}
-	// public double getMedian(int filtersize) {
-	// double dist = 0;
-	// myfilter.fetchSample(sampleUS, 0);
-	// dist = sampleUS[0];
-	// return dist;
-	// }
+
 }

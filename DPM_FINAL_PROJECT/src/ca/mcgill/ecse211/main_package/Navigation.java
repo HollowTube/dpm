@@ -27,6 +27,10 @@ public class Navigation {
 		Navigation.motorcontrol = MotorControl.getMotor();
 	}
 
+	/**
+	 * Convenience method for receiving values from odometer
+	 * @return double array size 3 from Odometer object
+	 */
 	private double[] get_position() {
 		return odometer.getXYT();
 	}
@@ -40,7 +44,6 @@ public class Navigation {
 	 */
 	public static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
-		// System.out.println(error);
 		return error;
 	}
 
@@ -54,10 +57,16 @@ public class Navigation {
 	 */
 	public double getHeading(double dx, double dy) {
 		double angle;
-		if (dy > 0) {
+		if (dy >= 0.1) {
 			angle = (Math.atan(dx / dy) + Math.PI * 2) % (Math.PI * 2);
-		} else {
-			angle = (Math.atan(dx / dy) + Math.PI);
+		}else if(-0.1 < dy && dy<0.1){
+			if(dx>0){
+				return 90;
+			}
+			else return 270;
+		}
+		else {
+			angle = (Math.atan(dx / (dy-0.01)) + Math.PI);
 		}
 		return angle * 180 / Math.PI;
 	}
@@ -86,7 +95,12 @@ public class Navigation {
 	
 	
 	
-	
+	/**
+	 * Method to turn to a 90 degree offset from a coordinate from current heading.
+	 * 
+	 * @param xf x coordinate
+	 * @param yf y coordinate
+	 */
 	public void offset90(double xf, double yf) {
 		double newAngle;
 		position = odometer.getXYT();
@@ -98,7 +112,7 @@ public class Navigation {
 
 	/**
 	 * This method returns the smallest angle between 2 headings it will return a
-	 * negative to turn counterclockwise and return positive for clockwise
+	 * negative to turn counterclockwise and return positive for clockwise.
 	 * 
 	 * @param ihead initial heading of robot
 	 * @param fhead desired heading of robot
@@ -128,7 +142,7 @@ public class Navigation {
 	}
 
 	/**
-	 * this method calculates the smallest angle to rotate to the correct heading
+	 * This method calculates the smallest angle to rotate to the correct heading
 	 * and then turns on a dime to reach it, inputs are the desired x and y
 	 * positions
 	 * 

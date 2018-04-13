@@ -41,7 +41,7 @@ public class LightPoller {
 	}
 
 	/**
-	 * made to run in the constructor, returns the baseline value of the game board(i.e. not the black line)
+	 * Made to run in the constructor, returns the baseline value of the game board(i.e. not the black line)
 	 * @return
 	 */
 	private float getBaseline() {
@@ -54,7 +54,9 @@ public class LightPoller {
 
 	
 	/**
-	 * updates the value of the current light and the prev light
+	 * Updates the value of the current light and the previous light. Used for any differential actions.
+	 * <p>
+	 * Prints current light value upon termination.
 	 */
 	public void getValue() {
 		lt.fetchSample(ltdata, 0);

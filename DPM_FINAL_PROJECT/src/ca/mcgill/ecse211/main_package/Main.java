@@ -4,6 +4,7 @@ package ca.mcgill.ecse211.main_package;
 import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.Localization.*;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -75,7 +76,7 @@ public class Main {
 	static LightPoller odoPoller = new LightPoller(colorRGBSensorReflectedLeft, sampleReflectedLeft);
 	final static LightPollerColor colorPoller = new LightPollerColor(colorRGBSensor, sample);
 	
-	private static final long CORRECTION_PERIOD = 25;
+	private static final long CORRECTION_PERIOD = 30;
 	// State declerations
 	public enum List_of_states {
 		IDLE, SEARCHING, IDENTIFYING, INITIALIZE, TURNING, TEST, BRIDGE_CROSSING, TRAVELLING, TUNNEL_CROSSING, APPROACH
@@ -84,7 +85,7 @@ public class Main {
 	static List_of_states state;
 
 	/**
-	 * Main method to run the program.
+	 * Main method that invokes all threads and controls state machine.
 	 * 
 	 * @param args
 	 * @throws OdometerExceptions
@@ -113,7 +114,6 @@ public class Main {
 		boolean isHunting = false;
 
 		// waits for wifi intake
-		// buttonChoice = Button.waitForAnyPress();
 		parameters.wifiIntake();
 
 		int[][] waypoints = null;
@@ -140,25 +140,15 @@ public class Main {
 				{ parameters.TN_end_x(parameters.TN_coord_x()), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.TN_end_y(parameters.TN_coord_y()) },
 				{ parameters.Red_start_coord_x(), parameters.Red_start_coord_y() } };
-		// int[][] waypoints = { { 0, 2 }, { 3, 2 }, { 3, 0 }, { 0, 0 } };
-
+		
 		if (parameters.GreenTeam == 13) {
 			waypoints = Green_waypoints;
 		} else {
 			waypoints = Red_waypoints;
 		}
-
+		
 		lcd.clear();
 
-		// buttonChoice = Button.waitForAnyPress(); // Record choice (left or right
-		// press)
-		// if (buttonChoice == Button.ID_DOWN) {
-		// Calibration.radius_calibration();
-		// } else if (buttonChoice == Button.ID_UP) {
-		// Calibration.track_calibration();
-		// }else if (buttonChoice == Button.ID_ENTER) {
-		// Testing.straightLine();
-		// }
 		// Start odometer and display threads
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		odoDisplayThread.start();
@@ -167,11 +157,14 @@ public class Main {
 
 		Thread odoCorrectionThread = new Thread(odometryCorrection);
 		odoCorrectionThread.start();
-		long correctionStart, correctionEnd;
+		
+		
+		
 		// set initial state
+		long correctionStart, correctionEnd;
+		motorControl.setLeftSpeed(150);
+		motorControl.setRightSpeed(150);
 		state = List_of_states.INITIALIZE;
-		motorControl.setLeftSpeed(200);
-		motorControl.setRightSpeed(200);
 		while (true) {
 			correctionStart = System.currentTimeMillis();
 			switch (state) {
@@ -182,7 +175,6 @@ public class Main {
 			 */
 			case INITIALIZE:
 				try {
-					// ulLoc.Localize();
 					if (parameters.GreenTeam == 13) {
 						Localize.Corner_Localize(parameters.Green_start_coord_x(), parameters.Green_start_coord_y(),
 								parameters.Green_start_heading());
@@ -224,8 +216,8 @@ public class Main {
 			 */
 			case TURNING:
 				sleepTime(500);
-				motorControl.setLeftSpeed(190);
-				motorControl.setRightSpeed(190);
+				motorControl.setLeftSpeed(150);
+				motorControl.setRightSpeed(150);
 				xf = waypoints[current_waypoint][0] * TILE_SIZE + 0.01;
 				yf = waypoints[current_waypoint][1] * TILE_SIZE + 0.01;
 
@@ -246,6 +238,12 @@ public class Main {
 						state = List_of_states.TURNING;
 					} else if (current_waypoint == 9) {
 						motorControl.turnCCW();
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
 						state = List_of_states.TURNING;
 					}
 
@@ -287,11 +285,15 @@ public class Main {
 						state = List_of_states.BRIDGE_CROSSING;
 					} else if (current_waypoint == 5) {
 						motorControl.turnCW();
-						//isHunting = true;
 						state = List_of_states.TURNING;
 					} else if (current_waypoint == 9) {
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
+						Sound.beep();
 						motorControl.turnCCW();
-						//isHunting = false;
 						state = List_of_states.TURNING;
 					} else {
 						state = List_of_states.TURNING;
@@ -306,8 +308,8 @@ public class Main {
 				motorControl.stop();
 
 				// set the new waypoints
-				xf = waypoints[current_waypoint][0];
-				yf = waypoints[current_waypoint][1];
+				xf = waypoints[current_waypoint][0] + 0.01;
+				yf = waypoints[current_waypoint][1] + 0.01;
 
 				// --------------------
 				// Localize before crossing
@@ -328,8 +330,7 @@ public class Main {
 
 				motorControl.setLeftSpeed(360);
 				motorControl.setRightSpeed(360);
-				motorControl.moveSetDistance(110);
-
+				motorControl.moveSetDistance(49.04+TILE_SIZE*parameters.BR_length());
 				// --------------------
 				// Localize after crossing
 				// --------------------
@@ -365,7 +366,7 @@ public class Main {
 				// --------------------
 				motorControl.setLeftSpeed(360);
 				motorControl.setRightSpeed(360);
-				motorControl.moveSetDistance(110);
+				motorControl.moveSetDistance(49.04+TILE_SIZE*parameters.BR_length());
 
 				// --------------------
 				// Localize after crossing
@@ -397,10 +398,8 @@ public class Main {
 
 				break;
 			case TEST:
-
-				colorPoller.target_found("blue");
-
-				state = List_of_states.IDLE;
+				motorControl.forward();
+				A_loc.fix_angle_on_path();
 				break;
 			default:
 				break;
@@ -417,7 +416,7 @@ public class Main {
 	}
 
 	/**
-	 * This method sets a time for thread sleep.
+	 * This method sets a time for thread sleep. Includes a try-catch block.
 	 * 
 	 * @param time
 	 *            sleep time

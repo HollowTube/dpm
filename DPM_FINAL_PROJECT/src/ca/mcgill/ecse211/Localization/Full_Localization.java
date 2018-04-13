@@ -100,6 +100,7 @@ public class Full_Localization {
 		motorcontrol.forward(); 	//set the robot in motion towards x = 0 line
 		LSL.fix_angle(); 			//stop at x = 0 line
 		motorcontrol.moveSetDistance(LS_offset);
+		motorcontrol.stop();
 		
 		try{
 			Thread.sleep(200);

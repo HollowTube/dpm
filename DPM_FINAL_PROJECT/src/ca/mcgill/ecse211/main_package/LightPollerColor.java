@@ -183,11 +183,6 @@ public class LightPollerColor {
 		prob_red = getProbability(red_block, reading);
 		prob_white = getProbability(white_block, reading);
 
-		// System.out.println("yellow " + prob_yellow);
-		// System.out.println("blue " + prob_blue);
-		// System.out.println("red " + prob_red);
-		// System.out.println("white " + prob_white);
-
 		max_prob = Math.max(Math.max(Math.max(prob_blue, prob_yellow), prob_red), prob_white);
 
 		if (max_prob == prob_red) {

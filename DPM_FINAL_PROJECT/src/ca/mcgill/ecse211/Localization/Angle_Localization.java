@@ -19,12 +19,13 @@ public class Angle_Localization {
 	private static MotorControl motorcontrol;
 	private LightPoller left_sensor;
 	private LightPoller right_sensor;
-	private float thresholdRight = 20f;
-	private float thresholdLeft = 16f;
+	private float thresholdRight = 21f;
+	private float thresholdLeft = 17f;
 
 	double initial_position[];
 	double current_position[];
 	private boolean recovery = false;
+	long startTime, endTime;
 
 	/**
 	 * Class constructor.
@@ -58,14 +59,9 @@ public class Angle_Localization {
 	 */
 	public void fix_angle() {
 		while (true) {
-			// left_sensor.getValue();
-			// right_sensor.getValue();
-			// if (USL.getDistance() < 20) {
-			// avoid_obstacle();
 			if (right_sensor.lessThan(thresholdRight)) {
 				motorcontrol.rightStop();
 				do {
-					// left_sensor.getValue();
 					if (left_sensor.lessThan(thresholdLeft)) {
 						motorcontrol.leftStop();
 						break;
@@ -75,7 +71,6 @@ public class Angle_Localization {
 			} else if (left_sensor.lessThan(thresholdLeft)) {
 				motorcontrol.leftStop();
 				do {
-					// right_sensor.getValue();
 					if (right_sensor.lessThan(thresholdRight)) {
 						motorcontrol.rightStop();
 						break;
@@ -100,13 +95,9 @@ public class Angle_Localization {
 	 * @author Tri-tin Truong
 	 */
 	public void fix_angle_on_path() {
-		// left_sensor.getValue();
-		// right_sensor.getValue();
 		if (right_sensor.lessThan(thresholdRight) && !recovery) {
 			motorcontrol.rightStop();
-			// Sound.buzz();
 			while (!left_sensor.lessThan(thresholdLeft)) {
-				// left_sensor.getValue();
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
@@ -116,14 +107,13 @@ public class Angle_Localization {
 			}
 			motorcontrol.leftStop();
 			angle_correction();
+			startTime = System.currentTimeMillis();
 			initial_position = odometer.getXYT();
 			recovery = true;
 
 		} else if (left_sensor.lessThan(thresholdLeft) && !recovery) {
 			motorcontrol.leftStop();
-			// Sound.beep();
 			while (!right_sensor.lessThan(thresholdRight)) {
-				// right_sensor.getValue();
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
@@ -133,13 +123,13 @@ public class Angle_Localization {
 			}
 			motorcontrol.rightStop();
 			angle_correction();
+			startTime = System.currentTimeMillis();
 			initial_position = odometer.getXYT();
 			recovery = true;
 
 		} else if (recovery) {
-			current_position = odometer.getXYT();
-			if (euclidian_error(current_position[0] - initial_position[0],
-					current_position[1] - initial_position[1]) > 3) {
+			endTime = System.currentTimeMillis();
+			if(endTime-startTime > 1000){
 				recovery = false;
 			}
 		}
@@ -178,7 +168,6 @@ public class Angle_Localization {
 	 */
 	private static double euclidian_error(double dx, double dy) {
 		double error = Math.sqrt(dx * dx + dy * dy);
-		// System.out.println(error);
 		return error;
 	}
 }

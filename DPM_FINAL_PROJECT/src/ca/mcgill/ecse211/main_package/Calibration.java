@@ -93,7 +93,6 @@ public class Calibration {
 			else if(button_choice == Button.ID_RIGHT) {
 				top_bound = mid;
 			}
-//			LCD.clear();
 		}
 		
 	}

@@ -13,82 +13,182 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class Color {
 	
+	/**
+	 * Get method for red mean value.
+	 * 
+	 * @return red mean value
+	 */
 	public float getRed_mean() {
 		return red_mean;
 	}
 
+	/**
+	 * Set method for red mean value.
+	 * 
+	 * @param red_mean
+	 */
 	public void setRed_mean(float red_mean) {
 		this.red_mean = red_mean;
 	}
 
+	/**
+	 * Get method for green mean value.
+	 * 
+	 * @return green mean value
+	 */
 	public float getGreen_mean() {
 		return green_mean;
 	}
 
+	/**
+	 * Set method for green mean value.
+	 * 
+	 * @param green_mean value
+	 */
 	public void setGreen_mean(float green_mean) {
 		this.green_mean = green_mean;
 	}
 
+	/**
+	 * Get method for blue mean value.
+	 * 
+	 * @return blue_mean value
+	 */
 	public float getBlue_mean() {
 		return blue_mean;
 	}
 
+	/**
+	 * Set method for blue mean value.
+	 * 
+	 * @param blue_mean value
+	 */
 	public void setBlue_mean(float blue_mean) {
 		this.blue_mean = blue_mean;
 	}
 
+	/**
+	 * Get method for red sigma
+	 * 
+	 * @return red sigma
+	 */
 	public float getRed_sigma() {
 		return red_sigma;
 	}
 
+	/**
+	 * Set method for red sigma
+	 * 
+	 * @param red_sigma
+	 */
 	public void setRed_sigma(float red_sigma) {
 		this.red_sigma = red_sigma;
 	}
 
+	/**
+	 * Get method for blue sigma
+	 * 
+	 * @return
+	 */
 	public float getBlue_sigma() {
 		return blue_sigma;
 	}
 
+	/**
+	 * Set method for blue sigma
+	 * 
+	 * @param blue_sigma
+	 */
 	public void setBlue_sigma(float blue_sigma) {
 		this.blue_sigma = blue_sigma;
 	}
 
+	/**
+	 * Get method for green sigma
+	 * 
+	 * @return
+	 */
 	public float getGreen_sigma() {
 		return green_sigma;
 	}
 
+	/**
+	 * Set method for green sigma
+	 * 
+	 * @param green_sigma
+	 */
 	public void setGreen_sigma(float green_sigma) {
 		this.green_sigma = green_sigma;
 	}
 
+	/**
+	 * Get method for NormalDistribution object of red
+	 * 
+	 * @return NormalDistribution for red
+	 */
 	public NormalDistribution getRed() {
 		return red;
 	}
 
+	/**
+	 * Set method for NormalDistribution object of red
+	 * 
+	 * @param red
+	 */
 	public void setRed(NormalDistribution red) {
 		this.red = red;
 	}
 
+	/**
+	 * Get method for NormalDistribution object of green
+	 * 
+	 * @return green
+	 */
 	public NormalDistribution getGreen() {
 		return green;
 	}
 
+	/**
+	 * Set method for NormalDistribution objet of green
+	 * 
+	 * @param green
+	 */
 	public void setGreen(NormalDistribution green) {
 		this.green = green;
 	}
 
+	/**
+	 * Get method for NormalDistribution object of blue
+	 * 
+	 * @return
+	 */
 	public NormalDistribution getBlue() {
 		return blue;
 	}
 
+	/**
+	 * Set method for NormalDistribution object of blue
+	 * 
+	 * @param blue
+	 */
 	public void setBlue(NormalDistribution blue) {
 		this.blue = blue;
 	}
 
+	/**
+	 * Set method for probability
+	 * 
+	 * @param double prob_yellow
+	 */
 	public void setProbability(double prob_yellow) {
 		this.probability = prob_yellow;
 	}
 
+	/**
+	 * Get method for probability
+	 * 
+	 * @return
+	 */
 	public double getProbability() {
 		return this.probability;
 	}
